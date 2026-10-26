@@ -1,0 +1,1008 @@
+/* =====================================================
+   RESERVIN — TEMA BARU
+   Krem + coklat muda, Montserrat, header menu-kiri / logo-tengah / tombol-kanan
+   Satu file untuk semua halaman (publik, customer, admin, pegawai).
+
+   Ganti gambar hero:  .hero { --hero-photo: url("../img/hero.jpg"); }
+   ===================================================== */
+
+:root {
+    --cream: #f6eee4;
+    --cream-2: #faf6f1;
+    --sand: #f0e4d7;
+    --tan: #c4a077;
+    --tan-dark: #ae8a62;
+    --brown: #8a5f4e;
+    --ink: #1a1714;
+    --muted: #6d625a;
+    --line: rgba(26, 23, 20, .13);
+    --white: #fff;
+    --ok-bg: #dfe8d6;
+    --ok-ink: #3d5a2c;
+    --warn-bg: #f3dcc4;
+    --warn-ink: #7a4a1c;
+    --bad-bg: #f1d3cf;
+    --bad-ink: #8c2f27;
+    --font: "Jost", "Helvetica Neue", Arial, sans-serif;
+    --serif: "Cormorant Garamond", Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: .04em;
+    color: var(--ink);
+    background: var(--cream);
+    -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; }
+a { color: inherit; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.15; }
+p { margin: 0; }
+.sr-only {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* =====================================================
+   HEADER  (menu kiri · logo tengah · tombol kanan)
+   ===================================================== */
+.site-header {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 34px 56px;
+    position: relative;
+    z-index: 20;
+}
+
+.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 28px;
+    max-width: 420px;
+}
+.site-nav a {
+    text-decoration: none;
+    font-size: 17px;
+    letter-spacing: .1em;
+    padding: 2px 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s, color .2s;
+}
+.site-nav a:hover { border-color: var(--ink); }
+.site-nav a.active { border-color: var(--ink); font-weight: 600; }
+
+.brand {
+    text-decoration: none;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+}
+.brand-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 58px;
+    line-height: 1;
+    letter-spacing: .08em;
+    color: var(--ink);
+}
+.brand-sub {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .38em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+.brand-sub svg { width: 16px; height: 16px; }
+
+.header-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 22px;
+}
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.25;
+    text-align: left;
+}
+.user-chip .avatar {
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    background: var(--sand);
+    font-size: 13px; font-weight: 700; letter-spacing: .08em;
+}
+.user-chip b { font-size: 14px; font-weight: 700; display: block; }
+.user-chip small { font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+
+/* =====================================================
+   TOMBOL
+   ===================================================== */
+.btn, .btn-cta, button.btn, a.btn,
+.btn-booking, .btn-salon, .btn-login, .btn-register {
+    display: inline-block;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    color: var(--ink);
+    background: var(--tan);
+    border: 1px solid var(--tan);
+    border-radius: 0;
+    padding: 16px 34px;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+}
+.btn-cta { padding: 30px 52px; }
+.btn:hover, .btn-cta:hover, .btn-booking:hover, .btn-login:hover, .btn-register:hover {
+    background: var(--tan-dark);
+    border-color: var(--tan-dark);
+    color: var(--ink);
+}
+.btn-secondary, .btn-salon, .btn-cancel {
+    background: transparent;
+    border-color: var(--ink);
+    color: var(--ink);
+}
+.btn-secondary:hover, .btn-salon:hover, .btn-cancel:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--cream);
+}
+.btn-success { background: #5f7550; border-color: #5f7550; color: var(--cream); }
+.btn-success:hover { background: #4b5f3f; border-color: #4b5f3f; color: var(--cream); }
+.btn-danger, .btn-delete, .delete {
+    background: #a4473f; border-color: #a4473f; color: var(--cream);
+}
+.btn-danger:hover, .btn-delete:hover, .delete:hover {
+    background: #86352e; border-color: #86352e; color: var(--cream);
+}
+
+/* =====================================================
+   HERO BAND (gambar + judul besar)
+   ===================================================== */
+.hero, .header {
+.hero {
+    --hero-photo: url('../images/lokasi salon.jpg');
+}
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 14px;
+    text-align: center;
+    padding: 100px 24px;
+    min-height: 500px;
+    color: var(--cream);
+
+    background-color: #b0847a;
+    background-image:
+        linear-gradient(90deg,
+  rgba(48, 30, 24, 0.60) 0%,
+  rgba(48, 30, 24, 0.60) 100%
+),
+        var(--hero-photo);
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+.hero::after, .header::after {                 /* tekstur halus */
+    content: "";
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 2px, transparent 2px 9px);
+    pointer-events: none;
+}
+.hero > *, .header > * { position: relative; z-index: 1; }
+.hero--lg { min-height: 440px; padding: 110px 24px; }
+.hero--sm { min-height: 200px; padding: 56px 24px; }
+
+.hero h1, .hero h2, .header h3, .header h1 {
+    font-weight: 800;
+    font-size: clamp(32px, 5.2vw, 72px);
+    line-height: 1.08;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+    color: var(--cream);
+    max-width: 1000px;
+    text-shadow: 0 2px 24px rgba(40, 20, 16, .35);
+}
+.hero--sm h1, .hero--sm h2 { font-size: clamp(28px, 4vw, 52px); }
+.hero p, .header small {
+    font-size: 15px;
+    letter-spacing: .1em;
+    color: var(--cream);
+    text-shadow: 0 1px 12px rgba(40, 20, 16, .45);
+}
+
+/* strip tiga panel bergelombang (seperti foto rambut) */
+.strip {
+    height: 190px;
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    background: var(--brown);
+}
+.strip span {
+    background-size: 240px 120px;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120' viewBox='0 0 240 120'%3E%3Cpath d='M0 20 Q30 0 60 20 T120 20 T180 20 T240 20 M0 60 Q30 40 60 60 T120 60 T180 60 T240 60 M0 100 Q30 80 60 100 T120 100 T180 100 T240 100' fill='none' stroke='%23f4eee6' stroke-opacity='.22' stroke-width='3'/%3E%3C/svg%3E");
+}
+.strip span:nth-child(1) { background-color: #b9876a; }
+.strip span:nth-child(2) { background-color: #c79878; }
+.strip span:nth-child(3) { background-color: #a07156; }
+
+/* =====================================================
+   SECTION & JUDUL BERGARIS BAWAH
+   ===================================================== */
+.section { background: var(--sand); padding: 72px 24px 96px; }
+.section.cream { background: var(--cream); }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; }
+
+.section-title,
+.page-title h1,
+.title h2 {
+    text-align: center;
+    font-weight: 800;
+    font-size: clamp(24px, 3vw, 36px);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+}
+.page-title, .title { text-align: center; margin-bottom: 44px; }
+.page-title p, .title p { margin-top: 18px; color: var(--muted); font-size: 15px; }
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+.site-footer {
+    background: var(--cream);
+    padding: 64px 56px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+.site-footer h3 { font-weight: 800; font-size: 38px; letter-spacing: .01em; text-transform: uppercase; }
+.site-footer address, .site-footer .foot-text { font-style: normal; margin-top: 28px; line-height: 1.6; }
+.site-footer .foot-right { text-align: right; }
+.site-footer .foot-right small { display: block; font-size: 17px; letter-spacing: .1em; }
+.site-footer .foot-right small::after { content: ""; display: block; width: 22px; height: 1px; background: var(--ink); margin: 8px 0 0 auto; }
+.site-footer .foot-link {
+    display: inline-block; margin-top: 56px;
+    font-weight: 800; font-size: 28px; text-transform: uppercase; letter-spacing: .02em;
+    text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px;
+}
+.site-footer .copy { grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); letter-spacing: .1em; }
+
+/* =====================================================
+   FORM (dipakai di semua halaman)
+   ===================================================== */
+label { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+
+input[type=text], input[type=password], input[type=email], input[type=tel],
+input[type=number], input[type=date], input[type=time], select, textarea,
+.form-control {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 16px;
+    letter-spacing: .08em;
+    color: var(--ink);
+    background: var(--white);
+    border: 1px solid transparent;
+    border-radius: 0;
+    padding: 22px 26px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+}
+textarea { min-height: 110px; resize: vertical; }
+::placeholder { color: #a39a92; letter-spacing: .1em; }
+input:focus, select:focus, textarea:focus {
+    border-color: var(--tan-dark);
+    box-shadow: 0 0 0 3px rgba(201, 162, 138, .35);
+}
+input[readonly] { background: #efe8df; color: var(--muted); }
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 22px center;
+    padding-right: 56px;
+}
+input[type=checkbox], input[type=radio] { accent-color: var(--brown); width: 18px; height: 18px; }
+
+.form-group { display: grid; gap: 10px; align-content: start; }
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.form-grid .full { grid-column: 1 / -1; }
+
+/* =====================================================
+   KARTU UMUM
+   ===================================================== */
+.card, .kotak, .salon-card, .booking-card, .stat, .summary-card {
+    background: var(--cream-2);
+    border: 1px solid var(--line);
+    border-radius: 0;
+}
+.card-title { font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
+.card-subtitle { margin-top: 6px; font-size: 14px; color: var(--muted); }
+
+/* =====================================================
+   MODAL
+   ===================================================== */
+.modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26, 23, 20, .62);
+    align-items: center; justify-content: center;
+    padding: 24px;
+    z-index: 100;
+    overflow-y: auto;
+}
+.modal-box {
+    background: var(--cream);
+    width: 100%; max-width: 480px;
+    padding: 40px;
+    border: 1px solid var(--line);
+    max-height: 100%; overflow-y: auto;
+}
+.modal-title, .modal-box > h2 {
+    font-weight: 800; font-size: 24px; letter-spacing: .03em; text-transform: uppercase;
+    margin-bottom: 22px;
+}
+.modal-box .form-group { margin-bottom: 18px; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+
+/* =====================================================
+   HALAMAN PUBLIK  (index · login · registrasi)
+   ===================================================== */
+.page-home .kotak { padding: 44px 40px; text-align: left; display: flex; flex-direction: column; gap: 18px; }
+.page-home .judul { font-weight: 800; font-size: 28px; text-transform: uppercase; letter-spacing: .02em; }
+.page-home .deskripsi { color: var(--muted); font-size: 15px; flex: 1; }
+.page-home .kotak .btn { align-self: flex-start; }
+.two-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; margin-top: 44px; }
+
+/* form di atas hero, seperti "Newsletter Signup" */
+.hero-form { width: 100%; max-width: 1180px; margin-top: 18px; }
+.hero-form form { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.hero-form .field { flex: 1 1 260px; min-width: 0; }
+.hero-form .field.full { flex-basis: 100%; }
+.hero-form .btn-login, .hero-form .btn-register {
+    flex: 0 0 auto; padding: 22px 54px; font-size: 18px; letter-spacing: .06em;
+}
+.hero-form .note, .hero-form .note a {
+    margin-top: 28px; font-size: 14px; color: var(--cream); text-shadow: 0 1px 10px rgba(40,20,16,.55);
+}
+.hero-form .note a { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.hero-form .note { display: grid; gap: 8px; justify-items: center; }
+.page-auth .hero { min-height: 560px; }
+
+/* =====================================================
+   CUSTOMER
+   ===================================================== */
+.page-customer { background: var(--sand); }
+.page-customer .container, .page-customer .app { display: block; width: 100%; max-width: none; height: auto; background: transparent; overflow: visible; }
+.page-customer .header { min-height: 220px; padding: 60px 24px; }
+.page-customer .header-top { display: grid; gap: 14px; justify-items: center; }
+.page-customer .header h3 { font-size: clamp(30px, 4.4vw, 56px); margin: 0; }
+.page-customer .logout { color: var(--cream); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; text-underline-offset: 4px; }
+.page-customer .content { width: 100%; max-width: 1180px; margin: 0 auto; padding: 64px 24px 96px; overflow: visible; }
+
+/* dashboard */
+.p-dashboard .content { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.p-dashboard .welcome, .p-dashboard .calendar { grid-column: 1 / -1; }
+.welcome { text-align: center; margin-bottom: 14px; }
+.welcome h3 { font-weight: 800; font-size: clamp(24px, 3vw, 36px); text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.welcome p { margin-top: 18px; color: var(--muted); font-size: 15px; }
+.page-customer .card { padding: 36px 32px; display: flex; flex-direction: column; gap: 14px; }
+.page-customer .card h4 { font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
+.page-customer .card p { color: var(--muted); font-size: 15px; flex: 1; }
+.page-customer .card > a:not(.btn) { align-self: flex-start; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; text-underline-offset: 5px; }
+.page-customer .card .btn { align-self: flex-start; }
+
+.p-dashboard .calendar { background: var(--cream-2); border: 1px solid var(--line); padding: 36px 32px; }
+.p-dashboard .calendar h4 { font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
+.p-dashboard .calendar p { color: var(--muted); font-size: 15px; margin: 8px 0 22px; }
+.dates { display: flex; gap: 14px; flex-wrap: wrap; }
+.p-dashboard .date { width: 92px; padding: 16px 0; background: var(--white); text-align: center; font-weight: 700; line-height: 1.5; border: 1px solid transparent; }
+.p-dashboard .date.active { background: var(--tan); }
+
+/* pilih salon */
+.p-pilih .content { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: start; }
+.p-pilih .title { grid-column: 1 / -1; }
+.salon-card { padding: 32px; display: grid; gap: 18px; }
+.salon-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.salon-header h3 { font-weight: 800; font-size: 22px; text-transform: uppercase; letter-spacing: .03em; }
+.pilih { font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--tan); border: 1px solid var(--tan); color: var(--ink); padding: 12px 24px; cursor: pointer; transition: background .2s; }
+.pilih:hover { background: var(--tan-dark); border-color: var(--tan-dark); }
+.location { font-size: 14px; color: var(--muted); }
+.detail-item { margin-bottom: 14px; }
+.detail-title { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.detail-text { font-size: 15px; }
+.fasilitas { display: flex; flex-wrap: wrap; gap: 8px; }
+.fasilitas span { font-size: 12px; padding: 6px 12px; border: 1px solid var(--line); background: var(--white); letter-spacing: .06em; }
+.modal-info { font-size: 15px; color: var(--muted); margin-bottom: 26px; }
+.modal-btn { display: block; width: 100%; font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 18px; border: 1px solid var(--ink); cursor: pointer; margin-top: 12px; border-radius: 0; }
+.modal-btn.lanjut, .modal-box > .modal-btn:not(.batal):not(.cancel-btn) { background: var(--tan); border-color: var(--tan); color: var(--ink); }
+.modal-btn.batal, .cancel-btn { background: transparent; color: var(--ink); }
+.cancel-btn { width: 100%; font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 18px; border: 1px solid var(--ink); cursor: pointer; margin-top: 12px; border-radius: 0; }
+.modal-btn:hover { filter: brightness(.95); }
+
+/* booking */
+.p-booking .content { max-width: 860px; }
+.p-booking .content > h1 { text-align: center; font-weight: 800; font-size: clamp(24px, 3vw, 36px); text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; margin-bottom: 40px; }
+.p-booking .card { padding: 44px; display: block; }
+.p-booking .card > label { display: block; margin: 30px 0 12px; }
+.p-booking .card > label:first-child { margin-top: 0; }
+.salon, .person, .option { background: var(--white); padding: 20px 24px; margin-bottom: 12px; }
+.salon b, .person b { font-size: 17px; letter-spacing: .06em; text-transform: uppercase; }
+.info { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.option label { text-transform: none; font-weight: 500; font-size: 15px; letter-spacing: .05em; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.add { font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: transparent; border: 1px dashed var(--ink); color: var(--ink); padding: 14px 22px; cursor: pointer; }
+.add:hover { background: var(--ink); color: var(--cream); }
+.date-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+.time-grid > .info { grid-column: 1 / -1; margin: 0; }
+.time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+.p-booking .date, .p-booking .time, .p-riwayat .time, .p-riwayat .calendar .date {
+    background: var(--white); text-align: center; padding: 14px 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: background .15s, border-color .15s;
+}
+.p-booking .date:hover, .p-booking .time:hover, .p-riwayat .time:hover, .p-riwayat .calendar .date:hover { border-color: var(--tan-dark); }
+.p-booking .date.active, .p-booking .time.active, .p-riwayat .time.active, .p-riwayat .calendar .date.active { background: var(--tan); border-color: var(--tan-dark); }
+.time-title { margin: 30px 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.p-booking .card .btn { display: block; width: 100%; margin-top: 36px; padding: 24px; font-size: 14px; }
+
+/* riwayat */
+.p-riwayat .content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; align-items: start; }
+.p-riwayat .note { grid-column: 1 / -1; text-align: center; color: var(--muted); font-size: 14px; }
+.booking-card { padding: 32px; display: grid; gap: 10px; }
+.booking-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+.kode { font-weight: 800; font-size: 20px; letter-spacing: .06em; }
+.status { display: inline-block; padding: 7px 14px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: var(--warn-bg); color: var(--warn-ink); }
+.status.confirmed { background: var(--ok-bg); color: var(--ok-ink); }
+.booking-card .nama { font-weight: 700; font-size: 18px; margin-top: 8px; }
+.booking-card .detail { font-size: 14px; color: var(--muted); }
+.schedule-btn { justify-self: start; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: transparent; border: 1px solid var(--ink); color: var(--ink); padding: 11px 20px; cursor: pointer; margin-bottom: 8px; }
+.schedule-btn:hover { background: var(--ink); color: var(--cream); }
+.booking-card .total { margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--line); font-weight: 700; font-size: 14px; letter-spacing: .06em; }
+.owner-info { background: var(--sand); padding: 14px 18px; font-size: 14px; margin-bottom: 20px; }
+.week, .p-riwayat .modal .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.week { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.p-riwayat .modal .calendar { max-height: 230px; overflow-y: auto; margin-bottom: 4px; }
+.p-riwayat .modal .calendar .date { padding: 10px 0; }
+.times { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.times > div:not(.time) { grid-column: 1 / -1; font-size: 14px; color: var(--muted); }
+.p-riwayat .modal-box { max-width: 520px; }
+
+/* bottom nav (mobile) */
+.bottom {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+    grid-template-columns: repeat(4, 1fr);
+}
+.bottom a { text-decoration: none; text-align: center; padding: 10px 4px 12px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.bottom a.active { color: var(--ink); box-shadow: inset 0 3px 0 var(--tan); }
+.bottom .icon { display: block; font-size: 20px; margin-bottom: 2px; }
+
+/* =====================================================
+   ADMIN & PEGAWAI
+   ===================================================== */
+.page-staff { background: var(--sand); }
+.page-staff .app, .page-staff .main { display: block; width: 100%; margin: 0; padding: 0; background: transparent; min-height: 0; }
+.page-staff .content { width: 100%; max-width: 1240px; margin: 0 auto; padding: 64px 24px 96px; }
+.page-staff .back { display: inline-block; margin-bottom: 26px; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; text-underline-offset: 5px; }
+
+.page-staff .card { padding: 36px; margin-bottom: 28px; }
+.page-staff .card-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+.page-staff .card-title { margin-bottom: 4px; }
+.page-staff .card > .card-title + .form-grid, .page-staff .card > .card-title + .time-box, .page-staff .card > .card-title + .facilities, .page-staff .card > .card-title + .table-wrapper { margin-top: 24px; }
+.page-staff .card-subtitle { margin-bottom: 22px; }
+
+/* statistik */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 24px; margin-bottom: 28px; }
+.stat { padding: 34px 24px; text-align: center; display: grid; gap: 6px; justify-items: center; }
+.stat-icon { font-size: 26px; width: 58px; height: 58px; display: grid; place-items: center; background: var(--sand); margin-bottom: 8px; }
+.stat-number { font-weight: 800; font-size: 44px; line-height: 1; }
+.stat-title { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+.row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; align-items: start; }
+.row > .card, .row > .list { margin-bottom: 0; }
+.page-staff .row { margin-bottom: 28px; }
+.card .row { margin-bottom: 0; gap: 8px 28px; }
+.list { display: grid; gap: 0; }
+.list-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.list-item:last-child { border-bottom: 0; }
+.item-name { font-weight: 700; letter-spacing: .05em; }
+.item-info { font-size: 13px; color: var(--muted); }
+.price { font-weight: 700; white-space: nowrap; }
+.facility { display: flex; align-items: center; gap: 12px; padding: 12px 0; font-size: 15px; }
+.check { width: 24px; height: 24px; display: grid; place-items: center; background: var(--tan); font-size: 13px; font-weight: 800; flex: none; }
+
+/* grafik batang */
+.chart { height: 300px; display: flex; align-items: flex-end; gap: 18px; padding: 24px 6px 0; border-bottom: 1px solid var(--ink); margin-top: 8px; }
+.bar-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; }
+.bar { width: 52px; max-width: 80%; min-height: 20px; background: linear-gradient(180deg, var(--tan) 0%, var(--tan-dark) 100%); border-radius: 0; transition: background .2s; }
+.bar:hover { background: var(--ink); }
+.bar-value { font-size: 12px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+.month, .bar-label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 10px 0 12px; }
+
+/* tabel */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); padding: 14px 16px; border-bottom: 1px solid var(--ink); white-space: nowrap; }
+td { padding: 18px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:hover { background: rgba(224, 197, 181, .28); }
+.service-name, .nama { font-weight: 700; letter-spacing: .05em; }
+.duration { white-space: nowrap; }
+td.total { font-weight: 800; }
+.action { display: flex; gap: 8px; flex-wrap: wrap; }
+.action button, .edit, .delete, .btn-edit, .btn-delete {
+    font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 10px 18px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; border-radius: 0;
+}
+.edit:hover, .btn-edit:hover { background: var(--ink); color: var(--cream); }
+.delete, .btn-delete { border-color: #a4473f; background: transparent; color: #a4473f; }
+.delete:hover, .btn-delete:hover { background: #a4473f; color: var(--cream); }
+.btn-edit { background: var(--tan); border-color: var(--tan); }
+.btn-edit:hover { background: var(--tan-dark); border-color: var(--tan-dark); color: var(--ink); }
+
+/* status */
+.page-staff .status { background: var(--sand); color: var(--ink); }
+.status.aktif, .status.confirmed, .status.done { background: var(--ok-bg); color: var(--ok-ink); }
+.status.waiting { background: var(--warn-bg); color: var(--warn-ink); }
+.status.nonaktif { background: var(--bad-bg); color: var(--bad-ink); }
+.payment-status { display: inline-block; padding: 7px 14px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: var(--warn-bg); color: var(--warn-ink); }
+
+.page-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+.page-header b { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* filter */
+.filter { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; margin-bottom: 28px; }
+.filter-group { display: grid; gap: 8px; min-width: 200px; flex: 1 1 200px; }
+.filter-group input, .filter-group select { padding: 16px 20px; font-size: 15px; }
+.filter-btn, .reset-btn { font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 18px 34px; border: 1px solid var(--tan); background: var(--tan); color: var(--ink); cursor: pointer; border-radius: 0; }
+.filter-btn:hover { background: var(--tan-dark); border-color: var(--tan-dark); }
+.reset-btn { background: transparent; border-color: var(--ink); }
+.reset-btn:hover { background: var(--ink); color: var(--cream); }
+.empty { display: none; text-align: center; padding: 40px 0 8px; color: var(--muted); }
+
+/* ringkasan laporan */
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 28px; }
+.summary-card { padding: 30px 28px; }
+.summary-title { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.summary-value { margin-top: 10px; font-weight: 800; font-size: 28px; letter-spacing: .02em; }
+
+/* form halaman admin / pegawai */
+.time-box { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.facilities { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 8px; }
+label.facility { background: var(--white); padding: 16px 20px; cursor: pointer; text-transform: none; letter-spacing: .05em; font-weight: 500; }
+.actions, .button-area { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+.section-title { font-size: 15px; letter-spacing: .14em; text-decoration: none; text-align: left; margin: 38px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
+.page-staff .section-title:first-of-type { margin-top: 30px; }
+
+.profile-box, .profile-head { display: flex; align-items: center; gap: 22px; margin: 26px 0 30px; }
+.big-profile { width: 96px; height: 96px; display: grid; place-items: center; font-size: 40px; background: var(--sand); flex: none; }
+.profile-name { font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: .04em; }
+.profile-role { margin-top: 4px; color: var(--muted); font-size: 14px; }
+.info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 18px; }
+.info-item { background: var(--white); padding: 18px 22px; }
+.info-label { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.info-value { margin-top: 6px; font-weight: 600; }
+.password-box { display: flex; gap: 12px; }
+.password-box .btn { padding: 0 28px; }
+
+/* detail booking (pegawai) */
+.card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--ink); }
+.card-top .kode { font-size: 26px; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 28px; }
+.detail-item { background: var(--white); padding: 18px 22px; margin: 0; }
+.detail-label { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.detail-value { margin-top: 6px; font-weight: 600; }
+.payment-title { font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 22px; }
+.payment { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.payment-item { background: var(--white); padding: 18px 22px; }
+.payment-label { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.payment-value { margin-top: 6px; font-weight: 700; }
+.transfer { margin-top: 30px; }
+.transfer-title { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 12px; }
+.transfer-image { display: block; width: 100%; max-width: 280px; min-height: 140px; background: var(--white); border: 1px solid var(--line); cursor: zoom-in; }
+.transfer-note { margin-top: 8px; font-size: 13px; color: var(--muted); }
+.total-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.page-staff .card > .total { margin-top: 30px; }
+.total-row.final { border-bottom: 0; border-top: 1px solid var(--ink); margin-top: 6px; font-weight: 800; font-size: 18px; }
+.modal > img { max-width: min(92vw, 760px); max-height: 86vh; background: var(--white); }
+.close { position: absolute; top: 18px; right: 28px; font-size: 44px; line-height: 1; color: var(--cream); cursor: pointer; }
+
+.site-footer--slim { grid-template-columns: 1fr; padding: 36px 56px; text-align: center; }
+.site-footer--slim .copy { border: 0; padding: 0; }
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1100px) {
+    .site-header { padding: 28px 28px; }
+    .p-dashboard .content, .p-pilih .content { grid-template-columns: repeat(2, 1fr); }
+    .row { grid-template-columns: 1fr; }
+    .payment { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+    .site-header { grid-template-columns: 1fr; justify-items: center; gap: 18px; padding: 22px 20px; }
+    .site-nav { justify-content: center; max-width: none; gap: 6px 22px; order: 2; }
+    .site-nav a { font-size: 15px; }
+    .brand { order: 1; }
+    .brand-name { font-size: 44px; }
+    .header-right { order: 3; justify-content: center; flex-wrap: wrap; }
+    .btn-cta { padding: 18px 34px; }
+
+    /* customer: menu pindah ke bottom bar */
+    .site-header--customer .site-nav { display: none; }
+    .page-customer .bottom { display: grid; }
+    .page-customer { padding-bottom: 76px; }
+
+    .site-footer { grid-template-columns: 1fr; padding: 44px 24px 36px; }
+    .site-footer .foot-right { text-align: left; }
+    .site-footer .foot-right small::after { margin-left: 0; }
+    .site-footer .foot-link { margin-top: 24px; font-size: 22px; }
+    .site-footer--slim { padding: 28px 20px; }
+
+    .two-col, .p-riwayat .content, .form-grid, .time-box, .info-grid, .detail-grid { grid-template-columns: 1fr; }
+    .p-dashboard .content, .p-pilih .content { grid-template-columns: 1fr; }
+    .p-booking .card { padding: 26px 20px; }
+    .page-staff .card { padding: 24px 18px; }
+    .page-staff .content { padding: 44px 16px 72px; }
+    .hero, .header { padding: 60px 20px; }
+    .hero--lg { min-height: 360px; }
+    .hero-form .btn-login, .hero-form .btn-register { flex: 1 1 100%; }
+    .chart { gap: 8px; height: 240px; }
+    .bar { width: 100%; max-width: 34px; }
+    .bar-value { font-size: 10px; }
+    .strip { height: 120px; }
+}
+
+@media (max-width: 560px) {
+    .payment { grid-template-columns: 1fr; }
+    .page-header, .page-staff .card-header { flex-direction: column; align-items: flex-start; }
+    .times { grid-template-columns: repeat(3, 1fr); }
+    .modal-box { padding: 28px 22px; }
+    .user-chip small { display: none; }
+}
+
+/* ---- penegasan variasi tombol (spesifisitas lebih tinggi dari .btn) ---- */
+.btn.btn-secondary, .btn.btn-cancel, .btn.btn-salon { background: transparent; border-color: var(--ink); color: var(--ink); }
+.btn.btn-secondary:hover, .btn.btn-cancel:hover, .btn.btn-salon:hover { background: var(--ink); color: var(--cream); }
+.btn.btn-success { background: #5f7550; border-color: #5f7550; color: var(--cream); }
+.btn.btn-success:hover { background: #4b5f3f; border-color: #4b5f3f; }
+.btn.btn-danger { background: #a4473f; border-color: #a4473f; color: var(--cream); }
+.btn.btn-danger:hover { background: #86352e; border-color: #86352e; }
+.action .delete, .action .btn-delete { border-color: #a4473f; color: #a4473f; background: transparent; }
+.action .delete:hover, .action .btn-delete:hover { background: #a4473f; color: var(--cream); }
+.action .btn-edit { background: var(--tan); border-color: var(--tan); }
+.action .edit:hover { background: var(--ink); color: var(--cream); }
+.page-staff .table-wrapper, .page-staff .card { max-width: 100%; }
+.page-staff .card > table { display: block; overflow-x: auto; }
+
+
+/* =====================================================================
+   VERSI 2 — gaya editorial: krem polos, garis tipis, kartu tanpa kotak tebal
+   Font: Cormorant Garamond (judul) + Jost (teks)
+   ===================================================================== */
+body { font-size: 17px; font-weight: 400; letter-spacing: .03em; background: var(--cream); }
+
+/* ---- header: garis tipis di bawah ---- */
+.site-header { padding: 22px 42px; border-bottom: 1px solid var(--line); }
+.site-nav { gap: 6px 30px; max-width: 470px; }
+.site-nav a { font-size: 16px; letter-spacing: .06em; }
+.brand-name { font-size: 42px; letter-spacing: .26em; font-weight: 500; padding-left: .26em; }
+.brand-sub { letter-spacing: .34em; font-weight: 500; }
+.btn-cta { padding: 22px 42px; font-size: 13px; letter-spacing: .16em; }
+
+/* ---- tombol utama: tan datar; sisanya jadi tautan bergaris bawah ---- */
+.btn, .btn-booking, .btn-salon, .btn-login, .btn-register, .filter-btn { font-weight: 600; letter-spacing: .14em; }
+.page-customer .card .btn, .page-home .kotak .btn, .pilih, .schedule-btn {
+    background: none; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0;
+    padding: 0 0 4px; color: var(--ink); font-size: 16px; font-weight: 400;
+    letter-spacing: .06em; text-transform: none; align-self: flex-start;
+}
+.page-customer .card .btn:hover, .page-home .kotak .btn:hover, .pilih:hover, .schedule-btn:hover { background: none; color: var(--brown); border-color: var(--brown); }
+.page-customer .card > a:not(.btn) { font-size: 16px; font-weight: 400; letter-spacing: .06em; text-transform: none; border-bottom: 1px solid var(--ink); text-decoration: none; padding-bottom: 4px; }
+
+/* ---- judul halaman: huruf renggang + garis tebal di bawahnya ---- */
+.hero, .header {
+    background: var(--cream); background-image: none; color: var(--ink);
+    min-height: 0; padding: 54px 24px 50px; border-bottom: 1px solid var(--line); gap: 12px;
+}
+.hero::after, .header::after { display: none; }
+.hero h1, .hero h2, .header h3, .header h1,
+.page-customer .header h3 {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4vw, 48px);
+    letter-spacing: .26em; padding-left: .26em; text-transform: uppercase; color: var(--ink); text-shadow: none;
+    text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 12px;
+}
+.hero p, .header small { color: var(--muted); text-shadow: none; font-size: 16px; letter-spacing: .08em; }
+.page-customer .logout { color: var(--ink); }
+.hero--lg { padding: 96px 24px 90px; gap: 18px; }
+.hero--lg h1 { font-size: clamp(36px, 5.4vw, 68px); }
+.hero--sm { padding: 54px 24px 50px; }
+.strip { display: none; }
+
+/* ---- judul bagian: serif, tanpa garis bawah ---- */
+.section-title, .page-title h1, .title h2, .welcome h3, .p-booking .content > h1 {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 3.4vw, 44px);
+    text-transform: none; letter-spacing: .01em; text-decoration: none;
+}
+.page-title, .title { margin-bottom: 0; padding: 56px 24px 48px; }
+.welcome { padding: 56px 24px 48px; margin: 0; }
+.page-title p, .title p, .welcome p { color: var(--muted); font-size: 17px; }
+
+/* ---- semua judul kartu: serif huruf kecil-besar ---- */
+.card-title, .page-customer .card h4, .p-dashboard .calendar h4, .salon-header h3, .judul,
+.modal-title, .modal-box > h2, .payment-title, .profile-name, .booking-card .nama, .site-footer h3, .kode,
+.page-home .judul {
+    font-family: var(--serif); font-weight: 500; text-transform: none; letter-spacing: 0;
+}
+.card-title, .page-customer .card h4, .p-dashboard .calendar h4, .page-home .judul, .payment-title { font-size: 32px; line-height: 1.15; }
+.salon-header h3 { font-size: 32px; }
+.modal-title, .modal-box > h2 { font-size: 32px; }
+.profile-name { font-size: 32px; }
+.kode, .card-top .kode { font-size: 30px; letter-spacing: .04em; }
+.booking-card .nama { font-size: 26px; }
+.site-footer h3 { font-size: 40px; letter-spacing: .2em; }
+.stat-number, .summary-value { font-family: var(--serif); font-weight: 500; }
+.stat-number { font-size: 56px; }
+.summary-value { font-size: 36px; }
+.detail-title, .detail-label, .payment-label, .info-label, .summary-title, .stat-title { font-weight: 500; }
+
+/* ---- kartu = sel bergaris tipis, rata sampai ujung layar ---- */
+.card, .kotak, .salon-card, .booking-card, .stat, .summary-card, .p-dashboard .calendar {
+    background: var(--cream-2); border: 1px solid var(--line); box-shadow: none; border-radius: 0;
+    margin: 0 -1px -1px 0;
+}
+.page-customer .content, .page-staff .content { max-width: none; padding: 0 0 90px; overflow: hidden; }
+.page-customer .content > *, .page-staff .content > * { min-width: 0; }
+.p-dashboard .content, .p-pilih .content, .p-riwayat .content { gap: 0; margin-left: -1px; }
+.stats, .summary, .row, .two-col { gap: 0; margin-left: -1px; margin-bottom: 0; overflow: hidden; }
+.page-staff .row { margin-bottom: 0; }
+.page-staff .card { padding: 48px 44px; margin-bottom: -1px; }
+.page-staff .content > .filter, .page-staff .content > .page-header, .page-staff .content > .back { margin-left: 44px; margin-right: 44px; }
+.page-staff .content > .back { margin-top: 36px; }
+.page-staff .content > .filter { margin-top: 0; padding: 0; }
+.page-customer .card, .p-dashboard .calendar { padding: 56px 40px 52px; gap: 18px; }
+.salon-card, .booking-card { padding: 56px 40px 52px; gap: 14px; }
+.stat, .summary-card { padding: 48px 36px; }
+.page-home .section { padding: 0; background: var(--cream); }
+.page-home .wrap { max-width: none; }
+.two-col { margin-top: 0; }
+.page-home .kotak { padding: 64px 48px 60px; gap: 20px; }
+.page-home .deskripsi { font-size: 17px; }
+.page-customer .card p { font-size: 17px; }
+
+/* nomor 01 02 03 di atas tiap kartu */
+.p-dashboard .content, .p-pilih .content, .p-riwayat .content, .two-col { counter-reset: n; }
+.p-dashboard .content > .card::before, .salon-card::before, .booking-card::before, .page-home .kotak::before {
+    counter-increment: n; content: counter(n, decimal-leading-zero);
+    font-size: 15px; letter-spacing: .14em; color: #a39a92; margin-bottom: 26px; display: block;
+}
+.p-dashboard .content > .calendar::before { content: "04"; font-size: 15px; letter-spacing: .14em; color: #a39a92; display: block; margin-bottom: 26px; }
+.salon-header { align-items: baseline; }
+.location { margin-bottom: 8px; }
+.fasilitas span { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; font-size: 14px; }
+.detail-item { margin-bottom: 18px; }
+.p-pilih .salon-card .detail { background: none; }
+
+/* ---- form ---- */
+input[type=text], input[type=password], input[type=email], input[type=tel], input[type=number],
+input[type=date], input[type=time], select, textarea, .form-control {
+    background: var(--white); border: 1px solid var(--line); padding: 18px 22px; font-size: 17px; letter-spacing: .04em;
+}
+::placeholder { letter-spacing: .06em; }
+label { font-weight: 500; letter-spacing: .12em; }
+.hero-form .btn-login, .hero-form .btn-register { font-size: 14px; letter-spacing: .16em; padding: 20px 48px; }
+.hero-form .note, .hero-form .note a { color: var(--ink); text-shadow: none; }
+.hero-form .note { color: var(--muted); }
+.page-auth .hero { min-height: 0; padding: 80px 24px 90px; }
+.p-booking .card { margin: 0 auto; }
+.p-booking .content { padding: 0 24px 90px; }
+.p-booking .content > h1 { padding: 56px 0 40px; margin: 0; }
+.salon, .person, .option, .info-item, .detail-item, .payment-item { background: var(--white); border: 1px solid var(--line); }
+.p-booking .date, .p-booking .time, .p-riwayat .time, .p-riwayat .calendar .date, .p-dashboard .date { border: 1px solid var(--line); background: var(--white); }
+.p-booking .date.active, .p-booking .time.active, .p-riwayat .time.active, .p-riwayat .calendar .date.active, .p-dashboard .date.active { background: var(--tan); border-color: var(--tan); }
+.facility .check, .check { border-radius: 0; }
+label.facility { border: 1px solid var(--line); }
+
+/* ---- tabel ---- */
+th { font-weight: 500; border-bottom: 1px solid var(--ink); }
+td { border-bottom: 1px solid var(--line); }
+tbody tr:hover { background: rgba(196, 160, 119, .10); }
+.stat-icon, .big-profile, .user-chip .avatar { background: var(--sand); }
+.bar { background: var(--tan); }
+.bar:hover { background: var(--ink); }
+.chart { border-bottom: 1px solid var(--ink); }
+.status, .payment-status { border-radius: 999px; padding: 5px 14px; font-weight: 500; }
+.action button, .edit, .delete, .btn-edit, .btn-delete { border-radius: 0; font-weight: 500; letter-spacing: .08em; }
+
+/* ---- modal & footer ---- */
+.modal-box { background: var(--cream-2); border: 1px solid var(--line); }
+.site-footer { border-top: 1px solid var(--line); background: var(--cream); }
+.site-footer .foot-link { font-family: var(--serif); font-weight: 500; font-size: 34px; text-transform: none; letter-spacing: 0; }
+.site-footer .copy { letter-spacing: .14em; }
+.bottom { background: var(--cream); }
+
+@media (max-width: 900px) {
+    .site-header { padding: 20px; }
+    .brand-name { font-size: 34px; letter-spacing: .2em; }
+    .stats, .summary, .row, .two-col { margin-left: 0; }
+    .p-dashboard .content, .p-pilih .content, .p-riwayat .content { margin-left: 0; }
+    .card, .kotak, .salon-card, .booking-card, .stat, .summary-card, .p-dashboard .calendar { margin: 0 0 -1px 0; }
+    .page-customer .card, .p-dashboard .calendar, .salon-card, .booking-card, .page-home .kotak { padding: 40px 24px; }
+    .page-staff .card { padding: 32px 20px; }
+    .page-staff .content > .filter, .page-staff .content > .page-header, .page-staff .content > .back { margin-left: 20px; margin-right: 20px; }
+    .hero h1, .hero h2, .header h3, .page-customer .header h3 { letter-spacing: .16em; padding-left: .16em; }
+}
+
+/* penyesuaian akhir v2 */
+.page-customer, .page-staff { background: var(--cream-2); }
+.page-title, .title, .welcome { background: var(--cream-2); }
+.row { align-items: stretch; }
+.page-staff .row > .card { margin-bottom: -1px; }
+
+/* =========================================================
+   RESERVIN VISUAL UPGRADE v3 — salon images + horizontal UI
+   ========================================================= */
+:root{--rose:#d0a58d;--rose-dark:#9b715c;--soft:#f7f0e8}
+body{overflow-x:hidden}
+.site-header{position:relative;z-index:10}
+.home-header{min-height:112px}
+.eyebrow{font-size:12px;letter-spacing:.24em;font-weight:600;color:#8f7869}
+.home-hero{display:grid;grid-template-columns:1fr 1.15fr;min-height:650px;background:#eee3d8}
+.hero-copy{padding:92px 7vw;display:flex;flex-direction:column;justify-content:center}
+.hero-copy h1{font-family:var(--serif);font-size:clamp(48px,6vw,88px);font-weight:500;line-height:.94;margin:16px 0 24px;color:#171313}
+.hero-copy h1 em,.customer-hero h1 em{font-weight:400}
+.hero-copy>p:not(.eyebrow){max-width:520px;font-size:18px;line-height:1.8;color:#655b55}
+.hero-photo{position:relative;min-height:650px;overflow:hidden}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.88)}
+.hero-tag{position:absolute;right:34px;bottom:34px;background:#f6eee5;padding:14px 18px;font-size:11px;letter-spacing:.2em}
+.home-intro{display:grid;grid-template-columns:1.2fr .8fr;gap:70px;padding:100px 7vw;background:var(--cream)}
+.home-intro h2,.section-head h2,.customer-gallery h2{font-family:var(--serif);font-size:58px;font-weight:500;line-height:.95;margin:12px 0}
+.home-intro h2 em{font-weight:400}
+.home-intro p{font-size:18px;line-height:1.9;align-self:end;max-width:550px;color:#645b55}
+.section-number{font-size:12px;letter-spacing:.2em;color:#a6958a}
+.home-section{padding:90px 5vw;background:var(--cream-2)}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:36px;padding:0 2vw}
+.slider-actions{display:flex;gap:8px}
+.slider-actions button{width:46px;height:46px;border:1px solid var(--line);background:transparent;font-size:20px;cursor:pointer}
+.slider-actions button:hover{background:var(--ink);color:white}
+.horizontal-track,.salon-carousel{display:flex;gap:18px;overflow-x:auto;scroll-behavior:smooth;cursor:grab;scrollbar-width:none;padding:4px 2vw 20px}
+.horizontal-track::-webkit-scrollbar,.salon-carousel::-webkit-scrollbar{display:none}
+.horizontal-track.dragging,.salon-carousel.dragging{cursor:grabbing;scroll-behavior:auto}
+.salon-showcase{min-width:min(72vw,650px);background:#fff;border:1px solid var(--line)}
+.salon-showcase img{width:100%;height:280px;object-fit:cover;display:block}
+.salon-showcase>div{padding:30px}
+.salon-showcase span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9b8b80}
+.salon-showcase h3{font-family:var(--serif);font-size:36px;font-weight:500;margin:10px 0}
+.salon-showcase p{color:#70655e;line-height:1.7;max-width:520px}
+.salon-showcase a,.service-card a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:5px}
+.image-banner{min-height:560px;position:relative;overflow:hidden;background:#d9c2b0}
+.image-banner img{width:100%;height:560px;object-fit:cover;display:block;filter:brightness(.72)}
+.image-banner>div{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:8vw;color:#fff}
+.image-banner h2{font-family:var(--serif);font-size:76px;line-height:.9;font-weight:500;margin:14px 0 30px}
+.image-banner .eyebrow{color:#fff}
+.service-track{padding-left:2vw}
+.service-card{min-width:310px;width:310px;min-height:300px;padding:34px;background:#fff;border:1px solid var(--line);flex:none}
+.service-card span{font-size:12px;color:#a6958a;letter-spacing:.15em}
+.service-card h3{font-family:var(--serif);font-size:32px;font-weight:500;margin:50px 0 12px}
+.service-card p{color:#70655e;line-height:1.65;min-height:78px}
+.select-page{padding:85px 5vw 110px;background:var(--cream-2);min-height:70vh}
+.select-heading{max-width:720px;margin:0 2vw 24px}
+.select-heading h1{font-family:var(--serif);font-size:62px;font-weight:500;line-height:.98;margin:14px 0}
+.select-heading p{font-size:17px;color:#74685f}
+.select-actions{margin:0 2vw 16px;justify-content:flex-end}
+.salon-carousel{padding-bottom:30px}
+.salon-card-new{min-width:390px;max-width:390px;background:#fff;border:1px solid var(--line);flex:none}
+.salon-card-new img{width:100%;height:220px;object-fit:cover;display:block}
+.salon-card-body{padding:28px}
+.salon-card-body>span{font-size:11px;letter-spacing:.12em;color:#9b8b80;text-transform:uppercase}
+.salon-card-body h2{font-family:var(--serif);font-size:36px;font-weight:500;margin:9px 0}
+.salon-card-body p{color:#6e635c}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0 24px}
+.chips b{font-size:11px;font-weight:500;border:1px solid var(--line);padding:6px 10px;border-radius:30px}
+.salon-card-body button{border:0;background:var(--tan);padding:14px 18px;font-weight:600;cursor:pointer;width:100%}
+.customer-home{background:var(--cream-2)}
+
+.customer-hero {
+    position: relative;
+    isolation: isolate;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 600px;
+    padding: 80px 7%;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(43, 30, 25, 0.82) 0%,
+            rgba(43, 30, 25, 0.60) 40%,
+            rgba(43, 30, 25, 0.18) 100%
+        ),
+        url('../images/Salon-background.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    color: #fffaf3;
+    overflow: hidden;
+}
+
+.customer-hero .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+}
+
+.customer-hero h1 {
+    color: #fffaf3;
+}
+
+.customer-hero p {
+    color: #f2e7dc;
+}
+
+.customer-hero .eyebrow {
+    color: #e4c3a7;
+}
+
+.customer-hero .btn-booking {
+    display: inline-block;
+    margin-top: 16px;
+}
+
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.quick-grid a{padding:45px 40px;min-height:220px;border-right:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.quick-grid a:last-child{border-right:0}
+.quick-grid span{font-size:12px;letter-spacing:.15em;color:#a6958a}
+.quick-grid h2{font-family:var(--serif);font-size:38px;font-weight:500;margin:38px 0 8px}
+.quick-grid p{color:#70655e;line-height:1.6;min-height:52px}
+.customer-gallery{padding:80px 5vw}
+.customer-gallery .horizontal-track img{min-width:48%;width:48%;height:400px;object-fit:cover;display:block}
+@media(max-width:900px){
+.home-hero,.customer-hero,.home-intro{grid-template-columns:1fr}
+.hero-photo{min-height:400px}.home-hero{min-height:auto}.hero-copy{padding:70px 7vw}
+.home-intro{gap:25px}.home-intro h2,.section-head h2{font-size:46px}
+.salon-showcase{min-width:82vw}.image-banner h2{font-size:56px}
+.quick-grid{grid-template-columns:1fr}.quick-grid a{border-right:0;border-bottom:1px solid var(--line)}
+.customer-hero img{height:330px}.customer-hero h1{font-size:52px}
+.salon-card-new{min-width:82vw;max-width:82vw}.customer-gallery .horizontal-track img{min-width:82%;width:82%}
+}
+
+.hero.hero-booking {
+  --hero-photo: url('../images/lokasi-salon.jpg');
+  min-height: 320px;
+  padding: 70px 24px;
+}
+
+.hero.hero-booking h1 { color: #fffaf3; border-bottom: 0; }
+.hero.hero-booking p { color: #f2e7dc; }
+.hero.hero-booking .eyebrow { color: #e4c3a7; }

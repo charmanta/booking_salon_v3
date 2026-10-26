@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#e8d2c1"/><stop offset="1" stop-color="#c9a184"/></linearGradient></defs>
+<rect width="800" height="500" fill="url(#g)"/>
+<rect x="80" y="80" width="640" height="340" rx="18" fill="#f8f2ea" opacity=".92"/>
+<circle cx="250" cy="210" r="72" fill="#c9a184" opacity=".8"/>
+<path d="M190 345c40-75 120-75 160 0" fill="none" stroke="#222" stroke-width="12" stroke-linecap="round"/>
+<path d="M470 160l120 120M590 160L470 280" stroke="#222" stroke-width="10" stroke-linecap="round"/>
+<circle cx="455" cy="295" r="18" fill="none" stroke="#222" stroke-width="7"/>
+<circle cx="605" cy="295" r="18" fill="none" stroke="#222" stroke-width="7"/>
+<text x="400" y="390" text-anchor="middle" font-family="Georgia,serif" font-size="34" letter-spacing="6" fill="#222">RESERVIN SALON</text>
+</svg>
