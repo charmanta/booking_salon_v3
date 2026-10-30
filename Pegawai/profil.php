@@ -29,38 +29,6 @@
 
 <div class="app">
 
-<!-- SIDEBAR -->
-
-
-
-
-<!-- MAIN -->
-
-<main class="main">
-
-    <!-- TOPBAR -->
-
-    <div class="hero hero--sm">
-                <h2>Profil Pegawai</h2>
-            </div>
-
-
-    <!-- CONTENT -->
-
-    <section class="content">
-
-        <div class="page-title">
-
-            <h1>
-                Profil Saya
-            </h1>
-
-            <p>
-                Kelola informasi akun dan data diri Anda.
-            </p>
-
-        </div>
-
 
         <!-- CARD PROFIL -->
 

@@ -1,0 +1,77 @@
+/* =====================================================================
+   RESERVIN — PEGAWAI (pegawai.css)
+   Dipisah dari theme.css. Hanya berisi komponen yang KHUSUS dipakai
+   halaman pegawai (terutama detail_booking.php).
+
+   Halaman pegawai juga memakai komponen staff yang ada di admin.css
+   (.stats, .stat, .card-header, .filter, table, .status.aktif/.waiting/.done,
+   .profile-head, .big-profile, .password-box, .actions, .back, .empty).
+   Jadi urutan pemuatan yang benar:
+
+   <link rel="stylesheet" href="../assets/css/theme.css">
+   <link rel="stylesheet" href="../assets/css/admin.css">
+   <link rel="stylesheet" href="../assets/css/pegawai.css">
+
+   Body class: class="page-staff page-pegawai p-pegawai-xxx"
+   ===================================================================== */
+
+/* =====================================================
+   1. DETAIL BOOKING
+   ===================================================== */
+.card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--ink); }
+.card-top .kode { font-family: var(--serif); font-weight: 500; font-size: 30px; letter-spacing: .04em; }
+
+.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 28px; }
+.detail-grid .detail-item { background: var(--white); border: 1px solid var(--line); padding: 18px 22px; margin: 0; }
+.detail-label { font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.detail-value { margin-top: 6px; font-weight: 600; }
+
+/* =====================================================
+   2. PEMBAYARAN
+   ===================================================== */
+.payment-title { font-family: var(--serif); font-weight: 500; font-size: 32px; line-height: 1.15; text-transform: none; letter-spacing: 0; margin-bottom: 22px; }
+.payment { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.payment-item { background: var(--white); border: 1px solid var(--line); padding: 18px 22px; }
+.payment-label { font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.payment-value { margin-top: 6px; font-weight: 700; }
+
+/* bukti transfer */
+.transfer { margin-top: 30px; }
+.transfer-title { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 12px; }
+.transfer-image { display: block; width: 100%; max-width: 280px; min-height: 140px; background: var(--white); border: 1px solid var(--line); cursor: zoom-in; }
+.transfer-note { margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+/* rincian total */
+.page-staff .card > .total { margin-top: 30px; }
+.total-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.total-row.final { border-bottom: 0; border-top: 1px solid var(--ink); margin-top: 6px; font-weight: 800; font-size: 18px; }
+
+/* modal pembesar bukti transfer */
+.modal > img { max-width: min(92vw, 760px); max-height: 86vh; background: var(--white); }
+.close { position: absolute; top: 18px; right: 28px; font-size: 44px; line-height: 1; color: var(--cream); cursor: pointer; }
+
+/* =====================================================
+   3. PROFIL PEGAWAI — judul seksi form
+   (di-scope .page-pegawai agar tidak tertimpa aturan
+   .section-title milik halaman publik)
+   ===================================================== */
+.page-pegawai .section-title {
+    font-family: var(--font);
+    font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    text-decoration: none; text-align: left;
+    margin: 38px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--ink);
+}
+.page-pegawai .section-title:first-of-type { margin-top: 30px; }
+
+/* =====================================================
+   4. RESPONSIVE
+   ===================================================== */
+@media (max-width: 1100px) {
+    .payment { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+    .detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+    .payment { grid-template-columns: 1fr; }
+}

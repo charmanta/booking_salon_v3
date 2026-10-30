@@ -1,0 +1,308 @@
+/* =====================================================================
+   RESERVIN — CUSTOMER (customer.css)
+   Dipisah dari theme.css. Dipakai halaman: dashboard, pilih_salon,
+   booking, riwayat (body class: page-customer p-dashboard / p-pilih /
+   p-booking / p-riwayat).
+
+   WAJIB dimuat SETELAH theme.css:
+   <link rel="stylesheet" href="../assets/css/theme.css">
+   <link rel="stylesheet" href="../assets/css/customer.css">
+
+   Urutan aturan mengikuti urutan asli di theme.css
+   (blok dasar -> responsive -> Versi 2 -> penyesuaian akhir -> v3).
+   ===================================================================== */
+
+/* =====================================================
+   1. LAYOUT DASAR CUSTOMER
+   ===================================================== */
+.page-customer { background: var(--sand); }
+.page-customer .container, .page-customer .app { display: block; width: 100%; max-width: none; height: auto; background: transparent; overflow: visible; }
+.page-customer .header { min-height: 220px; padding: 60px 24px; }
+.page-customer .header-top { display: grid; gap: 14px; justify-items: center; }
+.page-customer .header h3 { font-size: clamp(30px, 4.4vw, 56px); margin: 0; }
+.page-customer .logout { color: var(--cream); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; text-underline-offset: 4px; }
+.page-customer .content { width: 100%; max-width: 1180px; margin: 0 auto; padding: 64px 24px 96px; overflow: visible; }
+
+/* =====================================================
+   2. DASHBOARD
+   ===================================================== */
+.p-dashboard .content { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.p-dashboard .welcome, .p-dashboard .calendar { grid-column: 1 / -1; }
+.welcome { text-align: center; margin-bottom: 14px; }
+.welcome h3 { font-weight: 800; font-size: clamp(24px, 3vw, 36px); text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.welcome p { margin-top: 18px; color: var(--muted); font-size: 15px; }
+.page-customer .card { padding: 36px 32px; display: flex; flex-direction: column; gap: 14px; }
+.page-customer .card h4 { font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
+.page-customer .card p { color: var(--muted); font-size: 15px; flex: 1; }
+.page-customer .card > a:not(.btn) { align-self: flex-start; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; text-underline-offset: 5px; }
+.page-customer .card .btn { align-self: flex-start; }
+
+.p-dashboard .calendar { background: var(--cream-2); border: 1px solid var(--line); padding: 36px 32px; }
+.p-dashboard .calendar h4 { font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
+.p-dashboard .calendar p { color: var(--muted); font-size: 15px; margin: 8px 0 22px; }
+.dates { display: flex; gap: 14px; flex-wrap: wrap; }
+.p-dashboard .date { width: 92px; padding: 16px 0; background: var(--white); text-align: center; font-weight: 700; line-height: 1.5; border: 1px solid transparent; }
+.p-dashboard .date.active { background: var(--tan); }
+
+/* =====================================================
+   3. PILIH SALON
+   ===================================================== */
+.p-pilih .content { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: start; }
+.p-pilih .title { grid-column: 1 / -1; }
+.salon-card { padding: 32px; display: grid; gap: 18px; }
+.salon-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.salon-header h3 { font-weight: 800; font-size: 22px; text-transform: uppercase; letter-spacing: .03em; }
+.pilih { font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--tan); border: 1px solid var(--tan); color: var(--ink); padding: 12px 24px; cursor: pointer; transition: background .2s; }
+.pilih:hover { background: var(--tan-dark); border-color: var(--tan-dark); }
+.location { font-size: 14px; color: var(--muted); }
+.detail-title { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.detail-text { font-size: 15px; }
+.fasilitas { display: flex; flex-wrap: wrap; gap: 8px; }
+.fasilitas span { font-size: 12px; padding: 6px 12px; border: 1px solid var(--line); background: var(--white); letter-spacing: .06em; }
+.modal-info { font-size: 15px; color: var(--muted); margin-bottom: 26px; }
+.modal-btn { display: block; width: 100%; font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 18px; border: 1px solid var(--ink); cursor: pointer; margin-top: 12px; border-radius: 0; }
+.modal-btn.lanjut, .modal-box > .modal-btn:not(.batal):not(.cancel-btn) { background: var(--tan); border-color: var(--tan); color: var(--ink); }
+.modal-btn.batal, .cancel-btn { background: transparent; color: var(--ink); }
+.cancel-btn { width: 100%; font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 18px; border: 1px solid var(--ink); cursor: pointer; margin-top: 12px; border-radius: 0; }
+.modal-btn:hover { filter: brightness(.95); }
+
+/* =====================================================
+   4. BOOKING
+   ===================================================== */
+.p-booking .content { max-width: 860px; }
+.p-booking .content > h1 { text-align: center; font-weight: 800; font-size: clamp(24px, 3vw, 36px); text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; margin-bottom: 40px; }
+.p-booking .card { padding: 44px; display: block; }
+.p-booking .card > label { display: block; margin: 30px 0 12px; }
+.p-booking .card > label:first-child { margin-top: 0; }
+.salon, .person, .option { background: var(--white); padding: 20px 24px; margin-bottom: 12px; }
+.salon b, .person b { font-size: 17px; letter-spacing: .06em; text-transform: uppercase; }
+.info { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.option label { text-transform: none; font-weight: 500; font-size: 15px; letter-spacing: .05em; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.add { font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: transparent; border: 1px dashed var(--ink); color: var(--ink); padding: 14px 22px; cursor: pointer; }
+.add:hover { background: var(--ink); color: var(--cream); }
+.date-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+.time-grid > .info { grid-column: 1 / -1; margin: 0; }
+.time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+.p-booking .date, .p-booking .time, .p-riwayat .time, .p-riwayat .calendar .date {
+    background: var(--white); text-align: center; padding: 14px 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: background .15s, border-color .15s;
+}
+.p-booking .date:hover, .p-booking .time:hover, .p-riwayat .time:hover, .p-riwayat .calendar .date:hover { border-color: var(--tan-dark); }
+.p-booking .date.active, .p-booking .time.active, .p-riwayat .time.active, .p-riwayat .calendar .date.active { background: var(--tan); border-color: var(--tan-dark); }
+.time-title { margin: 30px 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.p-booking .card .btn { display: block; width: 100%; margin-top: 36px; padding: 24px; font-size: 14px; }
+
+/* =====================================================
+   5. RIWAYAT
+   ===================================================== */
+.p-riwayat .content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; align-items: start; }
+.p-riwayat .note { grid-column: 1 / -1; text-align: center; color: var(--muted); font-size: 14px; }
+.booking-card { padding: 32px; display: grid; gap: 10px; }
+.booking-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+.status.confirmed { background: var(--ok-bg); color: var(--ok-ink); }
+.booking-card .nama { font-weight: 700; font-size: 18px; margin-top: 8px; }
+.booking-card .detail { font-size: 14px; color: var(--muted); }
+.schedule-btn { justify-self: start; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: transparent; border: 1px solid var(--ink); color: var(--ink); padding: 11px 20px; cursor: pointer; margin-bottom: 8px; }
+.schedule-btn:hover { background: var(--ink); color: var(--cream); }
+.booking-card .total { margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--line); font-weight: 700; font-size: 14px; letter-spacing: .06em; }
+.owner-info { background: var(--sand); padding: 14px 18px; font-size: 14px; margin-bottom: 20px; }
+.week, .p-riwayat .modal .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.week { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.p-riwayat .modal .calendar { max-height: 230px; overflow-y: auto; margin-bottom: 4px; }
+.p-riwayat .modal .calendar .date { padding: 10px 0; }
+.times { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.times > div:not(.time) { grid-column: 1 / -1; font-size: 14px; color: var(--muted); }
+.p-riwayat .modal-box { max-width: 520px; }
+
+/* =====================================================
+   6. BOTTOM NAV (mobile)
+   ===================================================== */
+.bottom {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+    grid-template-columns: repeat(4, 1fr);
+}
+.bottom a { text-decoration: none; text-align: center; padding: 10px 4px 12px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.bottom a.active { color: var(--ink); box-shadow: inset 0 3px 0 var(--tan); }
+.bottom .icon { display: block; font-size: 20px; margin-bottom: 2px; }
+
+/* =====================================================
+   7. RESPONSIVE (blok dasar)
+   ===================================================== */
+@media (max-width: 1100px) {
+    .p-dashboard .content, .p-pilih .content { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+    /* menu atas pindah ke bottom bar */
+    .site-header--customer .site-nav { display: none; }
+    .page-customer .bottom { display: grid; }
+    .page-customer { padding-bottom: 76px; }
+
+    .p-riwayat .content { grid-template-columns: 1fr; }
+    .p-dashboard .content, .p-pilih .content { grid-template-columns: 1fr; }
+    .p-booking .card { padding: 26px 20px; }
+}
+
+@media (max-width: 560px) {
+    .times { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* =====================================================================
+   8. VERSI 2 — gaya editorial (bagian customer)
+   ===================================================================== */
+.page-customer .card .btn, .pilih, .schedule-btn {
+    background: none; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0;
+    padding: 0 0 4px; color: var(--ink); font-size: 16px; font-weight: 400;
+    letter-spacing: .06em; text-transform: none; align-self: flex-start;
+}
+.page-customer .card .btn:hover, .pilih:hover, .schedule-btn:hover { background: none; color: var(--brown); border-color: var(--brown); }
+.page-customer .card > a:not(.btn) { font-size: 16px; font-weight: 400; letter-spacing: .06em; text-transform: none; border-bottom: 1px solid var(--ink); text-decoration: none; padding-bottom: 4px; }
+
+.page-customer .header h3 {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4vw, 48px);
+    letter-spacing: .26em; padding-left: .26em; text-transform: uppercase; color: var(--ink); text-shadow: none;
+    text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 12px;
+}
+.page-customer .logout { color: var(--ink); }
+
+/* judul bagian */
+.welcome h3, .p-booking .content > h1 {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 3.4vw, 44px);
+    text-transform: none; letter-spacing: .01em; text-decoration: none;
+}
+.welcome { padding: 56px 24px 48px; margin: 0; }
+.welcome p { color: var(--muted); font-size: 17px; }
+
+/* judul kartu */
+.page-customer .card h4, .p-dashboard .calendar h4, .salon-header h3, .booking-card .nama {
+    font-family: var(--serif); font-weight: 500; text-transform: none; letter-spacing: 0;
+}
+.page-customer .card h4, .p-dashboard .calendar h4 { font-size: 32px; line-height: 1.15; }
+.salon-header h3 { font-size: 32px; }
+.booking-card .nama { font-size: 26px; }
+.detail-title { font-weight: 500; }
+
+/* kartu = sel bergaris tipis, rata sampai ujung layar */
+.salon-card, .booking-card, .p-dashboard .calendar {
+    background: var(--cream-2); border: 1px solid var(--line); box-shadow: none; border-radius: 0;
+    margin: 0 -1px -1px 0;
+}
+.page-customer .content { max-width: none; padding: 0 0 90px; overflow: hidden; }
+.page-customer .content > * { min-width: 0; }
+.p-dashboard .content, .p-pilih .content, .p-riwayat .content { gap: 0; margin-left: -1px; }
+.page-customer .card, .p-dashboard .calendar { padding: 56px 40px 52px; gap: 18px; }
+.salon-card, .booking-card { padding: 56px 40px 52px; gap: 14px; }
+.page-customer .card p { font-size: 17px; }
+
+/* nomor 01 02 03 di atas tiap kartu */
+.p-dashboard .content, .p-pilih .content, .p-riwayat .content { counter-reset: n; }
+.p-dashboard .content > .card::before, .salon-card::before, .booking-card::before {
+    counter-increment: n; content: counter(n, decimal-leading-zero);
+    font-size: 15px; letter-spacing: .14em; color: #a39a92; margin-bottom: 26px; display: block;
+}
+.p-dashboard .content > .calendar::before { content: "04"; font-size: 15px; letter-spacing: .14em; color: #a39a92; display: block; margin-bottom: 26px; }
+.salon-header { align-items: baseline; }
+.location { margin-bottom: 8px; }
+.fasilitas span { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; font-size: 14px; }
+.p-pilih .salon-card .detail { background: none; }
+
+/* booking */
+.p-booking .card { margin: 0 auto; }
+.p-booking .content { padding: 0 24px 90px; }
+.p-booking .content > h1 { padding: 56px 0 40px; margin: 0; }
+.salon, .person, .option { background: var(--white); border: 1px solid var(--line); }
+.p-booking .date, .p-booking .time, .p-riwayat .time, .p-riwayat .calendar .date, .p-dashboard .date { border: 1px solid var(--line); background: var(--white); }
+.p-booking .date.active, .p-booking .time.active, .p-riwayat .time.active, .p-riwayat .calendar .date.active, .p-dashboard .date.active { background: var(--tan); border-color: var(--tan); }
+
+.bottom { background: var(--cream); }
+
+@media (max-width: 900px) {
+    .p-dashboard .content, .p-pilih .content, .p-riwayat .content { margin-left: 0; }
+    .salon-card, .booking-card, .p-dashboard .calendar { margin: 0 0 -1px 0; }
+    .page-customer .card, .p-dashboard .calendar, .salon-card, .booking-card { padding: 40px 24px; }
+    .page-customer .header h3 { letter-spacing: .16em; padding-left: .16em; }
+}
+
+/* ---- penyesuaian akhir v2 ---- */
+.page-customer { background: var(--cream-2); }
+.welcome { background: var(--cream-2); }
+
+/* =========================================================
+   9. UPGRADE v3 — beranda customer, pilih salon (carousel), hero booking
+   ========================================================= */
+.customer-home { background: var(--cream-2); }
+
+.customer-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: 600px;
+    padding: 80px 7%;
+    background:
+        linear-gradient(90deg, rgba(43, 30, 25, 0.82) 0%, rgba(43, 30, 25, 0.60) 40%, rgba(43, 30, 25, 0.18) 100%),
+        url('../images/Salon-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fffaf3;
+    overflow: hidden;
+}
+.customer-hero .hero-content { position: relative; z-index: 1; max-width: 650px; }
+.customer-hero h1 { color: #fffaf3; }
+.customer-hero h1 em { font-weight: 400; }
+.customer-hero p { color: #f2e7dc; }
+.customer-hero .eyebrow { color: #e4c3a7; }
+.customer-hero .btn-booking { display: inline-block; margin-top: 16px; }
+
+.quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
+.quick-grid a { padding: 45px 40px; min-height: 220px; border-right: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+.quick-grid a:last-child { border-right: 0; }
+.quick-grid span { font-size: 12px; letter-spacing: .15em; color: #a6958a; }
+.quick-grid h2 { font-family: var(--serif); font-size: 38px; font-weight: 500; margin: 38px 0 8px; }
+.quick-grid p { color: #70655e; line-height: 1.6; min-height: 52px; }
+
+.customer-gallery { padding: 80px 5vw; }
+.customer-gallery h2 { font-family: var(--serif); font-size: 58px; font-weight: 500; line-height: .95; margin: 12px 0; }
+.customer-gallery .horizontal-track img { min-width: 48%; width: 48%; height: 400px; object-fit: cover; display: block; }
+
+/* halaman pilih salon versi carousel */
+.select-page { padding: 85px 5vw 110px; background: var(--cream-2); min-height: 70vh; }
+.select-heading { max-width: 720px; margin: 0 2vw 24px; }
+.select-heading h1 { font-family: var(--serif); font-size: 62px; font-weight: 500; line-height: .98; margin: 14px 0; }
+.select-heading p { font-size: 17px; color: #74685f; }
+.select-actions { margin: 0 2vw 16px; justify-content: flex-end; }
+.salon-carousel { display: flex; gap: 18px; overflow-x: auto; scroll-behavior: smooth; cursor: grab; scrollbar-width: none; padding: 4px 2vw 30px; }
+.salon-carousel::-webkit-scrollbar { display: none; }
+.salon-carousel.dragging { cursor: grabbing; scroll-behavior: auto; }
+.salon-card-new { min-width: 390px; max-width: 390px; background: #fff; border: 1px solid var(--line); flex: none; }
+.salon-card-new img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.salon-card-body { padding: 28px; }
+.salon-card-body > span { font-size: 11px; letter-spacing: .12em; color: #9b8b80; text-transform: uppercase; }
+.salon-card-body h2 { font-family: var(--serif); font-size: 36px; font-weight: 500; margin: 9px 0; }
+.salon-card-body p { color: #6e635c; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 20px 0 24px; }
+.chips b { font-size: 11px; font-weight: 500; border: 1px solid var(--line); padding: 6px 10px; border-radius: 30px; }
+.salon-card-body button { border: 0; background: var(--tan); padding: 14px 18px; font-weight: 600; cursor: pointer; width: 100%; }
+
+@media (max-width: 900px) {
+    .customer-hero { grid-template-columns: 1fr; }
+    .customer-hero img { height: 330px; }
+    .customer-hero h1 { font-size: 52px; }
+    .quick-grid { grid-template-columns: 1fr; }
+    .quick-grid a { border-right: 0; border-bottom: 1px solid var(--line); }
+    .salon-card-new { min-width: 82vw; max-width: 82vw; }
+    .customer-gallery .horizontal-track img { min-width: 82%; width: 82%; }
+}
+
+/* hero halaman booking */
+.hero.hero-booking {
+    --hero-photo: url('../images/lokasi-salon.jpg');
+    min-height: 320px;
+    padding: 70px 24px;
+}
+.hero.hero-booking h1 { color: #fffaf3; border-bottom: 0; }
+.hero.hero-booking p { color: #f2e7dc; }
+.hero.hero-booking .eyebrow { color: #e4c3a7; }
