@@ -41,29 +41,6 @@
 
 <main class="main">
 
-    <!-- TOPBAR -->
-
-    <div class="hero hero--sm">
-                <h2>Dashboard</h2>
-            </div>
-
-
-    <!-- CONTENT -->
-
-    <section class="content">
-
-        <div class="page-title">
-
-            <h1>
-                Dashboard Salon
-            </h1>
-
-            <p>
-                Kelola dan pantau informasi salon Anda.
-            </p>
-
-        </div>
-
 
         <!-- STATISTIK -->
 

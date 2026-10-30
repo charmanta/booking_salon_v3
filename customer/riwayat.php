@@ -19,7 +19,7 @@ function tgl($ts) {
  */
 $bookings = [
     [
-        'kode' => 'RSV-004', 'salon' => 'Luna Salon', 'kota' => 'Bandung',
+        'kode' => 'RSV-004', 'salon' => 'Luna Salon', 'kota' => 'Bandung', 'dibuat' => '2026-10-29 14:20',
         'bayar' => 'menunggu', 'batal' => false,
         'orang' => [
             ['nama' => 'Rina (Saya)',   'layanan' => 'Creambath', 'pegawai' => 'Rani',  'waktu' => '2026-11-01 18:00', 'harga' => 100000],
@@ -27,14 +27,14 @@ $bookings = [
         ],
     ],
     [
-        'kode' => 'RSV-003', 'salon' => 'Luna Salon', 'kota' => 'Bandung',
+        'kode' => 'RSV-003', 'salon' => 'Luna Salon', 'kota' => 'Bandung', 'dibuat' => '2026-10-30 09:05',
         'bayar' => 'lunas', 'batal' => false,
         'orang' => [
             ['nama' => 'Rina (Saya)', 'layanan' => 'Potong Rambut', 'pegawai' => 'Dewi', 'waktu' => '2026-11-04 10:00', 'harga' => 75000],
         ],
     ],
     [
-        'kode' => 'RSV-002', 'salon' => 'Luna Salon', 'kota' => 'Bandung',
+        'kode' => 'RSV-002', 'salon' => 'Luna Salon', 'kota' => 'Bandung', 'dibuat' => '2026-10-15 16:40',
         'bayar' => 'lunas', 'batal' => false,
         'orang' => [
             ['nama' => 'Rina (Saya)',  'layanan' => 'Potong Rambut', 'pegawai' => 'Rani',  'waktu' => '2026-10-19 17:40', 'harga' => 75000],
@@ -42,7 +42,7 @@ $bookings = [
         ],
     ],
     [
-        'kode' => 'RSV-001', 'salon' => 'Luna Salon', 'kota' => 'Bandung',
+        'kode' => 'RSV-001', 'salon' => 'Luna Salon', 'kota' => 'Bandung', 'dibuat' => '2026-10-12 11:15',
         'bayar' => 'lunas', 'batal' => false,
         'orang' => [
             ['nama' => 'Rina (Saya)', 'layanan' => 'Creambath', 'pegawai' => 'Rani', 'waktu' => '2026-10-17 18:00', 'harga' => 100000],
@@ -89,6 +89,37 @@ usort($bookings, function ($a, $b) {
     if ($ga !== $gb) return $ga <=> $gb;
     return $ga === 0 ? $a['awal'] <=> $b['awal'] : $b['akhir'] <=> $a['akhir'];
 });
+
+/* Data untuk invoice (detail transaksi) yang dibuka lewat JavaScript */
+$namaStatus = ['akan' => 'Akan datang', 'selesai' => 'Selesai', 'dibatalkan' => 'Dibatalkan'];
+$dataInvoice = [];
+
+foreach ($bookings as $b) {
+
+    $items = [];
+
+    foreach ($b['orang'] as $o) {
+        $items[] = [
+            'nama'    => $o['nama'],
+            'layanan' => $o['layanan'],
+            'pegawai' => $o['pegawai'],
+            'waktu'   => tgl($o['ts']),
+            'harga'   => rp($o['harga']),
+        ];
+    }
+
+    $dataInvoice[$b['kode']] = [
+        'kode'   => $b['kode'],
+        'salon'  => $b['salon'],
+        'kota'   => $b['kota'],
+        'dibuat' => tgl(strtotime($b['dibuat'])),
+        'status' => $namaStatus[$b['status']],
+        'bayar'  => $b['bayar'],
+        'items'  => $items,
+        'jumlah' => count($b['orang']),
+        'total'  => rp($b['total']),
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -154,6 +185,43 @@ usort($bookings, function ($a, $b) {
 
         .rv-kosong { display: none; text-align: center; padding: 48px 24px; color: #6b5f57; border: 1px dashed var(--line, #e6dccf); }
 
+        /* ===== Invoice / detail transaksi ===== */
+        .iv-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(48,30,24,.55); align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+        .iv-overlay.show { display: flex; }
+        .iv-box { background: #fff; width: 100%; max-width: 720px; padding: 44px 44px 36px; margin: auto 0; box-sizing: border-box; color: var(--ink, #2b1e19); }
+        .iv-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--ink, #2b1e19); }
+        .iv-brand { font-family: var(--serif, 'Cormorant Garamond', serif); font-size: 30px; letter-spacing: .26em; font-weight: 500; }
+        .iv-judul { text-align: right; }
+        .iv-judul b { display: block; font-family: var(--serif, 'Cormorant Garamond', serif); font-size: 34px; font-weight: 500; letter-spacing: .08em; }
+        .iv-judul span { font-size: 14px; color: #6b5f57; }
+        .iv-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; padding: 24px 0; border-bottom: 1px solid var(--line, #e6dccf); }
+        .iv-meta small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #6b5f57; margin-bottom: 4px; }
+        .iv-meta div { font-size: 15px; }
+        .iv-item { display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line, #e6dccf); }
+        .iv-item .nm { font-family: var(--serif, 'Cormorant Garamond', serif); font-size: 24px; font-weight: 500; }
+        .iv-item .sub { font-size: 14px; color: #6b5f57; margin-top: 2px; }
+        .iv-item .hg { font-weight: 600; white-space: nowrap; }
+        .iv-judul-bagian { margin: 24px 0 0; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #6b5f57; }
+        .iv-total { display: flex; justify-content: space-between; align-items: baseline; padding: 20px 0 6px; }
+        .iv-total span { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+        .iv-total b { font-family: var(--serif, 'Cormorant Garamond', serif); font-size: 34px; font-weight: 600; }
+        .iv-catatan { font-size: 13px; color: #6b5f57; margin-top: 12px; }
+        .iv-aksi { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+        .iv-aksi .rv-btn { flex: 1 1 140px; }
+
+        @media (max-width: 560px) {
+            .iv-box { padding: 28px 20px 24px; }
+            .iv-meta { grid-template-columns: 1fr; }
+            .iv-judul { text-align: left; }
+        }
+
+        @media print {
+            body > *:not(#invoiceModal) { display: none !important; }
+            #invoiceModal { position: static; display: block !important; background: none; padding: 0; }
+            .iv-box { max-width: none; padding: 0; }
+            .iv-aksi { display: none !important; }
+        }
+
         /* Modal ganti jadwal */
         .p-riwayat .calendar .date.kosong { visibility: hidden; pointer-events: none; border: 0; background: none; }
         .p-riwayat .time.off { opacity: .35; cursor: not-allowed; text-decoration: line-through; }
@@ -198,10 +266,7 @@ usort($bookings, function ($a, $b) {
 
 <div class="app">
 
-    <!-- HEADER -->
-
     
-
 
 
     <!-- CONTENT -->
@@ -297,8 +362,7 @@ usort($bookings, function ($a, $b) {
                         <a class="rv-btn utama" href="booking.php?salon=<?= urlencode($b['salon']) ?>">Booking lagi</a>
                     <?php endif; ?>
 
-                    <!-- Ganti alamat file bukti sesuai folder upload Anda -->
-                    <a class="rv-btn" href="../uploads/bukti/<?= e($b['kode']) ?>.jpg" target="_blank">Lihat bukti transfer</a>
+                    <button class="rv-btn" onclick="bukaInvoice('<?= e($b['kode']) ?>')">Lihat detail transaksi</button>
 
                     <?php if ($bisaBatal): ?>
                         <button class="rv-btn batal" onclick="batalkan('<?= e($b['kode']) ?>')">Batalkan</button>
@@ -462,6 +526,19 @@ usort($bookings, function ($a, $b) {
 </div>
 
 
+<!-- MODAL INVOICE / DETAIL TRANSAKSI -->
+
+<div
+    class="iv-overlay"
+    id="invoiceModal">
+
+    <div class="iv-box" id="invoiceIsi">
+
+    </div>
+
+</div>
+
+
 <script>
 
 let bookingDipilih = "";
@@ -480,6 +557,152 @@ function pad(n) {
 function isoLokal(d) {
     return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
 }
+
+
+/* ===== INVOICE / DETAIL TRANSAKSI ===== */
+
+const INVOICE = <?= json_encode($dataInvoice, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+
+function buatEl(tag, kelas, teks) {
+
+    const x = document.createElement(tag);
+
+    if (kelas) x.className = kelas;
+
+    if (teks !== undefined) x.textContent = teks;
+
+    return x;
+
+}
+
+function bukaInvoice(kode) {
+
+    const d = INVOICE[kode];
+
+    if (!d) return;
+
+    const box = document.getElementById("invoiceIsi");
+
+    box.innerHTML = "";
+
+
+    /* kepala */
+
+    const head = buatEl("div", "iv-head");
+
+    head.appendChild(buatEl("div", "iv-brand", "RESERVIN"));
+
+    const judul = buatEl("div", "iv-judul");
+    judul.appendChild(buatEl("b", "", "INVOICE"));
+    judul.appendChild(buatEl("span", "", "INV-" + d.kode));
+    head.appendChild(judul);
+
+    box.appendChild(head);
+
+
+    /* data umum */
+
+    const meta = buatEl("div", "iv-meta");
+
+    function baris(label, nilai, badge) {
+
+        const w = buatEl("div");
+
+        w.appendChild(buatEl("small", "", label));
+
+        if (badge) {
+            w.appendChild(buatEl("span", "rv-b " + badge.kelas, nilai));
+        } else {
+            w.appendChild(document.createTextNode(nilai));
+        }
+
+        meta.appendChild(w);
+
+    }
+
+    baris("Kode booking", d.kode);
+    baris("Tanggal booking", d.dibuat);
+    baris("Salon", d.salon + " · " + d.kota);
+    baris("Status booking", d.status);
+    baris("Status pembayaran",
+        d.bayar === "lunas" ? "Lunas" : "Menunggu verifikasi",
+        { kelas: d.bayar === "lunas" ? "lunas" : "menunggu" });
+    baris("Metode pembayaran", "Transfer bank (bayar penuh)");
+
+    box.appendChild(meta);
+
+
+    /* rincian per orang */
+
+    box.appendChild(buatEl("div", "iv-judul-bagian", "Rincian layanan"));
+
+    d.items.forEach(function (it) {
+
+        const row = buatEl("div", "iv-item");
+
+        const kiri = buatEl("div");
+        kiri.appendChild(buatEl("div", "nm", it.nama));
+        kiri.appendChild(buatEl("div", "sub", it.layanan + " · dilayani " + it.pegawai));
+        kiri.appendChild(buatEl("div", "sub", it.waktu));
+
+        row.appendChild(kiri);
+        row.appendChild(buatEl("div", "hg", it.harga));
+
+        box.appendChild(row);
+
+    });
+
+
+    /* total */
+
+    const tot = buatEl("div", "iv-total");
+
+    tot.appendChild(buatEl("span", "",
+        "Total" + (d.jumlah > 1 ? " (" + d.jumlah + " orang)" : "")));
+
+    tot.appendChild(buatEl("b", "", d.total));
+
+    box.appendChild(tot);
+
+    box.appendChild(buatEl("div", "iv-catatan",
+        "Invoice ini dibuat otomatis oleh sistem Reservin."));
+
+
+    /* tombol */
+
+    const aksi = buatEl("div", "iv-aksi");
+    const cetak = buatEl("button", "rv-btn", "Cetak / simpan PDF");
+    cetak.onclick = function () { window.print(); };
+    aksi.appendChild(cetak);
+
+    const tutup = buatEl("button", "rv-btn utama", "Tutup");
+    tutup.onclick = tutupInvoice;
+    aksi.appendChild(tutup);
+
+    box.appendChild(aksi);
+
+
+    document.getElementById("invoiceModal").classList.add("show");
+
+}
+
+function tutupInvoice() {
+
+    document.getElementById("invoiceModal").classList.remove("show");
+
+}
+
+document.getElementById("invoiceModal").addEventListener("click", function (e) {
+
+    if (e.target === this) tutupInvoice();
+
+});
+
+document.addEventListener("keydown", function (e) {
+
+    if (e.key === "Escape") tutupInvoice();
+
+});
 
 
 /* FILTER TAB */

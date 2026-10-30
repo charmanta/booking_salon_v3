@@ -2,11 +2,12 @@
 $salon = $_GET['salon'] ?? 'Luna Salon';
 
 // Daftar layanan (sementara statis, nanti bisa diganti dari database)
+// durasi = estimasi lama pengerjaan dalam menit (sesuaikan dengan salon)
 $layanan = [
-    ['nama' => 'Creambath',     'harga' => 100000],
-    ['nama' => 'Potong Rambut', 'harga' => 75000],
-    ['nama' => 'Facial',        'harga' => 120000],
-    ['nama' => 'Hair Spa',      'harga' => 150000],
+    ['nama' => 'Creambath',     'harga' => 100000, 'durasi' => 45],
+    ['nama' => 'Potong Rambut', 'harga' => 75000,  'durasi' => 30],
+    ['nama' => 'Facial',        'harga' => 120000, 'durasi' => 60],
+    ['nama' => 'Hair Spa',      'harga' => 150000, 'durasi' => 60],
 ];
 
 // Daftar pegawai (sementara statis, nanti bisa diganti dari database)
@@ -42,7 +43,8 @@ $pegawai = [
         .person .p-jadwal .info { margin: 0; }
         .btn-line { font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: transparent; border: 1px solid var(--ink); color: var(--ink); padding: 12px 20px; cursor: pointer; }
         .btn-line:hover { background: var(--ink); color: var(--cream); }
-        .person .p-sub-total { margin-top: 14px; text-align: right; font-weight: 700; font-size: 15px; }
+        .person .p-durasi { margin-top: 14px; text-align: right; }
+        .person .p-sub-total { margin-top: 4px; text-align: right; font-weight: 700; font-size: 15px; }
 
         /* ===== Rincian & pembayaran ===== */
         .pay-box { background: var(--white); border: 1px solid var(--line); padding: 20px 24px; margin-bottom: 12px; }
@@ -93,6 +95,7 @@ $pegawai = [
 <div class="app">
 
     
+
     <div class="content">
 
         <div class="card">
@@ -232,6 +235,41 @@ function namaTampil(o, i) {
     return o.nama.trim() || ("Orang " + (i + 1));
 }
 
+/* ===== ESTIMASI DURASI ===== */
+
+function durasiLayanan(namaLayanan) {
+    const l = LAYANAN.find(function (x) { return x.nama === namaLayanan; });
+    return l ? l.durasi : 0;
+}
+
+function durasiTotal(o) {
+    return o.layanan.reduce(function (t, n) { return t + durasiLayanan(n); }, 0);
+}
+
+function formatDurasi(m) {
+    if (!m) return "-";
+    const j = Math.floor(m / 60);
+    const s = m % 60;
+    if (j === 0) return s + " mnt";
+    if (s === 0) return j + " jam";
+    return j + " jam " + s + " mnt";
+}
+
+function menit(jam) {
+    const p = jam.split(":");
+    return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+}
+
+function jamSelesai(jam, mnt) {
+    const t = menit(jam) + mnt;
+    return pad(Math.floor(t / 60)) + ":" + pad(t % 60);
+}
+
+/* "18:00 - 18:45" */
+function rentangJam(jam, mnt) {
+    return jam + " - " + jamSelesai(jam, mnt);
+}
+
 function el(tag, cls, teks) {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -299,13 +337,24 @@ function renderOrang() {
                 } else {
                     o.layanan = o.layanan.filter(function (n) { return n !== l.nama; });
                 }
+                /* durasi berubah: jadwal lama bisa jadi bentrok atau lewat jam tutup */
+                if (o.tanggal && (bentrok(i, o.tanggal.iso, o.jam)
+                    || menit(o.jam) + durasiTotal(o) > JAM_TUTUP * 60)) {
+                    o.tanggal = null;
+                    o.jam = "";
+                    alert("Durasi layanan berubah dan jadwal sebelumnya tidak muat lagi. Silakan pilih ulang tanggal dan jam.");
+                    renderOrang();
+                    renderRincian();
+                    return;
+                }
+
                 perbarui(card, o);
             };
 
             kiri.appendChild(cb);
             kiri.appendChild(document.createTextNode(l.nama));
             row.appendChild(kiri);
-            row.appendChild(el("em", "", rupiah(l.harga)));
+            row.appendChild(el("em", "", "± " + formatDurasi(l.durasi) + " · " + rupiah(l.harga)));
             card.appendChild(row);
         });
 
@@ -340,7 +389,7 @@ function renderOrang() {
         /* jadwal */
         const jad = el("div", "p-jadwal");
         jad.appendChild(el("div", "info",
-            o.tanggal ? (o.tanggal.label + " · " + o.jam) : "Jadwal belum dipilih"));
+            o.tanggal ? (o.tanggal.label + " · " + rentangJam(o.jam, durasiTotal(o))) : "Jadwal belum dipilih"));
 
         const btn = el("button", "btn-line", o.tanggal ? "Ubah tanggal dan jam" : "Pilih tanggal dan jam");
         btn.type = "button";
@@ -348,7 +397,9 @@ function renderOrang() {
         jad.appendChild(btn);
         card.appendChild(jad);
 
-        /* subtotal */
+        /* estimasi durasi + subtotal */
+        card.appendChild(el("div", "info p-durasi", "Estimasi durasi: " + formatDurasi(durasiTotal(o))));
+
         const st = el("div", "p-sub-total", "Subtotal " + rupiah(subtotal(o)));
         st.className = "p-sub-total";
         card.appendChild(st);
@@ -360,6 +411,7 @@ function renderOrang() {
 /* perbarui subtotal kartu & rincian tanpa menggambar ulang semua kartu */
 function perbarui(card, o) {
     card.querySelector(".p-sub-total").textContent = "Subtotal " + rupiah(subtotal(o));
+    card.querySelector(".p-durasi").textContent = "Estimasi durasi: " + formatDurasi(durasiTotal(o));
     renderRincian();
 }
 
@@ -385,7 +437,7 @@ function renderRincian() {
         } else {
             o.layanan.forEach(function (n) {
                 const r = el("div", "rc-row");
-                r.appendChild(el("span", "", n));
+                r.appendChild(el("span", "", n + " (± " + formatDurasi(durasiLayanan(n)) + ")"));
                 r.appendChild(el("span", "", rupiah(harga(n))));
                 blok.appendChild(r);
             });
@@ -394,7 +446,9 @@ function renderRincian() {
         blok.appendChild(el("div", "rc-row muted",
             "Pegawai: " + (o.pegawai || "-")));
         blok.appendChild(el("div", "rc-row muted",
-            "Jadwal: " + (o.tanggal ? o.tanggal.label + ", " + o.jam : "-")));
+            "Estimasi durasi: " + formatDurasi(durasiTotal(o))));
+        blok.appendChild(el("div", "rc-row muted",
+            "Jadwal: " + (o.tanggal ? o.tanggal.label + ", " + rentangJam(o.jam, durasiTotal(o)) : "-")));
 
         box.appendChild(blok);
     });
@@ -417,13 +471,20 @@ function tambahOrang() {
 
 /* ===== POPUP JADWAL ===== */
 
-/* cek apakah pegawai yang sama sudah dipakai orang lain di jam yang sama */
+/* cek apakah pegawai yang sama masih dipakai orang lain (jam saling tumpang tindih) */
 function bentrok(indeks, iso, jam) {
     const peg = orang[indeks].pegawai;
     if (!peg) return false;
+
+    const mulai = menit(jam);
+    const selesai = mulai + durasiTotal(orang[indeks]);
+
     return orang.some(function (o, i) {
-        return i !== indeks && o.pegawai === peg && o.tanggal
-            && o.tanggal.iso === iso && o.jam === jam;
+        if (i === indeks || o.pegawai !== peg || !o.tanggal || o.tanggal.iso !== iso) {
+            return false;
+        }
+        const m2 = menit(o.jam);
+        return mulai < m2 + durasiTotal(o) && m2 < selesai;
     });
 }
 
@@ -445,7 +506,9 @@ function bukaJadwal(i) {
     tmp = { tanggal: o.tanggal, jam: o.jam };
 
     document.getElementById("jmJudul").textContent = "Jadwal " + namaTampil(o, i);
-    document.getElementById("jmInfo").textContent = "Pegawai: " + o.pegawai;
+    document.getElementById("jmInfo").textContent =
+        "Pegawai: " + o.pegawai + " · Estimasi durasi: " + formatDurasi(durasiTotal(o))
+        + " · Salon tutup pukul " + pad(JAM_TUTUP) + ".00";
 
     buatTanggal();
     buatJam();
@@ -514,10 +577,13 @@ function buatJam() {
 
         const lewat = hariIni && h * 60 <= menitSekarang;
         const penuh = bentrok(aktif, tmp.tanggal.iso, waktu);
+        const lewatTutup = h * 60 + durasiTotal(orang[aktif]) > JAM_TUTUP * 60;
 
-        if (lewat || penuh) {
+        if (lewat || penuh || lewatTutup) {
             c.classList.add("off");
-            c.title = lewat ? "Jam sudah lewat" : "Pegawai sudah dipakai di jam ini";
+            c.title = lewat ? "Jam sudah lewat"
+                : (lewatTutup ? "Layanan tidak selesai sebelum salon tutup"
+                    : "Pegawai sudah dipakai di jam ini");
         } else {
             if (tmp.jam === waktu) c.classList.add("active");
 
@@ -553,7 +619,10 @@ function ringkasPopup() {
 
     box.appendChild(el("div", "rc-row muted", "Pegawai: " + o.pegawai));
     box.appendChild(el("div", "rc-row muted",
-        "Jadwal: " + (tmp.tanggal ? tmp.tanggal.label : "-") + (tmp.jam ? ", " + tmp.jam : "")));
+        "Estimasi durasi: " + formatDurasi(durasiTotal(o))));
+    box.appendChild(el("div", "rc-row muted",
+        "Jadwal: " + (tmp.tanggal ? tmp.tanggal.label : "-")
+        + (tmp.jam ? ", " + rentangJam(tmp.jam, durasiTotal(o)) : "")));
 
     const tot = el("div", "rc-total");
     tot.appendChild(el("span", "", "Total"));
@@ -654,7 +723,8 @@ function konfirmasi() {
         teks += "\n" + namaTampil(o, i) + "\n"
             + "  Layanan: " + o.layanan.join(", ") + "\n"
             + "  Pegawai: " + o.pegawai + "\n"
-            + "  Jadwal: " + o.tanggal.label + ", " + o.jam + "\n"
+            + "  Jadwal: " + o.tanggal.label + ", " + rentangJam(o.jam, durasiTotal(o))
+            + " (± " + formatDurasi(durasiTotal(o)) + ")\n"
             + "  Subtotal: " + rupiah(subtotal(o)) + "\n";
     });
 
