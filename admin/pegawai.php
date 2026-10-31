@@ -10,6 +10,7 @@ function ikon($nama) {
         'store'    => '<path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M10 20v-5h4v5"/>',
         'gunting'  => '<circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 16 19 3M16 16 5 3"/>',
         'users'    => '<circle cx="9" cy="8" r="3.5"/><path d="M2.500 20c0-3.600 2.900-6 6.500-6s6.500 2.400 6.500 6"/><circle cx="17.500" cy="9" r="2.500"/><path d="M17 14.200c2.600.2 4.500 2 4.500 4.800"/>',
+        'kalender' => '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
         'laporan'  => '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-5M15 17v-2"/>',
         'user'     => '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.200 3.600-7 8-7s8 2.800 8 7"/>',
         'logout'   => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
@@ -33,6 +34,7 @@ $menu = [
     ['salon.php',     'Data Salon', 'store',   false],
     ['layanan.php',   'Layanan',    'gunting', false],
     ['pegawai.php',   'Pegawai',    'users',   true],
+    ['jadwal.php',    'Jadwal',     'kalender', false],
     ['laporan.php',   'Laporan',    'laporan', false],
     ['profil.php',    'Profil',     'user',    false],
 ];
@@ -42,14 +44,24 @@ $namaHari = [1 => 'Sen', 2 => 'Sel', 3 => 'Rab', 4 => 'Kam', 5 => 'Jum', 6 => 'S
 $hariIni  = (int)date('N');
 
 /*
- * [nama, no hp, jabatan, keahlian, hari kerja, jam masuk, jam pulang, masuk hari ini?]
- * Status otomatis: masuk = Aktif, tidak masuk = Nonaktif
+ * [nama, no hp, jabatan, keahlian, hari kerja, jam masuk, jam pulang, status kehadiran, waktu dicatat]
+ *
+ * Status kehadiran ('masuk' / 'tidak_masuk') DIISI OLEH PEGAWAI sendiri
+ * (dari halaman/akun pegawai), lalu disimpan ke database.
+ * Admin hanya MELIHAT. Status Aktif/Nonaktif mengikuti otomatis:
+ * masuk = Aktif, tidak masuk = Nonaktif.
+ *
+ * Contoh nanti saat memakai database (tabel kehadiran, 1 baris per pegawai per tanggal):
+ *   SELECT p.*, k.status, k.waktu_dicatat
+ *   FROM pegawai p
+ *   LEFT JOIN kehadiran k ON k.id_pegawai = p.id AND k.tanggal = CURDATE()
+ * Jika pegawai belum mengisi hari ini (k.status NULL), dianggap 'tidak_masuk'.
  */
 $pegawai = [
-    ['Dewi Lestari',   '081234567890', 'Pegawai', 'Hair Stylist',    [1, 2, 3, 4, 5, 6], '09:00', '17:00', true],
-    ['Andi Pratama',   '082345678901', 'Pegawai', 'Barber',          [1, 2, 3, 4, 5, 6], '10:00', '18:00', true],
-    ['Maya Putri',     '083456789012', 'Pegawai', 'Facial & Beauty', [2, 3, 4, 5, 6, 7], '09:00', '17:00', true],
-    ['Rani Salsabila', '084567890123', 'Pegawai', 'Hair Coloring',   [1, 3, 5, 6],       '11:00', '20:00', false],
+    ['Dewi Lestari',   '081234567890', 'Pegawai', 'Hair Stylist',    [1, 2, 3, 4, 5, 6], '09:00', '17:00', 'masuk',       '08:42'],
+    ['Andi Pratama',   '082345678901', 'Pegawai', 'Barber',          [1, 2, 3, 4, 5, 6], '10:00', '18:00', 'masuk',       '09:51'],
+    ['Maya Putri',     '083456789012', 'Pegawai', 'Facial & Beauty', [2, 3, 4, 5, 6, 7], '09:00', '17:00', 'masuk',       '08:55'],
+    ['Rani Salsabila', '084567890123', 'Pegawai', 'Hair Coloring',   [1, 3, 5, 6],       '11:00', '20:00', 'tidak_masuk', '07:30'],
 ];
 
 function ringkasHari($hari, $namaHari) {
@@ -60,7 +72,7 @@ function ringkasHari($hari, $namaHari) {
     return implode(', ', array_map(function ($h) use ($namaHari) { return $namaHari[$h]; }, $hari));
 }
 
-$jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
+$jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7] === 'masuk'; }));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -192,18 +204,12 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
         .ad-pil.ok { background: #dff3e8; color: #1c6f47; }
         .ad-pil.off { background: #f1ebe8; color: #7a6c68; }
 
-        /* saklar masuk / tidak masuk */
-        .ad-hadir { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
-        .ad-sakelar {
-            position: relative; width: 44px; height: 26px; border-radius: 999px; border: 0; padding: 0; cursor: pointer;
-            background: #d9cdc8; transition: background .2s; flex: none;
-        }
-        .ad-sakelar::after {
-            content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
-            background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .2s;
-        }
-        .ad-sakelar[aria-checked="true"] { background: #2e9468; }
-        .ad-sakelar[aria-checked="true"]::after { transform: translateX(18px); }
+        /* kehadiran (hanya tampilan, diisi oleh pegawai) */
+        .ad-hadir { display: flex; flex-direction: column; gap: 3px; white-space: nowrap; }
+        .ad-hadir-teks { display: inline-flex; align-items: center; gap: 9px; font-weight: 500; }
+        .ad-hadir-teks::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #2e9468; flex: none; }
+        .ad-hadir.off .ad-hadir-teks::before { background: #c9bbb5; }
+        .ad-hadir small { padding-left: 19px; font-size: 13px; color: var(--muted); }
 
         .ad-aksi-sel { display: flex; gap: 8px; }
         .ad-mini {
@@ -248,25 +254,11 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
         .ad-hari input:checked + span { background: var(--rose); border-color: var(--rose); color: #fff; font-weight: 500; }
         .ad-hari input:focus-visible + span { outline: 2px solid #c4938d; outline-offset: 2px; }
 
-        /* pilihan kehadiran */
-        .ad-seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-        .ad-seg label { position: relative; cursor: pointer; }
-        .ad-seg input { position: absolute; opacity: 0; pointer-events: none; }
-        .ad-seg span {
-            display: block; text-align: center; padding: 12px 14px; border-radius: 10px; border: 1px solid #e3d8d2;
-            font-size: 15px; background: #fff; transition: background .15s, border-color .15s;
-        }
-        .ad-seg input:checked + span { font-weight: 600; }
-        .ad-seg .y input:checked + span { background: #dff3e8; border-color: #8fd0ae; color: #1c6f47; }
-        .ad-seg .n input:checked + span { background: #f1ebe8; border-color: #cdbfb8; color: #5d504c; }
-        .ad-seg input:focus-visible + span { outline: 2px solid #c4938d; outline-offset: 2px; }
-        .ad-bantu { margin: 4px 0 0; font-size: 13.5px; color: var(--muted); }
-
         .ad-modal-aksi { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
 
         .ad-foot { text-align: center; padding: 22px; font-size: 12px; letter-spacing: .14em; color: #8a8088; border-top: 1px solid var(--line); }
 
-        .ad-burger:focus-visible, .ad-user:focus-visible, .ad-link:focus-visible, .ad-sakelar:focus-visible,
+        .ad-burger:focus-visible, .ad-user:focus-visible, .ad-link:focus-visible,
         .ad-btn:focus-visible, .ad-mini:focus-visible, .ad-x:focus-visible { outline: 2px solid #c4938d; outline-offset: 2px; }
 
         /* animasi baru aktif setelah halaman siap */
@@ -408,7 +400,7 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
                     <span class="ad-jumlah" id="ringkas"><?= $jmlMasuk ?> masuk · <?= count($pegawai) - $jmlMasuk ?> tidak masuk</span>
                 </div>
 
-                <p class="ad-tip">Geser tombol "Masuk hari ini" untuk mengubah status. Pegawai yang masuk berstatus Aktif, yang tidak masuk berstatus Nonaktif.</p>
+                <p class="ad-tip">Status masuk atau tidak masuk diisi oleh pegawai sendiri. Admin hanya dapat melihatnya. Pegawai yang masuk berstatus Aktif, yang tidak masuk berstatus Nonaktif.</p>
 
                 <div class="ad-tabel-box">
                     <table class="ad-tabel">
@@ -420,14 +412,17 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
                                 <th>Jabatan</th>
                                 <th>Keahlian</th>
                                 <th>Jadwal Masuk</th>
-                                <th>Masuk Hari Ini</th>
+                                <th>Kehadiran Hari Ini</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($pegawai as $i => $p): ?>
-                                <?php $kerjaHariIni = in_array($hariIni, $p[4], true); ?>
+                                <?php
+                                    $kerjaHariIni = in_array($hariIni, $p[4], true);
+                                    $hadir        = ($p[7] === 'masuk');
+                                ?>
                                 <tr class="baris"
                                     data-nama="<?= e($p[0]) ?>"
                                     data-hp="<?= e($p[1]) ?>"
@@ -435,8 +430,7 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
                                     data-keahlian="<?= e($p[3]) ?>"
                                     data-hari="<?= e(implode(',', $p[4])) ?>"
                                     data-masuk-jam="<?= e($p[5]) ?>"
-                                    data-pulang-jam="<?= e($p[6]) ?>"
-                                    data-hadir="<?= $p[7] ? '1' : '0' ?>">
+                                    data-pulang-jam="<?= e($p[6]) ?>">
                                     <td><?= $i + 1 ?></td>
                                     <td class="nama"><?= e($p[0]) ?></td>
                                     <td class="nowrap"><?= e($p[1]) ?></td>
@@ -449,15 +443,15 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
                                         </small>
                                     </td>
                                     <td>
-                                        <div class="ad-hadir">
-                                            <button type="button" class="ad-sakelar btn-sakelar" role="switch"
-                                                aria-checked="<?= $p[7] ? 'true' : 'false' ?>"
-                                                aria-label="Masuk hari ini: <?= e($p[0]) ?>"></button>
-                                            <span class="teks-hadir"><?= $p[7] ? 'Masuk' : 'Tidak masuk' ?></span>
+                                        <div class="ad-hadir<?= $hadir ? '' : ' off' ?>">
+                                            <span class="ad-hadir-teks"><?= $hadir ? 'Masuk' : 'Tidak masuk' ?></span>
+                                            <?php if (!empty($p[8])): ?>
+                                                <small>Dicatat pukul <?= e($p[8]) ?></small>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="ad-pil <?= $p[7] ? 'ok' : 'off' ?> pil-status"><?= $p[7] ? 'Aktif' : 'Nonaktif' ?></span>
+                                        <span class="ad-pil <?= $hadir ? 'ok' : 'off' ?>"><?= $hadir ? 'Aktif' : 'Nonaktif' ?></span>
                                     </td>
                                     <td>
                                         <div class="ad-aksi-sel">
@@ -541,21 +535,6 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
                 </div>
             </div>
 
-            <div class="ad-field">
-                <span class="lbl" id="lblHadir">Kehadiran hari ini</span>
-                <div class="ad-seg" role="radiogroup" aria-labelledby="lblHadir">
-                    <label class="y">
-                        <input type="radio" name="hadir" value="1" checked>
-                        <span>Masuk</span>
-                    </label>
-                    <label class="n">
-                        <input type="radio" name="hadir" value="0">
-                        <span>Tidak masuk</span>
-                    </label>
-                </div>
-                <p class="ad-bantu">Masuk berarti status Aktif. Tidak masuk berarti status Nonaktif.</p>
-            </div>
-
             <div class="ad-modal-aksi">
                 <button type="button" class="ad-btn kedua" id="btnBatal">Batal</button>
                 <button type="button" class="ad-btn utama" id="btnSimpan">Simpan</button>
@@ -568,7 +547,9 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
 
 <script>
 
-/* ===== pegawai: tambah, edit, hapus, kehadiran ===== */
+/* ===== pegawai: tambah, edit, hapus =====
+   Status masuk / tidak masuk TIDAK diatur di sini.
+   Nilainya datang dari database (diisi pegawai), admin hanya melihat. */
 
 (function () {
 
@@ -581,12 +562,6 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
         });
     }
 
-    function setHadir(v) {
-        document.querySelectorAll('input[name="hadir"]').forEach(function (r) {
-            r.checked = r.value === v;
-        });
-    }
-
     function buka(judul, d) {
         $("modalTitle").textContent = judul;
         $("nama").value = d.nama;
@@ -596,7 +571,6 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
         setHari(d.hari);
         $("jamMasuk").value = d.masuk;
         $("jamPulang").value = d.pulang;
-        setHadir(d.hadir);
         modal.classList.add("show");
         $("nama").focus();
     }
@@ -605,39 +579,14 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
         modal.classList.remove("show");
     }
 
-    /* ringkasan "x masuk · y tidak masuk" */
-    function hitung() {
-        const semua = document.querySelectorAll("tr.baris");
-        let masuk = 0;
-        semua.forEach(function (tr) { if (tr.dataset.hadir === "1") masuk++; });
-        $("ringkas").textContent = masuk + " masuk · " + (semua.length - masuk) + " tidak masuk";
-    }
-
-    /* terapkan kehadiran ke satu baris: masuk = Aktif, tidak masuk = Nonaktif */
-    function terapkan(tr, hadir) {
-        tr.dataset.hadir = hadir ? "1" : "0";
-        tr.querySelector(".btn-sakelar").setAttribute("aria-checked", hadir ? "true" : "false");
-        tr.querySelector(".teks-hadir").textContent = hadir ? "Masuk" : "Tidak masuk";
-        const pil = tr.querySelector(".pil-status");
-        pil.textContent = hadir ? "Aktif" : "Nonaktif";
-        pil.classList.toggle("ok", hadir);
-        pil.classList.toggle("off", !hadir);
-        hitung();
-    }
-
     $("btnTambah").addEventListener("click", function () {
         buka("Tambah Pegawai", {
             nama: "", hp: "", jabatan: "", keahlian: "",
-            hari: ["1", "2", "3", "4", "5", "6"], masuk: "09:00", pulang: "17:00", hadir: "1"
+            hari: ["1", "2", "3", "4", "5", "6"], masuk: "09:00", pulang: "17:00"
         });
     });
 
     document.querySelectorAll("tr.baris").forEach(function (tr) {
-
-        tr.querySelector(".btn-sakelar").addEventListener("click", function () {
-            /* demo: nanti kirim perubahan ini ke server (AJAX/form) */
-            terapkan(tr, tr.dataset.hadir !== "1");
-        });
 
         tr.querySelector(".btn-edit").addEventListener("click", function () {
             buka("Edit Pegawai", {
@@ -647,8 +596,7 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
                 keahlian: tr.dataset.keahlian,
                 hari: tr.dataset.hari.split(","),
                 masuk: tr.dataset.masukJam,
-                pulang: tr.dataset.pulangJam,
-                hadir: tr.dataset.hadir
+                pulang: tr.dataset.pulangJam
             });
         });
 

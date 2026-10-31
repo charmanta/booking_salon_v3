@@ -14,20 +14,9 @@ function ikon($nama) {
         'logout'   => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
         'turun'    => '<path d="M6 9l6 6 6-6"/>',
         'menu'     => '<path d="M4 6h16M4 12h10M4 18h16"/>',
-        'kamera'   => '<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.500" r="3.500"/>',
-        'cek'      => '<circle cx="12" cy="12" r="9"/><path d="M8 12.500l3 3 5-6"/>',
-        'jam'      => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-        'kirim'    => '<path d="M4 12l16-8-6 17-3-7z"/><path d="M11 14l9-10"/>',
     ];
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
         . ($p[$nama] ?? '') . '</svg>';
-}
-
-$hariPendek  = [1 => 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-$bulanPendek = [1 => 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-function tglHari($ts) {
-    global $hariPendek, $bulanPendek;
-    return $hariPendek[(int)date('N', $ts)] . ', ' . date('j', $ts) . ' ' . $bulanPendek[(int)date('n', $ts)] . ' ' . date('Y', $ts);
 }
 
 /* ===== Data contoh (nanti ganti dengan data dari database) ===== */
@@ -38,6 +27,7 @@ $menu = [
     ['dashboard.php',        'Dashboard',        'home',    false],
     ['detail_booking.php',   'Detail Reservasi', 'daftar',  false],
     ['daftar_reservasi.php', 'Daftar Reservasi', 'booking', false],
+    ['jadwal_saya.php',      'Jadwal Saya',      'kalender', false],
     ['profil.php',           'Profil',           'user',    true],
 ];
 
@@ -49,18 +39,8 @@ $akun = [
     'jabatan' => 'Pegawai',
 ];
 
-/* jadwal masuk hari ini (diatur admin di halaman Pegawai) */
-$jadwalHariIni = '09:00 – 17:00';
-
-/* presensi hari ini: null = belum, atau ['jam' => 'H:i'] bila sudah terkirim */
-$presensiHariIni = null;
-
-/* riwayat presensi sebelumnya: [timestamp, jam kirim atau null] */
-$riwayat = [];
-foreach ([1 => '08:51', 2 => '08:47', 3 => null, 4 => '09:02'] as $mundur => $jam) {
-    $riwayat[] = [strtotime("-$mundur day"), $jam];
-}
-$hariIni = strtotime('today');
+/* status hari ini: hanya ditampilkan, diisi dari presensi di Dashboard (true = sudah presensi / Aktif) */
+$sudahPresensi = false;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -171,29 +151,7 @@ $hariIni = strtotime('today');
         .ad-kepala b { display: block; font-size: 22px; font-weight: 600; }
         .ad-kepala small { display: block; margin-top: 4px; font-size: 15px; color: var(--muted); }
 
-        /* ===== PRESENSI ===== */
-        .ad-presensi { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
-        .ad-ringkas { display: grid; gap: 12px; align-content: start; }
-        .ad-ringkas .baris { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 12px; }
-        .ad-ringkas small { font-size: 13.5px; color: var(--muted); }
-        .ad-ringkas b { font-weight: 600; font-size: 16px; }
-
-        .ad-drop {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center;
-            min-height: 220px; padding: 20px; border: 2px dashed #d9cdc8; border-radius: 14px; background: #fbf8f6; cursor: pointer;
-            transition: background .15s, border-color .15s;
-        }
-        .ad-drop:hover, .ad-drop.seret { background: #fbf1ee; border-color: var(--rose-soft); }
-        .ad-drop svg { width: 38px; height: 38px; color: var(--rose-soft); }
-        .ad-drop b { font-size: 16px; font-weight: 600; }
-        .ad-drop span { font-size: 13.5px; color: var(--muted); }
-        .ad-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-        .ad-drop:focus-within { outline: 2px solid #c4938d; outline-offset: 2px; }
-
-        .ad-preview { display: none; }
-        .ad-preview img { display: block; width: 100%; max-height: 300px; object-fit: cover; border-radius: 14px; border: 1px solid var(--line); }
-        .ad-preview .ket { margin: 8px 0 0; font-size: 13.5px; color: var(--muted); word-break: break-all; }
-
+        /* tombol */
         .ad-aksi { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
         .ad-btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -205,22 +163,6 @@ $hariIni = strtotime('today');
         .ad-btn.utama:hover { background: var(--rose-dark); }
         .ad-btn.kedua { background: #fff; color: #4d4650; border-color: #e3d8d2; }
         .ad-btn.kedua:hover { background: #f6ece7; }
-        .ad-btn[disabled] { opacity: .5; cursor: not-allowed; }
-
-        .ad-pesan { margin: 14px 0 0; padding: 12px 14px; border-radius: 10px; font-size: 14.5px; display: none; }
-        .ad-pesan.salah { display: block; background: #fdeceb; color: #b4423a; }
-        .ad-pesan.benar { display: block; background: #dff3e8; color: #1c6f47; }
-        .ad-aturan { margin: 16px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.55; }
-
-        /* riwayat */
-        .ad-tabel-box { overflow-x: auto; margin-top: 26px; }
-        .ad-tabel { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 420px; }
-        .ad-tabel th { text-align: left; font-weight: 600; font-size: 14px; padding: 14px 14px; background: #f7f2ef; white-space: nowrap; }
-        .ad-tabel th:first-child { border-radius: 8px 0 0 8px; }
-        .ad-tabel th:last-child { border-radius: 0 8px 8px 0; }
-        .ad-tabel td { padding: 14px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-        .ad-tabel tr:last-child td { border-bottom: 0; }
-        .ad-sub-judul { margin: 26px 0 0; font-size: 16px; font-weight: 600; }
 
         /* form */
         .ad-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
@@ -238,6 +180,7 @@ $hariIni = strtotime('today');
         .ad-sandi { display: flex; gap: 10px; }
         .ad-sandi input { flex: 1; min-width: 0; }
         .ad-bantu { margin: 0; font-size: 13.5px; color: var(--muted); }
+        .ad-bantu a { color: var(--rose-dark); }
 
         .ad-foot { text-align: center; padding: 22px; font-size: 12px; letter-spacing: .14em; color: #8a8088; border-top: 1px solid var(--line); }
 
@@ -255,10 +198,6 @@ $hariIni = strtotime('today');
         @media (max-width: 999px) {
             body.sb-open .ad-overlay { display: block; }
             .ad-side { box-shadow: 8px 0 30px rgba(0, 0, 0, .3); }
-        }
-
-        @media (max-width: 860px) {
-            .ad-presensi { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 760px) {
@@ -365,7 +304,7 @@ $hariIni = strtotime('today');
 
             <section class="ad-sapa">
                 <h1>Profil</h1>
-                <p>Kelola data diri dan catat kehadiran kerja Anda.</p>
+                <p>Kelola data diri dan keamanan akun Anda.</p>
             </section>
 
 
@@ -379,98 +318,6 @@ $hariIni = strtotime('today');
                         <small><?= e($pegawai['peran']) ?> · <?= e($pegawai['salon']) ?></small>
                     </div>
                 </div>
-            </section>
-
-
-            <!-- PRESENSI KERJA -->
-
-            <section class="ad-kartu" id="presensi">
-
-                <div class="ad-kartu-head">
-                    <h2>Presensi Kerja</h2>
-                    <span class="ad-pil <?= $presensiHariIni ? 'ok' : 'off' ?>" id="pilPresensi"><?= $presensiHariIni ? 'Aktif' : 'Belum presensi' ?></span>
-                </div>
-                <p class="ad-sub">Kirim foto Anda di salon untuk menandai bahwa Anda masuk kerja. Setelah terkirim, status Anda menjadi Aktif.</p>
-
-                <div class="ad-presensi">
-
-                    <!-- kiri: ringkasan -->
-                    <div class="ad-ringkas">
-                        <div class="baris">
-                            <small>Hari ini</small>
-                            <b><?= e(tglHari($hariIni)) ?></b>
-                        </div>
-                        <div class="baris">
-                            <small>Jadwal masuk</small>
-                            <b><?= e($jadwalHariIni) ?></b>
-                        </div>
-                        <div class="baris">
-                            <small>Status kehadiran</small>
-                            <b id="teksStatus"><?= $presensiHariIni ? 'Aktif · terkirim ' . e($presensiHariIni['jam']) : 'Belum presensi' ?></b>
-                        </div>
-                        <p class="ad-aturan">
-                            Foto harus diambil di dalam salon (selfie atau suasana tempat kerja) dan terlihat jelas.
-                            Format JPG, PNG, atau WEBP, maksimal 5 MB. Presensi hanya bisa dikirim satu kali per hari.
-                        </p>
-                    </div>
-
-                    <!-- kanan: unggah foto -->
-                    <div>
-
-                        <label class="ad-drop" id="drop" for="fotoPresensi">
-                            <?= ikon('kamera') ?>
-                            <b>Ambil atau pilih foto</b>
-                            <span>Klik di sini, atau seret foto ke kotak ini</span>
-                            <input type="file" id="fotoPresensi" accept="image/jpeg,image/png,image/webp" capture="user">
-                        </label>
-
-                        <div class="ad-preview" id="preview">
-                            <img id="gambarPreview" alt="Foto presensi">
-                            <p class="ket" id="namaFile"></p>
-                        </div>
-
-                        <div class="ad-pesan" id="pesan" role="status"></div>
-
-                        <div class="ad-aksi">
-                            <button type="button" class="ad-btn utama" id="btnKirim"><?= ikon('kirim') ?> Kirim Presensi</button>
-                            <button type="button" class="ad-btn kedua" id="btnGanti" style="display:none">Ganti Foto</button>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RIWAYAT -->
-
-                <h3 class="ad-sub-judul">Riwayat Presensi</h3>
-
-                <div class="ad-tabel-box">
-                    <table class="ad-tabel">
-                        <thead>
-                            <tr>
-                                <th>Tanggal</th>
-                                <th>Dikirim Pukul</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="riwayat">
-                            <tr id="barisHariIni">
-                                <td><?= e(tglHari($hariIni)) ?> <small>(hari ini)</small></td>
-                                <td id="jamHariIni"><?= $presensiHariIni ? e($presensiHariIni['jam']) : '–' ?></td>
-                                <td><span class="ad-pil <?= $presensiHariIni ? 'ok' : 'off' ?>" id="pilRiwayat"><?= $presensiHariIni ? 'Aktif' : 'Belum presensi' ?></span></td>
-                            </tr>
-                            <?php foreach ($riwayat as $r): ?>
-                                <tr>
-                                    <td><?= e(tglHari($r[0])) ?></td>
-                                    <td><?= $r[1] ? e($r[1]) : '–' ?></td>
-                                    <td><span class="ad-pil <?= $r[1] ? 'ok' : 'off' ?>"><?= $r[1] ? 'Aktif' : 'Tidak masuk' ?></span></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
             </section>
 
 
@@ -535,8 +382,8 @@ $hariIni = strtotime('today');
 
                         <div class="ad-field">
                             <span class="lbl">Status Hari Ini</span>
-                            <div><span class="ad-pil <?= $presensiHariIni ? 'ok' : 'off' ?>" id="pilStatusKerja"><?= $presensiHariIni ? 'Aktif' : 'Nonaktif' ?></span></div>
-                            <p class="ad-bantu">Berubah menjadi Aktif setelah Anda mengirim presensi.</p>
+                            <div><span class="ad-pil <?= $sudahPresensi ? 'ok' : 'off' ?>"><?= $sudahPresensi ? 'Aktif' : 'Nonaktif' ?></span></div>
+                            <p class="ad-bantu">Berubah menjadi Aktif setelah Anda mengirim presensi di <a href="dashboard.php#presensi">Dashboard</a>.</p>
                         </div>
 
                     </div>
@@ -578,115 +425,6 @@ $hariIni = strtotime('today');
 
 
 <script>
-
-/* ===== presensi kerja ===== */
-
-(function () {
-
-    const MAKS = 5 * 1024 * 1024;
-    const JENIS = ["image/jpeg", "image/png", "image/webp"];
-
-    const input = document.getElementById("fotoPresensi");
-    const drop = document.getElementById("drop");
-    const preview = document.getElementById("preview");
-    const gambar = document.getElementById("gambarPreview");
-    const namaFile = document.getElementById("namaFile");
-    const pesan = document.getElementById("pesan");
-    const btnKirim = document.getElementById("btnKirim");
-    const btnGanti = document.getElementById("btnGanti");
-
-    let berkas = null;
-    let urlSementara = null;
-
-    function tampilPesan(teks, jenis) {
-        pesan.textContent = teks;
-        pesan.className = "ad-pesan " + jenis;
-    }
-
-    function hapusPesan() {
-        pesan.className = "ad-pesan";
-        pesan.textContent = "";
-    }
-
-    function pilih(file) {
-
-        hapusPesan();
-
-        if (!file) return;
-
-        if (JENIS.indexOf(file.type) === -1) {
-            tampilPesan("Format foto harus JPG, PNG, atau WEBP.", "salah");
-            return;
-        }
-
-        if (file.size > MAKS) {
-            tampilPesan("Ukuran foto maksimal 5 MB.", "salah");
-            return;
-        }
-
-        if (urlSementara) URL.revokeObjectURL(urlSementara);
-
-        berkas = file;
-        urlSementara = URL.createObjectURL(file);
-        gambar.src = urlSementara;
-        namaFile.textContent = file.name;
-
-        drop.style.display = "none";
-        preview.style.display = "block";
-        btnGanti.style.display = "inline-flex";
-
-    }
-
-    input.addEventListener("change", function () {
-        pilih(input.files[0]);
-    });
-
-    /* seret & lepas */
-    ["dragenter", "dragover"].forEach(function (n) {
-        drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.add("seret"); });
-    });
-    ["dragleave", "drop"].forEach(function (n) {
-        drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.remove("seret"); });
-    });
-    drop.addEventListener("drop", function (e) {
-        if (e.dataTransfer.files.length) pilih(e.dataTransfer.files[0]);
-    });
-
-    btnGanti.addEventListener("click", function () {
-        input.value = "";
-        input.click();
-    });
-
-    function dua(n) { return n < 10 ? "0" + n : "" + n; }
-
-    btnKirim.addEventListener("click", function () {
-
-        if (!berkas) {
-            tampilPesan("Pilih atau ambil foto di salon terlebih dahulu.", "salah");
-            return;
-        }
-
-        /* demo: nanti kirim berkas ke server (FormData + fetch) dan simpan ke ../uploads/presensi/ */
-        const sekarang = new Date();
-        const jam = dua(sekarang.getHours()) + ":" + dua(sekarang.getMinutes());
-
-        document.getElementById("pilPresensi").textContent = "Aktif";
-        document.getElementById("pilPresensi").className = "ad-pil ok";
-        document.getElementById("teksStatus").textContent = "Aktif · terkirim " + jam;
-        document.getElementById("jamHariIni").textContent = jam;
-        document.getElementById("pilRiwayat").textContent = "Aktif";
-        document.getElementById("pilRiwayat").className = "ad-pil ok";
-        document.getElementById("pilStatusKerja").textContent = "Aktif";
-        document.getElementById("pilStatusKerja").className = "ad-pil ok";
-
-        btnKirim.disabled = true;
-        btnGanti.style.display = "none";
-        tampilPesan("Presensi terkirim pukul " + jam + ". Status Anda sekarang Aktif.", "benar");
-
-    });
-
-})();
-
 
 /* ===== profil ===== */
 

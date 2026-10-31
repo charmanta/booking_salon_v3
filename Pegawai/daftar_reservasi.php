@@ -48,6 +48,7 @@ $menu = [
     ['dashboard.php',        'Dashboard',        'home',    false],
     ['detail_booking.php',   'Detail Reservasi', 'daftar',  false],
     ['daftar_reservasi.php', 'Daftar Reservasi', 'booking', true],
+    ['jadwal_saya.php',      'Jadwal Saya',      'kalender', false],
     ['profil.php',           'Profil',           'user',    false],
 ];
 
