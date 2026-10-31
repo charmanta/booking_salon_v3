@@ -20,6 +20,8 @@ function ikon($nama) {
         'edit'     => '<path d="M4 20h4L19 9a2.800 2.800 0 0 0-4-4L4 16z"/><path d="M13.500 6.500l4 4"/>',
         'hapus'    => '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>',
         'tutup'    => '<path d="M6 6l12 12M18 6L6 18"/>',
+        'mata'     => '<path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+        'kunci'    => '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
     ];
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
         . ($p[$nama] ?? '') . '</svg>';
@@ -50,12 +52,6 @@ $hariIni  = (int)date('N');
  * (dari halaman/akun pegawai), lalu disimpan ke database.
  * Admin hanya MELIHAT. Status Aktif/Nonaktif mengikuti otomatis:
  * masuk = Aktif, tidak masuk = Nonaktif.
- *
- * Contoh nanti saat memakai database (tabel kehadiran, 1 baris per pegawai per tanggal):
- *   SELECT p.*, k.status, k.waktu_dicatat
- *   FROM pegawai p
- *   LEFT JOIN kehadiran k ON k.id_pegawai = p.id AND k.tanggal = CURDATE()
- * Jika pegawai belum mengisi hari ini (k.status NULL), dianggap 'tidak_masuk'.
  */
 $pegawai = [
     ['Dewi Lestari',   '081234567890', 'Pegawai', 'Hair Stylist',    [1, 2, 3, 4, 5, 6], '09:00', '17:00', 'masuk',       '08:42'],
@@ -234,13 +230,30 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7] === 'masuk
 
         .ad-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .ad-field label, .ad-field .lbl { font-size: 14px; font-weight: 500; color: #4d4650; }
-        .ad-field input[type="text"], .ad-field input[type="time"], .ad-field select {
+        .ad-field input[type="text"], .ad-field input[type="time"], .ad-field input[type="email"],
+        .ad-field input[type="password"], .ad-field input[type="tel"], .ad-field select, .ad-field textarea {
             width: 100%; font-family: inherit; font-size: 15.5px; color: var(--ink);
             background: #fff; border: 1px solid #e3d8d2; border-radius: 10px; padding: 12px 14px;
             transition: border-color .15s, box-shadow .15s;
         }
-        .ad-field input:focus, .ad-field select:focus { outline: 0; border-color: var(--rose-soft); box-shadow: 0 0 0 3px rgba(196, 147, 141, .25); }
+        .ad-field textarea { min-height: 84px; resize: vertical; line-height: 1.5; }
+        .ad-field input:focus, .ad-field select:focus, .ad-field textarea:focus { outline: 0; border-color: var(--rose-soft); box-shadow: 0 0 0 3px rgba(196, 147, 141, .25); }
+        .ad-field small.bantu { font-size: 12.5px; color: var(--muted); }
         .ad-field-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+        /* kolom password + tombol lihat */
+        .ad-pass { position: relative; }
+        .ad-pass input { padding-right: 50px !important; }
+        .ad-pass button {
+            position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+            width: 38px; height: 38px; border: 0; background: transparent; border-radius: 8px;
+            display: grid; place-items: center; cursor: pointer; color: #6b6470; padding: 0;
+        }
+        .ad-pass button:hover { background: rgba(0, 0, 0, .06); }
+        .ad-pass button svg { width: 20px; height: 20px; }
+
+        .ad-info-akun { display: flex; gap: 10px; align-items: flex-start; background: #fbf4f1; border: 1px solid #f0dfd9; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; color: #6a5550; margin-bottom: 18px; }
+        .ad-info-akun svg { width: 18px; height: 18px; color: var(--rose); margin-top: 1px; }
 
         /* pilihan hari */
         .ad-hari { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -259,7 +272,7 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7] === 'masuk
         .ad-foot { text-align: center; padding: 22px; font-size: 12px; letter-spacing: .14em; color: #8a8088; border-top: 1px solid var(--line); }
 
         .ad-burger:focus-visible, .ad-user:focus-visible, .ad-link:focus-visible,
-        .ad-btn:focus-visible, .ad-mini:focus-visible, .ad-x:focus-visible { outline: 2px solid #c4938d; outline-offset: 2px; }
+        .ad-btn:focus-visible, .ad-mini:focus-visible, .ad-x:focus-visible, .ad-pass button:focus-visible { outline: 2px solid #c4938d; outline-offset: 2px; }
 
         /* animasi baru aktif setelah halaman siap */
         body.sb-ready .ad-side { transition: transform .3s ease; }
@@ -474,13 +487,92 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7] === 'masuk
     </div>
 
 
-    <!-- ===== MODAL TAMBAH / EDIT ===== -->
+    <!-- ===== POP-UP TAMBAH PEGAWAI (akun + data diri) ===== -->
+    <div class="ad-modal" id="modalTambah" role="dialog" aria-modal="true" aria-labelledby="tambahTitle">
+
+        <div class="ad-modal-box">
+
+            <div class="ad-modal-head">
+                <h2 id="tambahTitle">Tambah Pegawai</h2>
+                <button type="button" class="ad-x" id="tambahX" aria-label="Tutup"><?= ikon('tutup') ?></button>
+            </div>
+
+            <div class="ad-info-akun">
+                <?= ikon('kunci') ?>
+                <span>Data akun dan data diri pegawai hanya dapat dilihat oleh admin. Pegawai memakai username dan password ini untuk masuk ke akunnya.</span>
+            </div>
+
+            <div class="ad-field">
+                <label for="t_nama">Nama Lengkap</label>
+                <input type="text" id="t_nama" placeholder="Masukkan nama lengkap" autocomplete="off">
+            </div>
+
+            <h3 class="ad-sub" style="margin-top:6px">Akun Login</h3>
+
+            <div class="ad-field-2">
+                <div class="ad-field">
+                    <label for="t_username">Username</label>
+                    <input type="text" id="t_username" placeholder="Contoh: dewi.lestari" autocomplete="off">
+                </div>
+
+                <div class="ad-field">
+                    <label for="t_password">Password</label>
+                    <div class="ad-pass">
+                        <input type="password" id="t_password" placeholder="Minimal 6 karakter" autocomplete="new-password">
+                        <button type="button" id="t_lihat" aria-label="Tampilkan password"><?= ikon('mata') ?></button>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="ad-sub">Data Pegawai</h3>
+
+            <div class="ad-field-2">
+                <div class="ad-field">
+                    <label for="t_nik">NIK</label>
+                    <input type="text" id="t_nik" inputmode="numeric" maxlength="16" placeholder="16 digit NIK" autocomplete="off">
+                </div>
+
+                <div class="ad-field">
+                    <label for="t_keahlian">Specialist</label>
+                    <input type="text" id="t_keahlian" placeholder="Contoh: Hair Stylist" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="ad-field-2">
+                <div class="ad-field">
+                    <label for="t_hp">Nomor HP</label>
+                    <input type="tel" id="t_hp" inputmode="numeric" placeholder="Contoh: 081234567890" autocomplete="off">
+                </div>
+
+                <div class="ad-field">
+                    <label for="t_email">Email</label>
+                    <input type="email" id="t_email" placeholder="nama@email.com" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="ad-field">
+                <label for="t_alamat">Alamat</label>
+                <textarea id="t_alamat" placeholder="Masukkan alamat lengkap"></textarea>
+                <small class="bantu">Jadwal masuk bisa diatur setelah pegawai dibuat, lewat tombol Edit.</small>
+            </div>
+
+            <div class="ad-modal-aksi">
+                <button type="button" class="ad-btn kedua" id="tambahBatal">Batal</button>
+                <button type="button" class="ad-btn utama" id="tambahSimpan">Simpan</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===== MODAL EDIT PEGAWAI (tidak diubah) ===== -->
     <div class="ad-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
 
         <div class="ad-modal-box">
 
             <div class="ad-modal-head">
-                <h2 id="modalTitle">Tambah Pegawai</h2>
+                <h2 id="modalTitle">Edit Pegawai</h2>
                 <button type="button" class="ad-x" id="btnX" aria-label="Tutup"><?= ikon('tutup') ?></button>
             </div>
 
@@ -547,14 +639,115 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7] === 'masuk
 
 <script>
 
-/* ===== pegawai: tambah, edit, hapus =====
+const $ = function (id) { return document.getElementById(id); };
+
+
+/* ===== TAMBAH PEGAWAI (akun + data diri) =====
+   Catatan untuk database nanti:
+   - password WAJIB disimpan dalam bentuk hash (PHP: password_hash($pass, PASSWORD_DEFAULT)),
+     jangan pernah disimpan atau ditampilkan sebagai teks biasa.
+   - username dan NIK harus dicek unik di server.
+   - data ini hanya boleh dibaca oleh akun admin. */
+
+(function () {
+
+    const modal = $("modalTambah");
+
+    const idField = ["t_nama", "t_username", "t_password", "t_nik", "t_keahlian", "t_hp", "t_email", "t_alamat"];
+
+    function bersihkan() {
+        idField.forEach(function (id) { $(id).value = ""; });
+        $("t_password").type = "password";
+        $("t_lihat").setAttribute("aria-label", "Tampilkan password");
+    }
+
+    function buka() {
+        bersihkan();
+        modal.classList.add("show");
+        $("t_nama").focus();
+    }
+
+    function tutup() {
+        modal.classList.remove("show");
+        bersihkan();
+    }
+
+    $("btnTambah").addEventListener("click", buka);
+    $("tambahBatal").addEventListener("click", tutup);
+    $("tambahX").addEventListener("click", tutup);
+
+    modal.addEventListener("click", function (e) {
+        if (e.target === modal) tutup();
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && modal.classList.contains("show")) tutup();
+    });
+
+    /* lihat / sembunyikan password */
+    $("t_lihat").addEventListener("click", function () {
+        const p = $("t_password");
+        const tampil = p.type === "password";
+        p.type = tampil ? "text" : "password";
+        this.setAttribute("aria-label", tampil ? "Sembunyikan password" : "Tampilkan password");
+    });
+
+    /* NIK dan HP hanya angka */
+    ["t_nik", "t_hp"].forEach(function (id) {
+        $(id).addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, "");
+        });
+    });
+
+    /* username: huruf kecil tanpa spasi */
+    $("t_username").addEventListener("input", function () {
+        this.value = this.value.toLowerCase().replace(/\s/g, "");
+    });
+
+    $("tambahSimpan").addEventListener("click", function () {
+
+        const nama = $("t_nama").value.trim();
+        const user = $("t_username").value.trim();
+        const pass = $("t_password").value;
+        const nik = $("t_nik").value.trim();
+        const ahli = $("t_keahlian").value.trim();
+        const hp = $("t_hp").value.trim();
+        const email = $("t_email").value.trim();
+        const alamat = $("t_alamat").value.trim();
+
+        if (nama === "") { alert("Nama lengkap belum diisi."); $("t_nama").focus(); return; }
+
+        if (user.length < 4) { alert("Username minimal 4 karakter."); $("t_username").focus(); return; }
+        if (!/^[a-z0-9._-]+$/.test(user)) { alert("Username hanya boleh huruf, angka, titik, garis bawah, dan strip."); $("t_username").focus(); return; }
+
+        if (pass.length < 6) { alert("Password minimal 6 karakter."); $("t_password").focus(); return; }
+
+        if (!/^\d{16}$/.test(nik)) { alert("NIK harus 16 digit angka."); $("t_nik").focus(); return; }
+
+        if (ahli === "") { alert("Specialist belum diisi."); $("t_keahlian").focus(); return; }
+
+        if (!/^\d{9,15}$/.test(hp)) { alert("Nomor HP tidak valid (9 sampai 15 digit)."); $("t_hp").focus(); return; }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert("Format email tidak valid."); $("t_email").focus(); return; }
+
+        if (alamat === "") { alert("Alamat belum diisi."); $("t_alamat").focus(); return; }
+
+        /* nanti kirim ke server, mis. simpan_pegawai.php (POST) */
+        alert("Pegawai " + nama + " berhasil ditambahkan.\nUsername: " + user);
+        tutup();
+
+    });
+
+})();
+
+
+/* ===== EDIT / HAPUS PEGAWAI (tidak diubah) =====
    Status masuk / tidak masuk TIDAK diatur di sini.
    Nilainya datang dari database (diisi pegawai), admin hanya melihat. */
 
 (function () {
 
-    const modal = document.getElementById("modal");
-    const $ = function (id) { return document.getElementById(id); };
+    const modal = $("modal");
 
     function setHari(daftar) {
         document.querySelectorAll('input[name="hari"]').forEach(function (c) {
@@ -578,13 +771,6 @@ $jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7] === 'masuk
     function tutup() {
         modal.classList.remove("show");
     }
-
-    $("btnTambah").addEventListener("click", function () {
-        buka("Tambah Pegawai", {
-            nama: "", hp: "", jabatan: "", keahlian: "",
-            hari: ["1", "2", "3", "4", "5", "6"], masuk: "09:00", pulang: "17:00"
-        });
-    });
 
     document.querySelectorAll("tr.baris").forEach(function (tr) {
 
