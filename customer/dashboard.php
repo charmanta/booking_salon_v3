@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="../assets/css/theme.css">
 </head>
 <body class="page-customer p-dashboard">
+
+<?php include __DIR__ . '/customer_menu.php'; ?>
+
 <header class="site-header site-header--customer">
 <nav class="site-nav"><a href="dashboard.php" class="active">Beranda</a><a href="booking.php">Reservasi</a><a href="riwayat.php">Riwayat</a><a href="https://gemini.google.com/" target="_blank">Tanya AI</a><a href="../login.php">Keluar</a></nav>
 <a class="brand" href="dashboard.php"><span class="brand-name">RESERVIN</span><span class="brand-sub">Salon Booking</span></a>
@@ -34,7 +37,6 @@
 <section class="quick-grid"><a href="pilih_salon.php"><span>01</span><h2>Reservasi</h2><p>Pilih salon, layanan, stylist, dan waktu.</p>→</a><a href="riwayat.php"><span>02</span><h2>Riwayat</h2><p>Lihat dan ganti jadwal reservasi yang tersedia.</p>→</a><a href="https://gemini.google.com/" target="_blank"><span>03</span><h2>Tanya AI</h2><p>Cari inspirasi dan rekomendasi perawatan.</p>→</a></section>
 <section class="customer-gallery"><div class="section-head"><div><span class="eyebrow">SALON MOOD</span><h2>Inspirasi gaya</h2></div><div class="slider-actions"><button onclick="slide(-1)">←</button><button onclick="slide(1)">→</button></div></div><div class="horizontal-track" id="gallery"><img src="../assets/images/curly-hair.jpg" alt="Inspirasi rambut"><img src="../assets/images/creambath.jpg" alt="Inspirasi rambut"><img src="../assets/images/hair dye.jpg" alt="Inspirasi rambut"><img src="../assets/images/model rambut.jpg" alt="Salon beauty"></div></section>
 </main>
-<div class="bottom"><a href="dashboard.php" class="active"><span class="icon">🏠</span>Beranda</a><a href="pilih_salon.php"><span class="icon">📅</span>Reservasi</a><a href="riwayat.php"><span class="icon">📋</span>Riwayat</a><a href="https://gemini.google.com/" target="_blank"><span class="icon">💬</span>Tanya AI</a></div>
 <footer class="site-footer site-footer--slim"><div class="copy">© RESERVIN · BOOKING SALON</div></footer>
 <script>
 function slide(d){document.getElementById('gallery').scrollBy({left:d*390,behavior:'smooth'})}

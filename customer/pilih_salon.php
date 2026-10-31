@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="../assets/css/theme.css">
 </head>
 <body class="page-customer p-pilih">
+
+<?php include __DIR__ . '/customer_menu.php'; ?>
+
 <header class="site-header site-header--customer">
 <nav class="site-nav"><a href="dashboard.php">Beranda</a><a href="pilih_salon.php" class="active">Reservasi</a><a href="riwayat.php">Riwayat</a><a href="https://gemini.google.com/" target="_blank">Tanya AI</a><a href="../login.php">Keluar</a></nav>
 <a class="brand" href="dashboard.php"><span class="brand-name">RESERVIN</span><span class="brand-sub">Salon Booking</span></a>
@@ -39,8 +42,6 @@
 </article>
 </div>
 </main>
-
-<div class="bottom"><a href="dashboard.php"><span class="icon">🏠</span>Beranda</a><a href="pilih_salon.php" class="active"><span class="icon">📅</span>Reservasi</a><a href="riwayat.php"><span class="icon">📋</span>Riwayat</a><a href="https://gemini.google.com/" target="_blank"><span class="icon">💬</span>Tanya AI</a></div>
 
 <div class="modal" id="modalSalon"><div class="modal-box"><h2 id="namaSalon">Pilih Salon</h2><p class="modal-info">Kamu memilih salon ini. Selanjutnya pilih layanan, tanggal, jam, dan apakah ingin dilayani Owner atau Pegawai.</p><button class="modal-btn lanjut" onclick="lanjutBooking()">Lanjut Booking</button><button class="modal-btn batal" onclick="tutupModal()">Batal</button></div></div>
 

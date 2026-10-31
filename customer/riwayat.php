@@ -247,6 +247,8 @@ foreach ($bookings as $b) {
 </head>
 <body class="page-customer p-riwayat">
 
+    <?php include __DIR__ . '/customer_menu.php'; ?>
+
     <!-- ===== HEADER ===== -->
     <header class="site-header site-header--customer">
         <nav class="site-nav">
@@ -387,59 +389,6 @@ foreach ($bookings as $b) {
 
     </div>
 
-
-    <!-- MENU BAWAH -->
-
-    <div class="bottom">
-
-        <a href="dashboard.php">
-
-            <span class="icon">
-                🏠
-            </span>
-
-            Beranda
-
-        </a>
-
-
-        <a href="booking.php">
-
-            <span class="icon">
-                📅
-            </span>
-
-            Reservasi
-
-        </a>
-
-
-        <a
-            href="riwayat.php"
-            class="active">
-
-            <span class="icon">
-                📋
-            </span>
-
-            Riwayat
-
-        </a>
-
-
-        <a
-            href="https://gemini.google.com/"
-            target="_blank">
-
-            <span class="icon">
-                💬
-            </span>
-
-            Tanya AI
-
-        </a>
-
-    </div>
 
 </div>
 

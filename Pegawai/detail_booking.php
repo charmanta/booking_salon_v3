@@ -31,7 +31,7 @@ $pegawai = ['nama' => 'Siti Amelia', 'peran' => 'Pegawai', 'inisial' => 'SA'];
 
 $menu = [
     ['dashboard.php',      'Dashboard',      'home',    false],
-    ['detail_booking.php',   'Detail Reservasi', 'daftar',  true],
+    ['detail_reservasi.php',   'Detail Reservasi', 'daftar',  true],
     ['daftar_reservasi.php', 'Daftar Reservasi', 'booking', false],
     ['jadwal_saya.php',      'Jadwal Saya',      'kalender', false],
     ['profil.php',         'Profil',         'user',    false],
