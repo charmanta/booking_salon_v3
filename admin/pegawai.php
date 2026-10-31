@@ -1,3 +1,67 @@
+<?php
+date_default_timezone_set('Asia/Jakarta');
+
+function e($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+
+/* ikon garis (stroke) */
+function ikon($nama) {
+    $p = [
+        'home'     => '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+        'store'    => '<path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M10 20v-5h4v5"/>',
+        'gunting'  => '<circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 16 19 3M16 16 5 3"/>',
+        'users'    => '<circle cx="9" cy="8" r="3.5"/><path d="M2.500 20c0-3.600 2.900-6 6.500-6s6.500 2.400 6.500 6"/><circle cx="17.500" cy="9" r="2.500"/><path d="M17 14.200c2.600.2 4.500 2 4.500 4.800"/>',
+        'laporan'  => '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-5M15 17v-2"/>',
+        'user'     => '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.200 3.600-7 8-7s8 2.800 8 7"/>',
+        'logout'   => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
+        'turun'    => '<path d="M6 9l6 6 6-6"/>',
+        'menu'     => '<path d="M4 6h16M4 12h10M4 18h16"/>',
+        'plus'     => '<path d="M12 5v14M5 12h14"/>',
+        'edit'     => '<path d="M4 20h4L19 9a2.800 2.800 0 0 0-4-4L4 16z"/><path d="M13.500 6.500l4 4"/>',
+        'hapus'    => '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>',
+        'tutup'    => '<path d="M6 6l12 12M18 6L6 18"/>',
+    ];
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        . ($p[$nama] ?? '') . '</svg>';
+}
+
+/* ===== Data contoh (nanti ganti dengan data dari database) ===== */
+
+$admin = ['nama' => 'Siti Amelia', 'peran' => 'Pemilik Salon', 'inisial' => 'SA'];
+
+$menu = [
+    ['dashboard.php', 'Dashboard',  'home',    false],
+    ['salon.php',     'Data Salon', 'store',   false],
+    ['layanan.php',   'Layanan',    'gunting', false],
+    ['pegawai.php',   'Pegawai',    'users',   true],
+    ['laporan.php',   'Laporan',    'laporan', false],
+    ['profil.php',    'Profil',     'user',    false],
+];
+
+/* nomor hari: 1 = Senin ... 7 = Minggu */
+$namaHari = [1 => 'Sen', 2 => 'Sel', 3 => 'Rab', 4 => 'Kam', 5 => 'Jum', 6 => 'Sab', 7 => 'Min'];
+$hariIni  = (int)date('N');
+
+/*
+ * [nama, no hp, jabatan, keahlian, hari kerja, jam masuk, jam pulang, masuk hari ini?]
+ * Status otomatis: masuk = Aktif, tidak masuk = Nonaktif
+ */
+$pegawai = [
+    ['Dewi Lestari',   '081234567890', 'Pegawai', 'Hair Stylist',    [1, 2, 3, 4, 5, 6], '09:00', '17:00', true],
+    ['Andi Pratama',   '082345678901', 'Pegawai', 'Barber',          [1, 2, 3, 4, 5, 6], '10:00', '18:00', true],
+    ['Maya Putri',     '083456789012', 'Pegawai', 'Facial & Beauty', [2, 3, 4, 5, 6, 7], '09:00', '17:00', true],
+    ['Rani Salsabila', '084567890123', 'Pegawai', 'Hair Coloring',   [1, 3, 5, 6],       '11:00', '20:00', false],
+];
+
+function ringkasHari($hari, $namaHari) {
+    sort($hari);
+    if ($hari === [1, 2, 3, 4, 5, 6, 7]) return 'Setiap hari';
+    if ($hari === [1, 2, 3, 4, 5, 6]) return 'Sen – Sab';
+    if ($hari === [1, 2, 3, 4, 5]) return 'Sen – Jum';
+    return implode(', ', array_map(function ($h) use ($namaHari) { return $namaHari[$h]; }, $hari));
+}
+
+$jmlMasuk = count(array_filter($pegawai, function ($p) { return $p[7]; }));
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,631 +71,742 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/theme.css">
+    <!-- Halaman ini berdiri sendiri: semua gaya ada di blok <style> di bawah -->
+    <style>
+        :root {
+            --side: 232px;
+            --rose: #a9726c;
+            --rose-dark: #96605a;
+            --rose-soft: #c4938d;
+            --ink: #1f1a1a;
+            --muted: #6b6470;
+            --line: #ece4df;
+            --bg: #fbf8f6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body.ad-body { margin: 0; font-family: 'Jost', sans-serif; color: var(--ink); background: var(--bg); }
+        .ad-body a { color: inherit; }
+        .ad-body svg { width: 22px; height: 22px; flex: none; }
+
+        /* ================= SIDEBAR ================= */
+        .ad-side {
+            position: fixed; top: 0; left: 0; bottom: 0; width: var(--side); z-index: 200;
+            background: linear-gradient(180deg, #b07f79 0%, #a36d67 100%);
+            color: #fff; display: flex; flex-direction: column; padding: 22px 16px 18px;
+            transform: translateX(-100%); overflow-y: auto;
+        }
+        body.sb-open .ad-side { transform: none; }
+
+        .ad-logo { display: flex; align-items: center; justify-content: space-between; gap: 8px; text-decoration: none; color: #fff; padding: 0 4px 4px; }
+        .ad-logo b { display: block; font-size: 20px; font-weight: 600; letter-spacing: .12em; line-height: 1; }
+        .ad-logo small { display: block; margin-top: 5px; font-size: 13px; font-weight: 400; opacity: .95; }
+        .ad-logo svg { width: 28px; height: 28px; }
+
+        .ad-nav { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+        .ad-link {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px;
+            color: #fff; text-decoration: none; font-size: 14.5px; opacity: .95;
+        }
+        .ad-link:hover { background: rgba(255, 255, 255, .12); }
+        .ad-link.active { background: rgba(255, 255, 255, .24); font-weight: 600; opacity: 1; }
+        .ad-link svg { width: 20px; height: 20px; }
+
+        .ad-side-bawah { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .28); }
+        .ad-profil { display: flex; align-items: center; gap: 10px; padding: 4px 4px 12px; }
+        .ad-ava { width: 40px; height: 40px; border-radius: 50%; background: #fff; color: #7a4a45; display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: none; }
+        .ad-profil b { display: block; font-size: 14.5px; font-weight: 500; }
+        .ad-profil small { display: block; font-size: 12.5px; opacity: .85; margin-top: 2px; }
+
+        .ad-overlay { display: none; position: fixed; inset: 0; z-index: 150; background: rgba(30, 18, 16, .5); }
+
+        /* ================= KONTEN ================= */
+        .ad-wrap { min-height: 100vh; display: flex; flex-direction: column; }
+
+        .ad-top {
+            position: sticky; top: 0; z-index: 100; height: 88px; padding: 0 clamp(18px, 3vw, 44px);
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            background: linear-gradient(90deg, #f6ece7 0%, #fbf7f5 100%);
+            border-bottom: 1px solid var(--line);
+        }
+        .ad-burger { width: 46px; height: 46px; border: 0; background: transparent; border-radius: 10px; display: grid; place-items: center; cursor: pointer; color: #4a4348; padding: 0; }
+        .ad-burger:hover { background: rgba(0, 0, 0, .06); }
+        .ad-burger svg { width: 28px; height: 28px; }
+
+        .ad-user-wrap { position: relative; }
+        .ad-user { display: flex; align-items: center; gap: 14px; background: transparent; border: 0; cursor: pointer; font-family: inherit; color: inherit; padding: 6px 8px; border-radius: 12px; }
+        .ad-user:hover { background: rgba(0, 0, 0, .05); }
+        .ad-user .ad-ava { background: #c4938d; color: #fff; width: 48px; height: 48px; font-size: 17px; }
+        .ad-user-info { text-align: left; line-height: 1.25; }
+        .ad-user-info b { display: block; font-size: 16px; font-weight: 500; }
+        .ad-user-info small { display: block; font-size: 14px; color: var(--muted); }
+        .ad-user > svg { width: 20px; height: 20px; color: #4a4348; margin-left: 6px; }
+
+        .ad-dd { display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 200px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(60, 30, 25, .14); padding: 6px; z-index: 300; }
+        .ad-dd.show { display: block; }
+        .ad-dd a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 8px; text-decoration: none; font-size: 15px; }
+        .ad-dd a:hover { background: #f6ece7; }
+        .ad-dd svg { width: 20px; height: 20px; color: var(--rose); }
+
+        .ad-main { flex: 1; padding: 36px clamp(18px, 3vw, 44px) 56px; }
+
+        .ad-sapa-baris { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+        .ad-sapa h1 { margin: 0; font-size: clamp(28px, 3.2vw, 40px); font-weight: 700; letter-spacing: -.01em; }
+        .ad-sapa p { margin: 10px 0 0; font-size: 19px; color: var(--muted); }
+
+        /* kartu umum */
+        .ad-kartu { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; min-width: 0; margin-top: 30px; }
+        .ad-kartu-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+        .ad-kartu-head h2 { margin: 0; font-size: 21px; font-weight: 600; }
+        .ad-jumlah { font-size: 14px; color: var(--muted); }
+        .ad-tip { margin: 0 0 18px; font-size: 14.5px; color: var(--muted); }
+
+        /* tombol */
+        .ad-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: inherit; font-size: 15px; font-weight: 500; padding: 12px 22px; border-radius: 10px;
+            cursor: pointer; border: 1px solid transparent; transition: background .15s;
+        }
+        .ad-btn svg { width: 18px; height: 18px; }
+        .ad-btn.utama { background: var(--rose); color: #fff; }
+        .ad-btn.utama:hover { background: var(--rose-dark); }
+        .ad-btn.kedua { background: #fff; color: #4d4650; border-color: #e3d8d2; }
+        .ad-btn.kedua:hover { background: #f6ece7; }
+
+        /* tabel */
+        .ad-tabel-box { overflow-x: auto; }
+        .ad-tabel { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 900px; }
+        .ad-tabel th { text-align: left; font-weight: 600; font-size: 14px; padding: 14px 14px; background: #f7f2ef; white-space: nowrap; }
+        .ad-tabel th:first-child { border-radius: 8px 0 0 8px; }
+        .ad-tabel th:last-child { border-radius: 0 8px 8px 0; }
+        .ad-tabel td { padding: 15px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+        .ad-tabel tr:last-child td { border-bottom: 0; }
+        .ad-tabel .nama { font-weight: 600; white-space: nowrap; }
+        .ad-tabel .nowrap { white-space: nowrap; }
+        .ad-jadwal b { display: block; font-weight: 500; white-space: nowrap; }
+        .ad-jadwal small { display: block; margin-top: 3px; font-size: 13.5px; color: var(--muted); white-space: nowrap; }
+        .ad-jadwal .hari-ini { color: #1c6f47; }
+
+        .ad-pil { display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+        .ad-pil.ok { background: #dff3e8; color: #1c6f47; }
+        .ad-pil.off { background: #f1ebe8; color: #7a6c68; }
+
+        /* saklar masuk / tidak masuk */
+        .ad-hadir { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+        .ad-sakelar {
+            position: relative; width: 44px; height: 26px; border-radius: 999px; border: 0; padding: 0; cursor: pointer;
+            background: #d9cdc8; transition: background .2s; flex: none;
+        }
+        .ad-sakelar::after {
+            content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+            background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .2s;
+        }
+        .ad-sakelar[aria-checked="true"] { background: #2e9468; }
+        .ad-sakelar[aria-checked="true"]::after { transform: translateX(18px); }
+
+        .ad-aksi-sel { display: flex; gap: 8px; }
+        .ad-mini {
+            display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13.5px; font-weight: 500;
+            padding: 7px 12px; border-radius: 8px; cursor: pointer; background: #fff; border: 1px solid #e3d8d2; color: #4d4650;
+        }
+        .ad-mini svg { width: 16px; height: 16px; }
+        .ad-mini:hover { background: #f6ece7; }
+        .ad-mini.bahaya { color: #b4423a; border-color: #efc9c5; }
+        .ad-mini.bahaya:hover { background: #fdeceb; }
+
+        /* modal */
+        .ad-modal { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(30, 18, 16, .5); align-items: center; justify-content: center; padding: 18px; }
+        .ad-modal.show { display: flex; }
+        .ad-modal-box { background: #fff; border-radius: 16px; width: 100%; max-width: 520px; max-height: calc(100vh - 36px); overflow-y: auto; padding: 26px 28px; box-shadow: 0 20px 50px rgba(40, 20, 16, .25); }
+        .ad-modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .ad-modal-head h2 { margin: 0; font-size: 21px; font-weight: 600; }
+        .ad-x { width: 36px; height: 36px; border: 0; background: transparent; border-radius: 8px; display: grid; place-items: center; cursor: pointer; color: #4a4348; padding: 0; }
+        .ad-x:hover { background: rgba(0, 0, 0, .06); }
+
+        .ad-sub { margin: 24px 0 14px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 16px; font-weight: 600; }
+
+        .ad-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .ad-field label, .ad-field .lbl { font-size: 14px; font-weight: 500; color: #4d4650; }
+        .ad-field input[type="text"], .ad-field input[type="time"], .ad-field select {
+            width: 100%; font-family: inherit; font-size: 15.5px; color: var(--ink);
+            background: #fff; border: 1px solid #e3d8d2; border-radius: 10px; padding: 12px 14px;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .ad-field input:focus, .ad-field select:focus { outline: 0; border-color: var(--rose-soft); box-shadow: 0 0 0 3px rgba(196, 147, 141, .25); }
+        .ad-field-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+        /* pilihan hari */
+        .ad-hari { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ad-hari label { position: relative; cursor: pointer; }
+        .ad-hari input { position: absolute; opacity: 0; pointer-events: none; }
+        .ad-hari span {
+            display: block; min-width: 48px; text-align: center; padding: 9px 12px; border-radius: 10px;
+            border: 1px solid #e3d8d2; font-size: 14px; background: #fff; color: #4d4650; transition: background .15s;
+        }
+        .ad-hari label:hover span { background: #fbf4f1; }
+        .ad-hari input:checked + span { background: var(--rose); border-color: var(--rose); color: #fff; font-weight: 500; }
+        .ad-hari input:focus-visible + span { outline: 2px solid #c4938d; outline-offset: 2px; }
+
+        /* pilihan kehadiran */
+        .ad-seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .ad-seg label { position: relative; cursor: pointer; }
+        .ad-seg input { position: absolute; opacity: 0; pointer-events: none; }
+        .ad-seg span {
+            display: block; text-align: center; padding: 12px 14px; border-radius: 10px; border: 1px solid #e3d8d2;
+            font-size: 15px; background: #fff; transition: background .15s, border-color .15s;
+        }
+        .ad-seg input:checked + span { font-weight: 600; }
+        .ad-seg .y input:checked + span { background: #dff3e8; border-color: #8fd0ae; color: #1c6f47; }
+        .ad-seg .n input:checked + span { background: #f1ebe8; border-color: #cdbfb8; color: #5d504c; }
+        .ad-seg input:focus-visible + span { outline: 2px solid #c4938d; outline-offset: 2px; }
+        .ad-bantu { margin: 4px 0 0; font-size: 13.5px; color: var(--muted); }
+
+        .ad-modal-aksi { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+
+        .ad-foot { text-align: center; padding: 22px; font-size: 12px; letter-spacing: .14em; color: #8a8088; border-top: 1px solid var(--line); }
+
+        .ad-burger:focus-visible, .ad-user:focus-visible, .ad-link:focus-visible, .ad-sakelar:focus-visible,
+        .ad-btn:focus-visible, .ad-mini:focus-visible, .ad-x:focus-visible { outline: 2px solid #c4938d; outline-offset: 2px; }
+
+        /* animasi baru aktif setelah halaman siap */
+        body.sb-ready .ad-side { transition: transform .3s ease; }
+        body.sb-ready .ad-wrap { transition: margin-left .3s ease; }
+
+        /* ================= RESPONSIVE ================= */
+        @media (min-width: 1000px) {
+            body.sb-open .ad-wrap { margin-left: var(--side); }
+        }
+
+        @media (max-width: 999px) {
+            body.sb-open .ad-overlay { display: block; }
+            .ad-side { box-shadow: 8px 0 30px rgba(0, 0, 0, .3); }
+        }
+
+        @media (max-width: 760px) {
+            .ad-user-info { display: none; }
+        }
+
+        @media (max-width: 520px) {
+            .ad-kartu { padding: 20px 16px; }
+            .ad-modal-box { padding: 22px 18px; }
+            .ad-field-2 { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
 </head>
-<body class="page-staff p-admin-pegawai">
-
-    <!-- ===== HEADER ===== -->
-    <header class="site-header site-header--staff">
-        <nav class="site-nav">
-            <a href="dashboard.php">Dashboard</a>
-            <a href="salon.php">Data Salon</a>
-            <a href="layanan.php">Layanan</a>
-            <a href="pegawai.php" class="active">Pegawai</a>
-            <a href="laporan.php">Laporan</a>
-            <a href="profil.php">Profil</a>
-        </nav>
-        <a class="brand" href="dashboard.php" aria-label="Reservin"><span class="brand-name">RESERVIN</span><span class="brand-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 16 19 3M16 16 5 3"/></svg> Salon Booking</span></a>
-        <div class="header-right">
-            <div class="user-chip"><span class="avatar">SA</span><span><b>Siti Amelia</b><small>Pemilik Salon</small></span></div>
-            <a href="../login.php" class="btn btn-cta" style="padding:26px 34px">Logout</a>
-        </div>
-    </header>
-
-
-
-<!-- SIDEBAR -->
-
-
-
-
-<!-- MAIN -->
-
-<main class="main">
-
-    <!-- TOPBAR -->
-
-    <div class="hero hero--sm">
-                <h2>Pegawai</h2>
-            </div>
-
-
-    <!-- CONTENT -->
-
-    <section class="content">
-
-        <div class="page-title">
-
-            <h1>
-                Data Pegawai
-            </h1>
-
-            <p>
-                Kelola data pegawai yang bekerja di salon Anda.
-            </p>
-
-        </div>
-
-
-        <div class="page-header">
-
-            <b>
-                Daftar Pegawai
-            </b>
-
-            <button
-                class="btn btn-primary"
-                onclick="bukaTambah()">
-
-                + Tambah Pegawai
-
-            </button>
-
-        </div>
-
-
-        <!-- TABLE -->
-
-        <div class="card">
-
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>No</th>
-
-                            <th>Nama Pegawai</th>
-
-                            <th>No. HP</th>
-
-                            <th>Jabatan</th>
-
-                            <th>Keahlian</th>
-
-                            <th>Status</th>
-
-                            <th>Aksi</th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>1</td>
-
-                            <td>
-                                <div class="nama">
-                                    Dewi Lestari
-                                </div>
-                            </td>
-
-                            <td>
-                                081234567890
-                            </td>
-
-                            <td>
-                                Pegawai
-                            </td>
-
-                            <td>
-                                Hair Stylist
-                            </td>
-
-                            <td>
-                                <span class="status aktif">
-                                    Aktif
-                                </span>
-                            </td>
-
-                            <td>
-
-                                <div class="action">
-
-                                    <button
-                                        class="btn-edit"
-                                        onclick="editPegawai(
-                                        'Dewi Lestari',
-                                        '081234567890',
-                                        'Pegawai',
-                                        'Hair Stylist',
-                                        'Aktif'
-                                        )">
-
-                                        Edit
-
-                                    </button>
-
-                                    <button
-                                        class="btn-delete"
-                                        onclick="hapusPegawai('Dewi Lestari')">
-
-                                        Hapus
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>2</td>
-
-                            <td>
-                                <div class="nama">
-                                    Andi Pratama
-                                </div>
-                            </td>
-
-                            <td>
-                                082345678901
-                            </td>
-
-                            <td>
-                                Pegawai
-                            </td>
-
-                            <td>
-                                Barber
-                            </td>
-
-                            <td>
-                                <span class="status aktif">
-                                    Aktif
-                                </span>
-                            </td>
-
-                            <td>
-
-                                <div class="action">
-
-                                    <button
-                                        class="btn-edit"
-                                        onclick="editPegawai(
-                                        'Andi Pratama',
-                                        '082345678901',
-                                        'Pegawai',
-                                        'Barber',
-                                        'Aktif'
-                                        )">
-
-                                        Edit
-
-                                    </button>
-
-                                    <button
-                                        class="btn-delete"
-                                        onclick="hapusPegawai('Andi Pratama')">
-
-                                        Hapus
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>3</td>
-
-                            <td>
-                                <div class="nama">
-                                    Maya Putri
-                                </div>
-                            </td>
-
-                            <td>
-                                083456789012
-                            </td>
-
-                            <td>
-                                Pegawai
-                            </td>
-
-                            <td>
-                                Facial & Beauty
-                            </td>
-
-                            <td>
-                                <span class="status aktif">
-                                    Aktif
-                                </span>
-                            </td>
-
-                            <td>
-
-                                <div class="action">
-
-                                    <button
-                                        class="btn-edit"
-                                        onclick="editPegawai(
-                                        'Maya Putri',
-                                        '083456789012',
-                                        'Pegawai',
-                                        'Facial & Beauty',
-                                        'Aktif'
-                                        )">
-
-                                        Edit
-
-                                    </button>
-
-                                    <button
-                                        class="btn-delete"
-                                        onclick="hapusPegawai('Maya Putri')">
-
-                                        Hapus
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>4</td>
-
-                            <td>
-                                <div class="nama">
-                                    Rani Salsabila
-                                </div>
-                            </td>
-
-                            <td>
-                                084567890123
-                            </td>
-
-                            <td>
-                                Pegawai
-                            </td>
-
-                            <td>
-                                Hair Coloring
-                            </td>
-
-                            <td>
-                                <span class="status nonaktif">
-                                    Nonaktif
-                                </span>
-                            </td>
-
-                            <td>
-
-                                <div class="action">
-
-                                    <button
-                                        class="btn-edit"
-                                        onclick="editPegawai(
-                                        'Rani Salsabila',
-                                        '084567890123',
-                                        'Pegawai',
-                                        'Hair Coloring',
-                                        'Nonaktif'
-                                        )">
-
-                                        Edit
-
-                                    </button>
-
-                                    <button
-                                        class="btn-delete"
-                                        onclick="hapusPegawai('Rani Salsabila')">
-
-                                        Hapus
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<!-- MODAL TAMBAH / EDIT -->
-
-<div
-    class="modal"
-    id="modal">
-
-    <div class="modal-box">
-
-        <div class="modal-title">
-
-            <span id="modalTitle">
-                Tambah Pegawai
+<body class="ad-body">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="ad-side" id="sidebar" aria-label="Menu admin">
+
+        <a class="ad-logo" href="dashboard.php" aria-label="Reservin Salon Booking">
+            <span>
+                <b>RESERVIN</b>
+                <small>Salon Booking</small>
             </span>
+            <?= ikon('gunting') ?>
+        </a>
+
+        <nav class="ad-nav">
+            <?php foreach ($menu as $m): ?>
+                <a href="<?= e($m[0]) ?>" class="ad-link<?= $m[3] ? ' active' : '' ?>"<?= $m[3] ? ' aria-current="page"' : '' ?>>
+                    <?= ikon($m[2]) ?>
+                    <?= e($m[1]) ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+
+        <div class="ad-side-bawah">
+
+            <div class="ad-profil">
+                <div class="ad-ava"><?= e($admin['inisial']) ?></div>
+                <div>
+                    <b><?= e($admin['nama']) ?></b>
+                    <small><?= e($admin['peran']) ?></small>
+                </div>
+            </div>
+
+            <a href="../login.php" class="ad-link">
+                <?= ikon('logout') ?>
+                Logout
+            </a>
 
         </div>
 
+    </aside>
 
-        <div class="form-group">
-
-            <label>
-                Nama Pegawai
-            </label>
-
-            <input
-                type="text"
-                id="nama"
-                placeholder="Masukkan nama pegawai">
-
-        </div>
+    <div class="ad-overlay" id="overlay"></div>
 
 
-        <div class="form-group">
+    <!-- ===== KONTEN ===== -->
+    <div class="ad-wrap" id="wrap">
 
-            <label>
-                No. HP
-            </label>
-
-            <input
-                type="text"
-                id="hp"
-                placeholder="Contoh: 081234567890">
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Jabatan
-            </label>
-
-            <select id="jabatan">
-
-                <option value="">
-                    Pilih jabatan
-                </option>
-
-                <option value="Pegawai">
-                    Pegawai
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Keahlian
-            </label>
-
-            <input
-                type="text"
-                id="keahlian"
-                placeholder="Contoh: Hair Stylist">
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Status
-            </label>
-
-            <select id="status">
-
-                <option value="Aktif">
-                    Aktif
-                </option>
-
-                <option value="Nonaktif">
-                    Nonaktif
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="modal-actions">
+        <header class="ad-top">
 
             <button
-                class="btn-cancel"
-                onclick="tutupModal()">
-
-                Batal
-
+                type="button"
+                class="ad-burger"
+                id="burger"
+                aria-label="Buka menu"
+                aria-expanded="false"
+                aria-controls="sidebar">
+                <?= ikon('menu') ?>
             </button>
 
-            <button
-                class="btn btn-primary"
-                onclick="simpanPegawai()">
+            <div class="ad-user-wrap">
 
-                Simpan
+                <button
+                    type="button"
+                    class="ad-user"
+                    id="userBtn"
+                    aria-haspopup="true"
+                    aria-expanded="false">
 
-            </button>
+                    <span class="ad-ava"><?= e($admin['inisial']) ?></span>
+
+                    <span class="ad-user-info">
+                        <b><?= e($admin['nama']) ?></b>
+                        <small><?= e($admin['peran']) ?></small>
+                    </span>
+
+                    <?= ikon('turun') ?>
+
+                </button>
+
+                <div class="ad-dd" id="userMenu">
+                    <a href="profil.php"><?= ikon('user') ?> Profil</a>
+                    <a href="../login.php"><?= ikon('logout') ?> Logout</a>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <main class="ad-main">
+
+            <div class="ad-sapa-baris">
+
+                <section class="ad-sapa">
+                    <h1>Data Pegawai</h1>
+                    <p>Kelola data pegawai yang bekerja di salon Anda.</p>
+                </section>
+
+                <button type="button" class="ad-btn utama" id="btnTambah">
+                    <?= ikon('plus') ?> Tambah Pegawai
+                </button>
+
+            </div>
+
+
+            <!-- DAFTAR PEGAWAI -->
+
+            <section class="ad-kartu">
+
+                <div class="ad-kartu-head">
+                    <h2>Daftar Pegawai</h2>
+                    <span class="ad-jumlah" id="ringkas"><?= $jmlMasuk ?> masuk · <?= count($pegawai) - $jmlMasuk ?> tidak masuk</span>
+                </div>
+
+                <p class="ad-tip">Geser tombol "Masuk hari ini" untuk mengubah status. Pegawai yang masuk berstatus Aktif, yang tidak masuk berstatus Nonaktif.</p>
+
+                <div class="ad-tabel-box">
+                    <table class="ad-tabel">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Pegawai</th>
+                                <th>No. HP</th>
+                                <th>Jabatan</th>
+                                <th>Keahlian</th>
+                                <th>Jadwal Masuk</th>
+                                <th>Masuk Hari Ini</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($pegawai as $i => $p): ?>
+                                <?php $kerjaHariIni = in_array($hariIni, $p[4], true); ?>
+                                <tr class="baris"
+                                    data-nama="<?= e($p[0]) ?>"
+                                    data-hp="<?= e($p[1]) ?>"
+                                    data-jabatan="<?= e($p[2]) ?>"
+                                    data-keahlian="<?= e($p[3]) ?>"
+                                    data-hari="<?= e(implode(',', $p[4])) ?>"
+                                    data-masuk-jam="<?= e($p[5]) ?>"
+                                    data-pulang-jam="<?= e($p[6]) ?>"
+                                    data-hadir="<?= $p[7] ? '1' : '0' ?>">
+                                    <td><?= $i + 1 ?></td>
+                                    <td class="nama"><?= e($p[0]) ?></td>
+                                    <td class="nowrap"><?= e($p[1]) ?></td>
+                                    <td><?= e($p[2]) ?></td>
+                                    <td class="nowrap"><?= e($p[3]) ?></td>
+                                    <td class="ad-jadwal">
+                                        <b><?= e(ringkasHari($p[4], $namaHari)) ?></b>
+                                        <small class="<?= $kerjaHariIni ? 'hari-ini' : '' ?>">
+                                            <?= e($p[5]) ?> – <?= e($p[6]) ?><?= $kerjaHariIni ? ' · jadwal hari ini' : '' ?>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="ad-hadir">
+                                            <button type="button" class="ad-sakelar btn-sakelar" role="switch"
+                                                aria-checked="<?= $p[7] ? 'true' : 'false' ?>"
+                                                aria-label="Masuk hari ini: <?= e($p[0]) ?>"></button>
+                                            <span class="teks-hadir"><?= $p[7] ? 'Masuk' : 'Tidak masuk' ?></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="ad-pil <?= $p[7] ? 'ok' : 'off' ?> pil-status"><?= $p[7] ? 'Aktif' : 'Nonaktif' ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="ad-aksi-sel">
+                                            <button type="button" class="ad-mini btn-edit"><?= ikon('edit') ?> Edit</button>
+                                            <button type="button" class="ad-mini bahaya btn-hapus"><?= ikon('hapus') ?> Hapus</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="ad-foot">© RESERVIN · BOOKING SALON</footer>
+
+    </div>
+
+
+    <!-- ===== MODAL TAMBAH / EDIT ===== -->
+    <div class="ad-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="ad-modal-box">
+
+            <div class="ad-modal-head">
+                <h2 id="modalTitle">Tambah Pegawai</h2>
+                <button type="button" class="ad-x" id="btnX" aria-label="Tutup"><?= ikon('tutup') ?></button>
+            </div>
+
+            <div class="ad-field">
+                <label for="nama">Nama Pegawai</label>
+                <input type="text" id="nama" placeholder="Masukkan nama pegawai">
+            </div>
+
+            <div class="ad-field-2">
+                <div class="ad-field">
+                    <label for="hp">No. HP</label>
+                    <input type="text" id="hp" placeholder="Contoh: 081234567890">
+                </div>
+
+                <div class="ad-field">
+                    <label for="jabatan">Jabatan</label>
+                    <select id="jabatan">
+                        <option value="">Pilih jabatan</option>
+                        <option value="Pegawai">Pegawai</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="ad-field">
+                <label for="keahlian">Keahlian</label>
+                <input type="text" id="keahlian" placeholder="Contoh: Hair Stylist">
+            </div>
+
+            <h3 class="ad-sub">Jadwal Masuk</h3>
+
+            <div class="ad-field">
+                <span class="lbl" id="lblHari">Hari kerja</span>
+                <div class="ad-hari" role="group" aria-labelledby="lblHari">
+                    <?php foreach ($namaHari as $no => $h): ?>
+                        <label>
+                            <input type="checkbox" name="hari" value="<?= $no ?>">
+                            <span><?= e($h) ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div class="ad-field-2">
+                <div class="ad-field">
+                    <label for="jamMasuk">Jam masuk</label>
+                    <input type="time" id="jamMasuk" value="09:00">
+                </div>
+
+                <div class="ad-field">
+                    <label for="jamPulang">Jam pulang</label>
+                    <input type="time" id="jamPulang" value="17:00">
+                </div>
+            </div>
+
+            <div class="ad-field">
+                <span class="lbl" id="lblHadir">Kehadiran hari ini</span>
+                <div class="ad-seg" role="radiogroup" aria-labelledby="lblHadir">
+                    <label class="y">
+                        <input type="radio" name="hadir" value="1" checked>
+                        <span>Masuk</span>
+                    </label>
+                    <label class="n">
+                        <input type="radio" name="hadir" value="0">
+                        <span>Tidak masuk</span>
+                    </label>
+                </div>
+                <p class="ad-bantu">Masuk berarti status Aktif. Tidak masuk berarti status Nonaktif.</p>
+            </div>
+
+            <div class="ad-modal-aksi">
+                <button type="button" class="ad-btn kedua" id="btnBatal">Batal</button>
+                <button type="button" class="ad-btn utama" id="btnSimpan">Simpan</button>
+            </div>
 
         </div>
 
     </div>
 
-</div>
-
 
 <script>
 
-function bukaTambah(){
+/* ===== pegawai: tambah, edit, hapus, kehadiran ===== */
 
-    document.getElementById("modalTitle").innerText =
-        "Tambah Pegawai";
+(function () {
 
-    document.getElementById("nama").value = "";
-    document.getElementById("hp").value = "";
-    document.getElementById("jabatan").value = "";
-    document.getElementById("keahlian").value = "";
-    document.getElementById("status").value = "Aktif";
+    const modal = document.getElementById("modal");
+    const $ = function (id) { return document.getElementById(id); };
 
-    document.getElementById("modal").style.display =
-        "flex";
-}
-
-
-function editPegawai(
-    nama,
-    hp,
-    jabatan,
-    keahlian,
-    status
-){
-
-    document.getElementById("modalTitle").innerText =
-        "Edit Pegawai";
-
-    document.getElementById("nama").value =
-        nama;
-
-    document.getElementById("hp").value =
-        hp;
-
-    document.getElementById("jabatan").value =
-        jabatan;
-
-    document.getElementById("keahlian").value =
-        keahlian;
-
-    document.getElementById("status").value =
-        status;
-
-    document.getElementById("modal").style.display =
-        "flex";
-}
-
-
-function tutupModal(){
-
-    document.getElementById("modal").style.display =
-        "none";
-}
-
-
-function simpanPegawai(){
-
-    let nama =
-        document.getElementById("nama").value.trim();
-
-    let hp =
-        document.getElementById("hp").value.trim();
-
-    let jabatan =
-        document.getElementById("jabatan").value;
-
-    let keahlian =
-        document.getElementById("keahlian").value.trim();
-
-
-    if(nama === ""){
-
-        alert("Nama pegawai belum diisi.");
-
-        return;
+    function setHari(daftar) {
+        document.querySelectorAll('input[name="hari"]').forEach(function (c) {
+            c.checked = daftar.indexOf(c.value) !== -1;
+        });
     }
 
-
-    if(hp === ""){
-
-        alert("No. HP belum diisi.");
-
-        return;
+    function setHadir(v) {
+        document.querySelectorAll('input[name="hadir"]').forEach(function (r) {
+            r.checked = r.value === v;
+        });
     }
 
-
-    if(jabatan === ""){
-
-        alert("Jabatan belum dipilih.");
-
-        return;
+    function buka(judul, d) {
+        $("modalTitle").textContent = judul;
+        $("nama").value = d.nama;
+        $("hp").value = d.hp;
+        $("jabatan").value = d.jabatan;
+        $("keahlian").value = d.keahlian;
+        setHari(d.hari);
+        $("jamMasuk").value = d.masuk;
+        $("jamPulang").value = d.pulang;
+        setHadir(d.hadir);
+        modal.classList.add("show");
+        $("nama").focus();
     }
 
-
-    if(keahlian === ""){
-
-        alert("Keahlian belum diisi.");
-
-        return;
+    function tutup() {
+        modal.classList.remove("show");
     }
 
+    /* ringkasan "x masuk · y tidak masuk" */
+    function hitung() {
+        const semua = document.querySelectorAll("tr.baris");
+        let masuk = 0;
+        semua.forEach(function (tr) { if (tr.dataset.hadir === "1") masuk++; });
+        $("ringkas").textContent = masuk + " masuk · " + (semua.length - masuk) + " tidak masuk";
+    }
 
-    alert(
-        "Data pegawai berhasil disimpan."
-    );
+    /* terapkan kehadiran ke satu baris: masuk = Aktif, tidak masuk = Nonaktif */
+    function terapkan(tr, hadir) {
+        tr.dataset.hadir = hadir ? "1" : "0";
+        tr.querySelector(".btn-sakelar").setAttribute("aria-checked", hadir ? "true" : "false");
+        tr.querySelector(".teks-hadir").textContent = hadir ? "Masuk" : "Tidak masuk";
+        const pil = tr.querySelector(".pil-status");
+        pil.textContent = hadir ? "Aktif" : "Nonaktif";
+        pil.classList.toggle("ok", hadir);
+        pil.classList.toggle("off", !hadir);
+        hitung();
+    }
 
-    tutupModal();
-}
+    $("btnTambah").addEventListener("click", function () {
+        buka("Tambah Pegawai", {
+            nama: "", hp: "", jabatan: "", keahlian: "",
+            hari: ["1", "2", "3", "4", "5", "6"], masuk: "09:00", pulang: "17:00", hadir: "1"
+        });
+    });
+
+    document.querySelectorAll("tr.baris").forEach(function (tr) {
+
+        tr.querySelector(".btn-sakelar").addEventListener("click", function () {
+            /* demo: nanti kirim perubahan ini ke server (AJAX/form) */
+            terapkan(tr, tr.dataset.hadir !== "1");
+        });
+
+        tr.querySelector(".btn-edit").addEventListener("click", function () {
+            buka("Edit Pegawai", {
+                nama: tr.dataset.nama,
+                hp: tr.dataset.hp,
+                jabatan: tr.dataset.jabatan,
+                keahlian: tr.dataset.keahlian,
+                hari: tr.dataset.hari.split(","),
+                masuk: tr.dataset.masukJam,
+                pulang: tr.dataset.pulangJam,
+                hadir: tr.dataset.hadir
+            });
+        });
+
+        tr.querySelector(".btn-hapus").addEventListener("click", function () {
+            if (confirm("Apakah Anda yakin ingin menghapus pegawai " + tr.dataset.nama + "?")) {
+                alert("Data " + tr.dataset.nama + " berhasil dihapus.");
+            }
+        });
+
+    });
+
+    $("btnSimpan").addEventListener("click", function () {
+
+        if ($("nama").value.trim() === "") { alert("Nama pegawai belum diisi."); return; }
+        if ($("hp").value.trim() === "") { alert("No. HP belum diisi."); return; }
+        if ($("jabatan").value === "") { alert("Jabatan belum dipilih."); return; }
+        if ($("keahlian").value.trim() === "") { alert("Keahlian belum diisi."); return; }
+
+        if (document.querySelectorAll('input[name="hari"]:checked').length === 0) {
+            alert("Pilih minimal satu hari kerja.");
+            return;
+        }
+
+        if ($("jamMasuk").value === "" || $("jamPulang").value === "") {
+            alert("Jam masuk dan jam pulang belum diisi.");
+            return;
+        }
+
+        if ($("jamPulang").value <= $("jamMasuk").value) {
+            alert("Jam pulang harus setelah jam masuk.");
+            return;
+        }
+
+        alert("Data pegawai berhasil disimpan.");
+        tutup();
+
+    });
+
+    $("btnBatal").addEventListener("click", tutup);
+    $("btnX").addEventListener("click", tutup);
+
+    modal.addEventListener("click", function (e) {
+        if (e.target === modal) tutup();
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && modal.classList.contains("show")) tutup();
+    });
+
+})();
 
 
-function hapusPegawai(nama){
+/* ===== sidebar & menu pengguna ===== */
 
-    let yakin = confirm(
-        "Apakah Anda yakin ingin menghapus pegawai " +
-        nama +
-        "?"
-    );
+(function () {
 
+    const body = document.body;
+    const burger = document.getElementById("burger");
+    const overlay = document.getElementById("overlay");
+    const LEBAR_DESKTOP = 1000;
 
-    if(yakin){
+    function desktop() {
+        return window.innerWidth >= LEBAR_DESKTOP;
+    }
 
-        alert(
-            "Data " +
-            nama +
-            " berhasil dihapus."
-        );
+    function atur(buka, simpan) {
+
+        body.classList.toggle("sb-open", buka);
+
+        burger.setAttribute("aria-expanded", buka ? "true" : "false");
+        burger.setAttribute("aria-label", buka ? "Tutup menu" : "Buka menu");
+
+        /* pilihan buka/tutup hanya diingat untuk desktop */
+        if (simpan && desktop()) {
+            try {
+                localStorage.setItem("adminSidebar", buka ? "1" : "0");
+            } catch (e) { /* abaikan */ }
+        }
 
     }
 
-}
+    /* keadaan awal: desktop terbuka (kecuali pernah ditutup), HP tertutup */
+
+    let awal = desktop();
+
+    if (desktop()) {
+        try {
+            const s = localStorage.getItem("adminSidebar");
+            if (s !== null) awal = s === "1";
+        } catch (e) { /* abaikan */ }
+    }
+
+    atur(awal, false);
+
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+            body.classList.add("sb-ready");
+        });
+    });
+
+    burger.addEventListener("click", function () {
+        atur(!body.classList.contains("sb-open"), true);
+    });
+
+    overlay.addEventListener("click", function () {
+        atur(false, false);
+    });
+
+    let sebelumnyaDesktop = desktop();
+
+    window.addEventListener("resize", function () {
+
+        const sekarang = desktop();
+
+        if (sekarang !== sebelumnyaDesktop) {
+            atur(sekarang, false);
+            sebelumnyaDesktop = sekarang;
+        }
+
+    });
+
+
+    /* menu pengguna di kanan atas */
+
+    const userBtn = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+
+    function tutupUser() {
+        userMenu.classList.remove("show");
+        userBtn.setAttribute("aria-expanded", "false");
+    }
+
+    userBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const buka = !userMenu.classList.contains("show");
+        userMenu.classList.toggle("show", buka);
+        userBtn.setAttribute("aria-expanded", buka ? "true" : "false");
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!userMenu.contains(e.target)) tutupUser();
+    });
+
+    document.addEventListener("keydown", function (e) {
+
+        if (e.key !== "Escape") return;
+
+        tutupUser();
+
+        if (body.classList.contains("sb-open") && !desktop()) {
+            atur(false, false);
+        }
+
+    });
+
+})();
 
 </script>
-
-    <footer class="site-footer site-footer--slim">
-        <div class="copy">© RESERVIN · BOOKING SALON</div>
-    </footer>
 
 </body>
 </html>
