@@ -3,15 +3,17 @@
    RESERVIN — SIDEBAR & BURGER CUSTOMER (customer/includes/sidebar.php)
    Komponen navigasi samping customer, tombol burger, profil ringkas,
    dan overlay mobile.
+   CATATAN: Komponen ini hanya aktif & ditampilkan pada layar mobile (<= 900px).
+   Pada layar desktop, navigasi menggunakan horizontal menu pada topbar.
    ===================================================================== */
 $halamanAktif = $current_page ?? basename(parse_url($_SERVER['SCRIPT_NAME'] ?? '', PHP_URL_PATH));
 ?>
-<!-- TOMBOL BURGER UNTUK MEMBUKA SIDEBAR -->
+<!-- TOMBOL BURGER UNTUK MEMBUKA SIDEBAR (HANYA MUNCUL DI MOBILE) -->
 <button type="button" class="cm-burger" id="cmBurger" aria-label="Buka menu" aria-expanded="false" aria-controls="cmSide">
     <?= cm_ikon('menu') ?>
 </button>
 
-<!-- SIDEBAR CUSTOMER -->
+<!-- SIDEBAR DRAWER CUSTOMER (KHUSUS MOBILE) -->
 <aside class="cm-side" id="cmSide" aria-label="Menu customer">
 
     <button type="button" class="cm-tutup" id="cmTutup" aria-label="Tutup menu">

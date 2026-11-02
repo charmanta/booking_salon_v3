@@ -254,7 +254,7 @@ function tabelItem(array $its) {
     $h .= '</tr></thead><tbody>';
 
     foreach ($its as $i) {
-        $h .= '<tr class="ad-baris' . ($i['batal'] ? ' dibatal' : '') . '">';
+        $h .= '<tr class="ad-row' . ($i['batal'] ? ' dibatal' : '') . '">';
         $h .= '<td>' . e(tgl($i['ts'])) . '</td>';
         $h .= '<td class="tebal">' . e($i['kode']) . '</td>';
         $h .= '<td>' . e($i['nama']) . '</td>';
@@ -634,16 +634,16 @@ document.addEventListener("keydown", function (e) {
         const panel = panelAktif();
         let tampil = 0;
 
-        panel.querySelectorAll(".ad-baris").forEach(function (tr) {
+        panel.querySelectorAll(".ad-row").forEach(function (tr) {
             const cocok = q === "" || tr.textContent.toLowerCase().indexOf(q) !== -1;
             tr.style.display = cocok ? "" : "none";
             if (cocok) tampil++;
         });
 
         panel.querySelectorAll("details.ad-grup").forEach(function (d) {
-            const ada = d.querySelectorAll(".ad-baris").length > 0;
+            const ada = d.querySelectorAll(".ad-row").length > 0;
             const cocokBaris = Array.prototype.some.call(
-                d.querySelectorAll(".ad-baris"),
+                d.querySelectorAll(".ad-row"),
                 function (tr) { return tr.style.display !== "none"; }
             );
 

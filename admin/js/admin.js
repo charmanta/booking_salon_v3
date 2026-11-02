@@ -6,6 +6,7 @@
  * 2. Simpan Preferensi Sidebar ke LocalStorage
  * 3. Menu Profil Pengguna (Dropdown Kanan Atas)
  * 4. Penanganan Tombol Escape & Resize Window
+ * 5. Efek Ripple Wave & Tactile Feedback (Matching Customer)
  * =====================================================================
  */
 
@@ -125,6 +126,74 @@
             aturSidebar(false, false);
         }
     });
+
+    /**
+     * EFEK RIPPLE WAVE & TACTILE FEEDBACK INTERAKTIF
+     * Memicu gelombang animasi saat tombol ditekan di seluruh halaman admin
+     * — sama persis dengan sistem di customer/ agar tampilan terasa konsisten
+     */
+    function inisialisasiEfekTombol() {
+        document.addEventListener("pointerdown", function (e) {
+            const btn = e.target.closest(
+                ".ad-btn, .ad-mini, .ad-tab, .ad-burger, .ad-user, " +
+                ".ad-x, .iv-btn, .ad-hari label, .ad-fas label, " +
+                ".ad-link, .ad-semua, .ad-dd a"
+            );
+
+            if (!btn || btn.disabled) return;
+
+            // Pastikan elemen bertipe <button>, <a>, atau label interaktif
+            const tag = btn.tagName.toLowerCase();
+            const boleh = ["button", "a", "label"].includes(tag) ||
+                btn.classList.contains("ad-btn") ||
+                btn.classList.contains("ad-mini");
+            if (!boleh) return;
+
+            const style = window.getComputedStyle(btn);
+            if (style.position === "static") {
+                btn.style.position = "relative";
+            }
+            if (style.overflow !== "hidden") {
+                btn.style.overflow = "hidden";
+            }
+
+            const rect = btn.getBoundingClientRect();
+            const diameter = Math.max(rect.width, rect.height) * 1.2;
+            const radius = diameter / 2;
+
+            const ripple = document.createElement("span");
+            ripple.className = "cm-ripple";
+
+            // Deteksi warna latar — tentukan kontras ripple
+            const bg = style.backgroundColor;
+            const isDark =
+                bg.includes("43, 30") ||     /* var(--ink) #2b1e19 */
+                bg.includes("59, 42") ||     /* sidebar dark */
+                bg.includes("196, 160") ||   /* var(--tan) */
+                bg.includes("176, 141");     /* var(--tan-dark) */
+
+            if (!isDark) {
+                ripple.classList.add("cm-ripple-dark");
+            }
+
+            ripple.style.width = diameter + "px";
+            ripple.style.height = diameter + "px";
+            ripple.style.left = (e.clientX - rect.left - radius) + "px";
+            ripple.style.top = (e.clientY - rect.top - radius) + "px";
+
+            // Bersihkan ripple lama
+            const rippleLama = btn.querySelector(".cm-ripple");
+            if (rippleLama) rippleLama.remove();
+
+            btn.appendChild(ripple);
+
+            setTimeout(function () {
+                ripple.remove();
+            }, 600);
+        });
+    }
+
+    inisialisasiEfekTombol();
 
 })();
 

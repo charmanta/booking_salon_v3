@@ -1,23 +1,18 @@
 /* =====================================================================
-   RESERVIN — TAMPILAN CUSTOMER (customer/css/customer.css)
-   Semua styling untuk panel customer (Dashboard, Pilih Salon, Booking, Riwayat).
-
-   DAFTAR ISI:
-   1. VARIABEL & RESET DASAR
-   2. SIDEBAR CUSTOMER & BURGER NAVIGATION
-   3. HEADER CUSTOMER (SITE-HEADER)
-   4. DASHBOARD (HERO, QUICK GRID, GALLERY INSPIRASI)
-   5. PILIH SALON (CAROUSEL & CHIPS FASILITAS)
-   6. HALAMAN BOOKING (FORM MULTI-ORANG, ESTIMASI, BUKTI BAYAR)
-   7. MODAL PILIH JADWAL (BOOKING POP-UP)
-   8. HALAMAN RIWAYAT (KARTU BOOKING, TAB FILTER)
-   9. MODAL GANTI JADWAL (KALENDER RESCHEDULE)
-   10. MODAL INVOICE & CETAK TRANSAKSI
-   11. RESPONSIVE BREAKPOINTS (Desktop, Tablet, Mobile)
+   RESERVIN — CUSTOMER CENTRAL STYLESHEET (customer/css/customer.css)
+   Dikelompokkan secara terstruktur untuk memudahkan modifikasi tampilan:
+   1. Root Variables & Reset Khusus Customer
+   2. Navigasi Sidebar Customer (.cm-side, .cm-burger, .cm-overlay)
+   3. Header / Topbar (.site-header--customer)
+   4. Beranda / Dashboard (.customer-hero, .quick-grid, .customer-gallery)
+   5. Halaman Pilih Salon & Carousel (.select-page, .salon-carousel, modal)
+   6. Halaman Reservasi / Booking (Kartu orang, rincian biaya, modal jadwal)
+   7. Halaman Riwayat & Invoice Transaksi (.rv-card, .rv-tabs, .iv-box, print)
+   8. Penyesuaian Responsif & Mobile
    ===================================================================== */
 
 /* =====================================================
-   1. VARIABEL & RESET DASAR
+   1. ROOT VARIABLES & LAYOUT DASAR CUSTOMER
    ===================================================== */
 :root {
     --cm-side: 250px;
@@ -27,81 +22,87 @@
 }
 
 .page-customer {
-    background: var(--cream-2, #fbf7f2);
+    background: var(--cream-2, #f5efe6);
     padding-bottom: 0 !important;
 }
 
-/* Sembunyikan menu navigasi horizontal lama & bottom-bar (digantikan sidebar modern) */
-.bottom,
-.site-nav {
-    display: none !important;
+.page-customer .container,
+.page-customer .app {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    background: transparent;
+    overflow: visible;
+}
+
+.page-customer .card {
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.page-customer .card h4 {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.page-customer .card p {
+    color: var(--muted);
+    font-size: 15px;
+    flex: 1;
+}
+
+.page-customer .card > a:not(.btn) {
+    align-self: flex-start;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-transform: none;
+    border-bottom: 1px solid var(--ink);
+    text-decoration: none;
+    padding-bottom: 4px;
+}
+
+.page-customer .card .btn,
+.pilih,
+.schedule-btn {
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--ink);
+    border-radius: 0;
+    padding: 0 0 4px;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-transform: none;
+    align-self: flex-start;
+    cursor: pointer;
+}
+
+.page-customer .card .btn:hover,
+.pilih:hover,
+.schedule-btn:hover {
+    background: none;
+    color: var(--brown);
+    border-color: var(--brown);
 }
 
 /* =====================================================
-   2. SIDEBAR CUSTOMER & BURGER NAVIGATION
+   2. NAVIGASI SIDEBAR CUSTOMER (.cm-*) — KHUSUS MOBILE
    ===================================================== */
-.cm-burger {
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    z-index: 150;
-    width: 46px;
-    height: 46px;
-    padding: 0;
-    display: grid;
-    place-items: center;
-    background: #faf6f0;
-    border: 1px solid #e6dccf;
-    border-radius: 10px;
-    color: #2b1e19;
-    cursor: pointer;
-    transition: background .15s;
-}
-.cm-burger:hover {
-    background: #f1e8dc;
-}
-.cm-burger svg {
-    width: 26px;
-    height: 26px;
-}
-
-.cm-side {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: var(--cm-side);
-    z-index: 1200;
-    background: linear-gradient(180deg, var(--cm-a) 0%, var(--cm-b) 100%);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 22px 16px 18px;
-    transform: translateX(-100%);
-    overflow-y: auto;
-    box-shadow: 8px 0 30px rgba(0, 0, 0, .3);
-    font-family: 'Jost', sans-serif;
-    visibility: hidden;
-}
-body.cm-open .cm-side {
-    transform: none;
-    visibility: visible;
-}
-body.cm-ready .cm-side {
-    transition: transform .3s ease, visibility .3s;
-}
-
+/* Secara default pada layar desktop: burger, drawer sidebar, & overlay TIDAK digunakan */
+.cm-burger,
+.cm-side,
 .cm-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 1100;
-    background: rgba(30, 18, 16, .5);
-}
-body.cm-open .cm-overlay {
-    display: block;
+    display: none !important;
 }
 
+/* Komponen styling isi drawer sidebar (aktif saat di mobile) */
 .cm-logo {
     display: flex;
     align-items: center;
@@ -111,6 +112,7 @@ body.cm-open .cm-overlay {
     color: #fff;
     padding: 0 4px 4px;
 }
+
 .cm-logo b {
     display: block;
     font-family: 'Cormorant Garamond', serif;
@@ -119,6 +121,7 @@ body.cm-open .cm-overlay {
     letter-spacing: .24em;
     line-height: 1;
 }
+
 .cm-logo small {
     display: block;
     margin-top: 6px;
@@ -127,6 +130,7 @@ body.cm-open .cm-overlay {
     text-transform: uppercase;
     opacity: .85;
 }
+
 .cm-logo svg {
     width: 26px;
     height: 26px;
@@ -139,6 +143,7 @@ body.cm-open .cm-overlay {
     flex-direction: column;
     gap: 4px;
 }
+
 .cm-link {
     display: flex;
     align-items: center;
@@ -149,17 +154,20 @@ body.cm-open .cm-overlay {
     text-decoration: none;
     font-size: 15px;
     opacity: .92;
-    transition: background .15s;
+    transition: background .15s, opacity .15s;
 }
+
 .cm-link:hover {
     background: rgba(255, 255, 255, .1);
 }
+
 .cm-link.active {
     background: rgba(196, 160, 116, .28);
     font-weight: 600;
     opacity: 1;
     box-shadow: inset 3px 0 0 var(--cm-aksen);
 }
+
 .cm-link svg {
     width: 20px;
     height: 20px;
@@ -171,12 +179,14 @@ body.cm-open .cm-overlay {
     padding-top: 14px;
     border-top: 1px solid rgba(255, 255, 255, .22);
 }
+
 .cm-profil {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 4px 4px 12px;
 }
+
 .cm-ava {
     width: 40px;
     height: 40px;
@@ -189,11 +199,13 @@ body.cm-open .cm-overlay {
     font-size: 15px;
     flex: none;
 }
+
 .cm-profil b {
     display: block;
     font-size: 15px;
     font-weight: 500;
 }
+
 .cm-profil small {
     display: block;
     font-size: 12.5px;
@@ -217,10 +229,12 @@ body.cm-open .cm-overlay {
     cursor: pointer;
     opacity: .8;
 }
+
 .cm-tutup:hover {
     background: rgba(255, 255, 255, .12);
     opacity: 1;
 }
+
 .cm-tutup svg {
     width: 20px;
     height: 20px;
@@ -233,40 +247,167 @@ body.cm-open .cm-overlay {
     outline-offset: 2px;
 }
 
-@media print {
-    .cm-burger,
-    .cm-side,
-    .cm-overlay {
+/* =====================================================
+   3. HEADER / TOPBAR CUSTOMER (.site-header--customer)
+   ===================================================== */
+.bottom {
+    display: none !important;
+}
+
+/* Navigasi Desktop Terbuka (Bukan Model Burger) */
+.site-header--customer {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 22px 42px;
+    position: relative;
+    z-index: 20;
+    border-bottom: 1px solid var(--line);
+}
+
+.site-header--customer .site-nav {
+    display: flex !important;
+    align-items: center;
+    gap: 6px 28px;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+}
+
+.site-header--customer .site-nav a {
+    text-decoration: none;
+    color: var(--ink, #2b1e19);
+    font-size: 16px;
+    letter-spacing: .06em;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color .2s, color .2s;
+}
+
+.site-header--customer .site-nav a:hover {
+    border-color: var(--ink, #2b1e19);
+}
+
+.site-header--customer .site-nav a.active {
+    border-color: var(--tan, #c4a074);
+    font-weight: 600;
+}
+
+.site-header--customer .brand {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+}
+
+.site-header--customer .header-right {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+}
+
+/* =====================================================
+   RESPONSIF MOBILE (<= 900px): MENGGUNAKAN BURGER & SIDEBAR
+   ===================================================== */
+@media (max-width: 900px) {
+    /* Sembunyikan navigasi atas standar saat di layar mobile */
+    .site-header--customer .site-nav {
         display: none !important;
     }
-}
 
-/* =====================================================
-   3. HEADER CUSTOMER (SITE-HEADER)
-   ===================================================== */
-@media (min-width: 901px) {
-    .site-header--customer .brand {
-        grid-column: 2;
-        grid-row: 1;
-        justify-self: center;
-    }
-    .site-header--customer .header-right {
-        grid-column: 3;
-        grid-row: 1;
-        justify-self: end;
-    }
-}
-@media (max-width: 900px) {
+    /* Beri ruang atas pada header agar tidak terhalang tombol burger */
     .site-header--customer {
         padding-top: 72px;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .site-header--customer .brand {
+        order: 1;
+    }
+
+    .site-header--customer .header-right {
+        order: 2;
+        justify-self: center;
+    }
+
+    /* Tampilkan tombol burger HANYA di mobile */
+    .cm-burger {
+        display: grid !important;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 150;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        place-items: center;
+        background: #faf6f0;
+        border: 1px solid #e6dccf;
+        border-radius: 10px;
+        color: #2b1e19;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .cm-burger:hover {
+        background: #f1e8dc;
+    }
+
+    .cm-burger svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* Sidebar drawer HANYA di mobile */
+    .cm-side {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--cm-side);
+        z-index: 1200;
+        background: linear-gradient(180deg, var(--cm-a) 0%, var(--cm-b) 100%);
+        color: #fff;
+        flex-direction: column;
+        padding: 22px 16px 18px;
+        transform: translateX(-100%);
+        overflow-y: auto;
+        box-shadow: 8px 0 30px rgba(0, 0, 0, .3);
+        font-family: 'Jost', sans-serif;
+        visibility: hidden;
+    }
+
+    body.cm-open .cm-side {
+        transform: none;
+        visibility: visible;
+    }
+
+    body.cm-ready .cm-side {
+        transition: transform .3s ease, visibility .3s;
+    }
+
+    /* Overlay gelap HANYA di mobile */
+    .cm-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(30, 18, 16, .5);
+        display: none !important;
+    }
+
+    body.cm-open .cm-overlay {
+        display: block !important;
     }
 }
 
 /* =====================================================
-   4. DASHBOARD (BERANDA CUSTOMER)
+   4. BERANDA / DASHBOARD CUSTOMER
    ===================================================== */
 .customer-home {
-    background: var(--cream-2, #fbf7f2);
+    background: var(--cream-2);
 }
 
 .customer-hero {
@@ -278,117 +419,127 @@ body.cm-open .cm-overlay {
     padding: 80px 7%;
     background:
         linear-gradient(90deg, rgba(43, 30, 25, 0.82) 0%, rgba(43, 30, 25, 0.60) 40%, rgba(43, 30, 25, 0.18) 100%),
-        url('../../assets/images/Salon-background.jpg');
+        url('../images/Salon-background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     color: #fffaf3;
     overflow: hidden;
 }
+
 .customer-hero .hero-content {
     position: relative;
     z-index: 1;
     max-width: 650px;
 }
+
 .customer-hero h1 {
     color: #fffaf3;
-    font-family: var(--serif, 'Cormorant Garamond', serif);
-    font-size: clamp(38px, 5vw, 64px);
+    font-family: var(--serif);
+    font-size: clamp(34px, 4.5vw, 64px);
+    font-weight: 500;
     line-height: 1.05;
-    margin: 12px 0 16px;
+    margin: 16px 0;
 }
+
 .customer-hero h1 em {
     font-weight: 400;
 }
+
 .customer-hero p {
     color: #f2e7dc;
     font-size: 18px;
+    line-height: 1.6;
     margin-bottom: 24px;
 }
+
 .customer-hero .eyebrow {
     color: #e4c3a7;
     font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .16em;
+    letter-spacing: .2em;
     text-transform: uppercase;
 }
+
 .customer-hero .btn-booking {
     display: inline-block;
     margin-top: 8px;
-    padding: 16px 36px;
-    background: var(--tan, #c4a074);
-    color: var(--ink, #2b1e19);
-    font-weight: 700;
-    text-decoration: none;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-}
-.customer-hero .btn-booking:hover {
-    filter: brightness(.95);
 }
 
 .quick-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border-bottom: 1px solid var(--line, #e6dccf);
+    border-bottom: 1px solid var(--line);
 }
+
 .quick-grid a {
     padding: 45px 40px;
     min-height: 220px;
-    border-right: 1px solid var(--line, #e6dccf);
+    border-right: 1px solid var(--line);
     text-decoration: none;
-    color: var(--ink, #2b1e19);
-    transition: background .15s;
+    color: var(--ink);
+    transition: background .2s;
 }
+
 .quick-grid a:hover {
-    background: rgba(196, 160, 116, .08);
+    background: #ede6dc;
 }
+
 .quick-grid a:last-child {
     border-right: 0;
 }
+
 .quick-grid span {
     font-size: 12px;
     letter-spacing: .15em;
     color: #a6958a;
+    text-transform: uppercase;
 }
+
 .quick-grid h2 {
-    font-family: var(--serif, 'Cormorant Garamond', serif);
+    font-family: var(--serif);
     font-size: 38px;
     font-weight: 500;
     margin: 38px 0 8px;
 }
+
 .quick-grid p {
     color: #70655e;
     line-height: 1.6;
     min-height: 52px;
+    font-size: 15px;
 }
 
 .customer-gallery {
     padding: 80px 5vw;
 }
-.customer-gallery .section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 28px;
+
+.customer-gallery .eyebrow {
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #8c7f76;
 }
+
 .customer-gallery h2 {
-    font-family: var(--serif, 'Cormorant Garamond', serif);
+    font-family: var(--serif);
     font-size: 58px;
     font-weight: 500;
     line-height: .95;
-    margin: 12px 0 0;
+    margin: 12px 0 32px;
 }
+
 .customer-gallery .horizontal-track {
     display: flex;
     gap: 20px;
     overflow-x: auto;
-    scroll-behavior: smooth;
     scrollbar-width: none;
+    padding-bottom: 10px;
 }
+
 .customer-gallery .horizontal-track::-webkit-scrollbar {
     display: none;
 }
+
 .customer-gallery .horizontal-track img {
     min-width: 48%;
     width: 48%;
@@ -398,46 +549,58 @@ body.cm-open .cm-overlay {
 }
 
 /* =====================================================
-   5. PILIH SALON (CAROUSEL & FASILITAS)
+   5. HALAMAN PILIH SALON (CAROUSEL & MODAL)
    ===================================================== */
 .select-page {
     padding: 85px 5vw 110px;
-    background: var(--cream-2, #fbf7f2);
+    background: var(--cream-2);
     min-height: 70vh;
 }
+
 .select-heading {
     max-width: 720px;
     margin: 0 2vw 24px;
 }
+
+.select-heading .eyebrow {
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #8c7f76;
+}
+
 .select-heading h1 {
-    font-family: var(--serif, 'Cormorant Garamond', serif);
-    font-size: clamp(38px, 5vw, 62px);
+    font-family: var(--serif);
+    font-size: 62px;
     font-weight: 500;
     line-height: .98;
     margin: 14px 0;
 }
+
 .select-heading p {
     font-size: 17px;
     color: #74685f;
 }
+
 .select-actions {
-    display: flex;
-    gap: 12px;
     margin: 0 2vw 16px;
+    display: flex;
     justify-content: flex-end;
+    gap: 8px;
 }
-.slider-actions button {
-    width: 48px;
-    height: 48px;
-    border: 1px solid var(--ink, #2b1e19);
-    background: transparent;
+
+.select-actions button {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line);
+    background: #fff;
     cursor: pointer;
     font-size: 18px;
     transition: background .15s;
 }
-.slider-actions button:hover {
-    background: var(--ink, #2b1e19);
-    color: #fff;
+
+.select-actions button:hover {
+    background: var(--tan);
 }
 
 .salon-carousel {
@@ -449,9 +612,11 @@ body.cm-open .cm-overlay {
     scrollbar-width: none;
     padding: 4px 2vw 30px;
 }
+
 .salon-carousel::-webkit-scrollbar {
     display: none;
 }
+
 .salon-carousel.dragging {
     cursor: grabbing;
     scroll-behavior: auto;
@@ -461,225 +626,325 @@ body.cm-open .cm-overlay {
     min-width: 390px;
     max-width: 390px;
     background: #fff;
-    border: 1px solid var(--line, #e6dccf);
+    border: 1px solid var(--line);
     flex: none;
 }
+
 .salon-card-new img {
     width: 100%;
     height: 220px;
     object-fit: cover;
     display: block;
 }
+
 .salon-card-body {
     padding: 28px;
 }
+
 .salon-card-body > span {
     font-size: 11px;
     letter-spacing: .12em;
     color: #9b8b80;
     text-transform: uppercase;
 }
+
 .salon-card-body h2 {
-    font-family: var(--serif, 'Cormorant Garamond', serif);
+    font-family: var(--serif);
     font-size: 36px;
     font-weight: 500;
     margin: 9px 0;
 }
+
 .salon-card-body p {
     color: #6e635c;
     font-size: 15px;
+    line-height: 1.5;
 }
+
 .chips {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
     margin: 20px 0 24px;
 }
+
 .chips b {
     font-size: 11px;
     font-weight: 500;
-    border: 1px solid var(--line, #e6dccf);
-    padding: 6px 12px;
+    border: 1px solid var(--line);
+    padding: 6px 10px;
     border-radius: 30px;
 }
+
 .salon-card-body button {
     border: 0;
-    background: var(--tan, #c4a074);
-    color: var(--ink, #2b1e19);
+    background: var(--tan);
     padding: 14px 18px;
     font-weight: 600;
     cursor: pointer;
     width: 100%;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-size: 12px;
     transition: filter .15s;
 }
+
 .salon-card-body button:hover {
     filter: brightness(.95);
 }
 
 /* Modal Pilih Salon */
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(48, 30, 24, .55);
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-}
-.modal-box {
-    background: #fff;
-    width: 100%;
-    max-width: 520px;
-    padding: 36px 32px;
-}
-.modal-box h2 {
-    font-family: var(--serif, 'Cormorant Garamond', serif);
-    font-size: 32px;
-    font-weight: 500;
-    margin: 0 0 12px;
-}
 .modal-info {
     font-size: 15px;
-    color: var(--muted, #6b6470);
+    color: var(--muted);
     margin-bottom: 26px;
-    line-height: 1.5;
 }
+
 .modal-btn {
     display: block;
     width: 100%;
-    font-family: inherit;
+    font-family: var(--font);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    padding: 16px;
-    border: 1px solid var(--ink, #2b1e19);
+    padding: 18px;
+    border: 1px solid var(--ink);
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 12px;
+    border-radius: 0;
 }
-.modal-btn.lanjut {
-    background: var(--tan, #c4a074);
-    border-color: var(--tan, #c4a074);
-    color: var(--ink, #2b1e19);
+
+.modal-btn.lanjut,
+.modal-box > .modal-btn:not(.batal):not(.cancel-btn) {
+    background: var(--tan);
+    border-color: var(--tan);
+    color: var(--ink);
 }
+
 .modal-btn.batal,
 .cancel-btn {
     background: transparent;
-    color: var(--ink, #2b1e19);
+    color: var(--ink);
+}
+
+.cancel-btn {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 18px;
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    margin-top: 12px;
+    border-radius: 0;
+}
+
+.modal-btn:hover {
+    filter: brightness(.95);
 }
 
 /* =====================================================
-   6. HALAMAN BOOKING (FORM MULTI-ORANG & PEMBAYARAN)
+   6. HALAMAN RESERVASI / BOOKING
    ===================================================== */
 .hero.hero-booking {
-    background-image:
-        linear-gradient(rgba(43, 30, 25, 0.75), rgba(43, 30, 25, 0.75)),
-        url('../../assets/images/lokasi-salon.jpg');
-    background-size: cover;
-    background-position: center;
-    min-height: 280px;
-    padding: 60px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #fff;
+    --hero-photo: url('../images/lokasi-salon.jpg');
+    min-height: 320px;
+    padding: 70px 24px;
 }
+
 .hero.hero-booking h1 {
     color: #fffaf3;
-    font-family: var(--serif, 'Cormorant Garamond', serif);
-    font-size: clamp(34px, 4vw, 52px);
-    margin: 8px 0;
+    border-bottom: 0;
 }
+
 .hero.hero-booking p {
     color: #f2e7dc;
-    font-size: 16px;
-    margin: 0;
 }
+
 .hero.hero-booking .eyebrow {
     color: #e4c3a7;
-    font-size: 12px;
-    letter-spacing: .16em;
-    text-transform: uppercase;
 }
 
 .p-booking .content {
     max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 24px 96px;
+    padding: 0 24px 90px;
 }
+
+.p-booking .content > h1 {
+    text-align: center;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(30px, 3.4vw, 44px);
+    margin: 0;
+    padding: 56px 0 40px;
+}
+
 .p-booking .card {
-    background: #fff;
-    border: 1px solid var(--line, #e6dccf);
     padding: 44px;
+    display: block;
+    margin: 0 auto;
 }
+
 .p-booking .card > label {
     display: block;
-    margin: 28px 0 10px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted, #6b6470);
+    margin: 30px 0 12px;
 }
+
 .p-booking .card > label:first-child {
     margin-top: 0;
 }
 
 .salon,
 .person,
-.pay-box {
-    background: #fff;
-    border: 1px solid var(--line, #e6dccf);
-    padding: 22px 24px;
+.option {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 20px 24px;
     margin-bottom: 12px;
 }
+
 .salon b,
-.person b,
-.pay-box b {
+.person b {
     font-size: 17px;
     letter-spacing: .06em;
     text-transform: uppercase;
 }
+
 .info {
     font-size: 14px;
-    color: var(--muted, #6b6470);
+    color: var(--muted);
     margin-top: 4px;
 }
 
+.option label {
+    text-transform: none;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: .05em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.add {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px dashed var(--ink);
+    color: var(--ink);
+    padding: 14px 22px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.add:hover {
+    background: var(--ink);
+    color: var(--cream);
+}
+
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 10px;
+}
+
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 10px;
+}
+
+.time-grid > .info {
+    grid-column: 1 / -1;
+    margin: 0;
+}
+
+.p-booking .date,
+.p-booking .time,
+.p-riwayat .time,
+.p-riwayat .calendar .date {
+    background: var(--white);
+    text-align: center;
+    padding: 14px 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    transition: background .15s, border-color .15s;
+}
+
+.p-booking .date:hover,
+.p-booking .time:hover,
+.p-riwayat .time:hover,
+.p-riwayat .calendar .date:hover {
+    border-color: var(--tan-dark);
+}
+
+.p-booking .date.active,
+.p-booking .time.active,
+.p-riwayat .time.active,
+.p-riwayat .calendar .date.active {
+    background: var(--tan);
+    border-color: var(--tan);
+}
+
+.time-title {
+    margin: 30px 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.p-booking .card .btn {
+    display: block;
+    width: 100%;
+    margin-top: 36px;
+    padding: 24px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Person Card Sub-elements */
 .person .p-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
 }
+
 .person .p-hapus {
     background: none;
     border: 0;
-    color: var(--muted, #6b6470);
+    color: var(--muted);
     font-family: inherit;
     font-size: 13px;
     cursor: pointer;
     text-decoration: underline;
 }
+
 .person .p-nama {
     width: 100%;
     margin-top: 10px;
-    padding: 12px 14px;
-    font-family: inherit;
-    font-size: 15px;
-    border: 1px solid var(--line, #e6dccf);
 }
+
 .person .p-sub {
     font-size: 12px;
     font-weight: 600;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--muted, #6b6470);
+    color: var(--muted);
     margin: 18px 0 8px;
     display: block;
 }
+
 .person .cb {
     display: flex;
     justify-content: space-between;
@@ -687,39 +952,43 @@ body.cm-open .cm-overlay {
     gap: 12px;
     padding: 8px 0;
     cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
     font-size: 15px;
     margin: 0;
 }
+
 .person .cb span {
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .person .cb em {
     font-style: normal;
-    color: var(--muted, #6b6470);
+    color: var(--muted);
 }
+
 .person select {
     width: 100%;
-    padding: 12px 14px;
-    font-family: inherit;
-    font-size: 15px;
-    border: 1px solid var(--line, #e6dccf);
-    background: #fff;
 }
+
 .person .p-jadwal {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid var(--line, #e6dccf);
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
 }
+
 .person .p-jadwal .info {
     margin: 0;
 }
+
 .btn-line {
     font-family: inherit;
     font-size: 12px;
@@ -727,22 +996,22 @@ body.cm-open .cm-overlay {
     letter-spacing: .08em;
     text-transform: uppercase;
     background: transparent;
-    border: 1px solid var(--ink, #2b1e19);
-    color: var(--ink, #2b1e19);
+    border: 1px solid var(--ink);
+    color: var(--ink);
     padding: 12px 20px;
     cursor: pointer;
-    transition: background .15s;
 }
+
 .btn-line:hover {
-    background: var(--ink, #2b1e19);
-    color: #fff;
+    background: var(--ink);
+    color: var(--cream);
 }
+
 .person .p-durasi {
     margin-top: 14px;
     text-align: right;
-    font-size: 14px;
-    color: var(--muted, #6b6470);
 }
+
 .person .p-sub-total {
     margin-top: 4px;
     text-align: right;
@@ -750,33 +1019,29 @@ body.cm-open .cm-overlay {
     font-size: 15px;
 }
 
-.add {
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    background: transparent;
-    border: 1px dashed var(--ink, #2b1e19);
-    color: var(--ink, #2b1e19);
-    padding: 14px 22px;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background .15s;
-}
-.add:hover {
-    background: var(--ink, #2b1e19);
-    color: #fff;
+/* Rincian Biaya & Upload Bukti Pembayaran */
+.pay-box {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 20px 24px;
+    margin-bottom: 12px;
 }
 
-/* Rincian & Bukti Pembayaran */
+.pay-box b {
+    font-size: 17px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
 .rc-orang {
     padding: 14px 0;
-    border-bottom: 1px solid var(--line, #e6dccf);
+    border-bottom: 1px solid var(--line);
 }
+
 .rc-orang:first-child {
     padding-top: 0;
 }
+
 .rc-row {
     display: flex;
     justify-content: space-between;
@@ -784,14 +1049,17 @@ body.cm-open .cm-overlay {
     font-size: 14px;
     margin-top: 4px;
 }
+
 .rc-row.head {
     font-weight: 700;
     font-size: 15px;
     margin-top: 0;
 }
+
 .rc-row.muted {
-    color: var(--muted, #6b6470);
+    color: var(--muted);
 }
+
 .rc-total {
     display: flex;
     justify-content: space-between;
@@ -801,48 +1069,30 @@ body.cm-open .cm-overlay {
 }
 
 .upload-box {
-    background: #fff;
-    border: 1px dashed var(--ink, #2b1e19);
-    padding: 22px 24px;
+    background: var(--white);
+    border: 1px dashed var(--ink);
+    padding: 20px 24px;
 }
+
 .upload-box input[type="file"] {
     width: 100%;
     font-family: inherit;
     font-size: 14px;
 }
+
 #previewBukti {
     display: none;
     max-width: 100%;
     max-height: 320px;
     margin-top: 14px;
-    border: 1px solid var(--line, #e6dccf);
+    border: 1px solid var(--line);
 }
+
 #namaFile {
     margin-top: 10px;
 }
 
-.p-booking .card > .btn {
-    display: block;
-    width: 100%;
-    margin-top: 36px;
-    padding: 20px;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    background: var(--tan, #c4a074);
-    border: 1px solid var(--tan, #c4a074);
-    color: var(--ink, #2b1e19);
-    cursor: pointer;
-    transition: filter .15s;
-}
-.p-booking .card > .btn:hover {
-    filter: brightness(.95);
-}
-
-/* =====================================================
-   7. MODAL PILIH JADWAL (BOOKING POP-UP)
-   ===================================================== */
+/* Popup Jadwal Booking (.jm-*) */
 .jm-overlay {
     display: none;
     position: fixed;
@@ -853,23 +1103,27 @@ body.cm-open .cm-overlay {
     justify-content: center;
     padding: 16px;
 }
+
 .jm-overlay.show {
     display: flex;
 }
+
 .jm-box {
-    background: #faf6f0;
+    background: var(--cream, #faf6f0);
     width: 100%;
     max-width: 640px;
     max-height: 92vh;
     overflow-y: auto;
     padding: 32px;
 }
+
 .jm-box h3 {
-    font-family: var(--serif, 'Cormorant Garamond', serif);
+    font-family: var(--serif);
     font-weight: 500;
     font-size: 30px;
     margin: 0 0 4px;
 }
+
 .jm-box .jm-sub {
     font-size: 12px;
     font-weight: 600;
@@ -878,55 +1132,20 @@ body.cm-open .cm-overlay {
     margin: 22px 0 10px;
     display: block;
 }
-.date-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-    gap: 10px;
-}
-.time-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-    gap: 10px;
-}
-.p-booking .date,
-.p-booking .time {
-    background: #fff;
-    text-align: center;
-    padding: 14px 6px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1px solid var(--line, #e6dccf);
-    transition: background .15s, border-color .15s;
-}
-.p-booking .date:hover,
-.p-booking .time:hover {
-    border-color: #9b8b80;
-}
-.p-booking .date.active,
-.p-booking .time.active {
-    background: var(--tan, #c4a074);
-    border-color: var(--tan, #c4a074);
-}
-.p-booking .time.off {
-    opacity: .35;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
 
 .jm-ringkas {
-    background: #fff;
-    border: 1px solid var(--line, #e6dccf);
+    background: var(--white);
+    border: 1px solid var(--line);
     padding: 18px 20px;
     margin-top: 22px;
-    font-size: 14px;
-    line-height: 1.5;
 }
+
 .jm-actions {
     display: flex;
     gap: 12px;
     margin-top: 20px;
 }
+
 .jm-actions button {
     flex: 1;
     font-family: inherit;
@@ -935,31 +1154,41 @@ body.cm-open .cm-overlay {
     letter-spacing: .08em;
     text-transform: uppercase;
     padding: 16px;
-    border: 1px solid var(--ink, #2b1e19);
+    border: 1px solid var(--ink);
     cursor: pointer;
     background: transparent;
-    color: var(--ink, #2b1e19);
+    color: var(--ink);
 }
+
 .jm-actions button.utama {
-    background: var(--tan, #c4a074);
-    border-color: var(--tan, #c4a074);
+    background: var(--tan);
+    border-color: var(--tan);
 }
+
 .jm-actions button:disabled {
     opacity: .4;
     cursor: not-allowed;
 }
 
+.p-booking .time.off {
+    opacity: .35;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
 /* =====================================================
-   8. HALAMAN RIWAYAT (KARTU & STATUS)
+   7. HALAMAN RIWAYAT & DETAIL TRANSAKSI / INVOICE
    ===================================================== */
 body.p-riwayat .content {
     display: flex;
     flex-direction: column;
     gap: 24px;
     width: 100%;
+    box-sizing: border-box;
     max-width: 1280px;
     margin: 0 auto;
     padding: 56px clamp(20px, 5vw, 72px) 96px;
+    overflow: visible;
 }
 
 .rv-judul {
@@ -969,13 +1198,17 @@ body.p-riwayat .content {
     justify-content: space-between;
     gap: 12px;
 }
+
 .rv-judul h2 {
     margin: 0;
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-weight: 500;
     font-size: clamp(34px, 4vw, 48px);
     line-height: 1.05;
+    text-transform: none;
+    letter-spacing: 0;
 }
+
 .rv-judul span {
     font-size: 14px;
     color: #6b5f57;
@@ -988,6 +1221,7 @@ body.p-riwayat .content {
     border-bottom: 1px solid var(--line, #e6dccf);
     margin-bottom: 4px;
 }
+
 .rv-tab {
     background: none;
     border: 0;
@@ -998,11 +1232,12 @@ body.p-riwayat .content {
     font-size: 15px;
     color: #6b5f57;
     cursor: pointer;
-    transition: color .15s;
 }
+
 .rv-tab b {
     font-weight: 500;
 }
+
 .rv-tab.active {
     color: var(--ink, #2b1e19);
     font-weight: 600;
@@ -1010,36 +1245,41 @@ body.p-riwayat .content {
 }
 
 .rv-card {
-    background: #fff;
+    background: var(--white, #fff);
     border: 1px solid var(--line, #e6dccf);
     padding: 40px 36px 32px;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
+
 .rv-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 16px;
 }
+
 .rv-kode {
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-size: 36px;
     font-weight: 500;
     line-height: 1.1;
 }
+
 .rv-salon {
     font-size: 14px;
     color: #6b5f57;
     margin-top: 4px;
 }
+
 .rv-badges {
     display: flex;
     flex-direction: column;
     gap: 8px;
     align-items: flex-end;
 }
+
 .rv-b {
     display: inline-block;
     padding: 6px 14px;
@@ -1050,22 +1290,27 @@ body.p-riwayat .content {
     text-transform: uppercase;
     white-space: nowrap;
 }
+
 .rv-b.akan {
     border: 1px solid var(--ink, #2b1e19);
     color: var(--ink, #2b1e19);
 }
+
 .rv-b.selesai {
     background: #ece7e1;
     color: #5c534c;
 }
+
 .rv-b.dibatalkan {
     background: #f4dedb;
     color: #8a3326;
 }
+
 .rv-b.lunas {
     background: var(--ok-bg, #e3ebdc);
     color: var(--ok-ink, #2f4a23);
 }
+
 .rv-b.menunggu {
     background: #f3e2cf;
     color: #6b3f12;
@@ -1079,28 +1324,34 @@ body.p-riwayat .content {
     flex-direction: column;
     gap: 6px;
 }
+
 .rv-card .rv-top + .rv-orang {
     margin-top: 20px;
 }
+
 .rv-baris {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: 12px;
 }
+
 .rv-nama {
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-size: 26px;
     font-weight: 500;
 }
+
 .rv-harga {
     font-size: 15px;
     font-weight: 600;
     white-space: nowrap;
 }
+
 .rv-layanan {
     font-size: 15px;
 }
+
 .rv-waktu {
     display: flex;
     align-items: center;
@@ -1108,6 +1359,7 @@ body.p-riwayat .content {
     font-size: 14px;
     color: #6b5f57;
 }
+
 .rv-ganti {
     align-self: flex-start;
     margin-top: 8px;
@@ -1121,11 +1373,11 @@ body.p-riwayat .content {
     color: var(--ink, #2b1e19);
     padding: 10px 18px;
     cursor: pointer;
-    transition: background .15s;
 }
+
 .rv-ganti:hover {
     background: var(--ink, #2b1e19);
-    color: #fff;
+    color: var(--cream, #faf6f0);
 }
 
 .rv-total {
@@ -1136,12 +1388,14 @@ body.p-riwayat .content {
     align-items: baseline;
     gap: 12px;
 }
+
 .rv-total span {
     font-size: 13px;
     font-weight: 600;
     letter-spacing: .1em;
     text-transform: uppercase;
 }
+
 .rv-total b {
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-size: 30px;
@@ -1154,6 +1408,7 @@ body.p-riwayat .content {
     gap: 12px;
     margin-top: 16px;
 }
+
 .rv-btn {
     display: inline-block;
     text-decoration: none;
@@ -1168,29 +1423,40 @@ body.p-riwayat .content {
     background: transparent;
     color: var(--ink, #2b1e19);
     cursor: pointer;
-    transition: background .15s;
 }
+
 .rv-btn:hover {
     background: var(--ink, #2b1e19);
-    color: #fff;
+    color: var(--cream, #faf6f0);
 }
+
 .rv-btn.utama {
     background: var(--tan, #c4a074);
     border-color: var(--tan, #c4a074);
 }
+
+.rv-btn.utama:hover {
+    filter: brightness(.95);
+    background: var(--tan, #c4a074);
+    color: var(--ink, #2b1e19);
+}
+
 .rv-btn.batal {
     border-color: #9a3b2e;
     color: #9a3b2e;
 }
+
 .rv-btn.batal:hover {
     background: #9a3b2e;
     color: #fff;
 }
+
 .rv-info {
     font-size: 13px;
     color: #6b5f57;
     margin-top: 10px;
 }
+
 .rv-kosong {
     display: none;
     text-align: center;
@@ -1199,104 +1465,72 @@ body.p-riwayat .content {
     border: 1px dashed var(--line, #e6dccf);
 }
 
-/* =====================================================
-   9. MODAL GANTI JADWAL (RESCHEDULE)
-   ===================================================== */
-.p-riwayat .modal-box {
-    max-width: 520px;
-}
+/* Modal Kalender Ganti Jadwal */
 .owner-info {
-    background: var(--sand, #eee7df);
+    background: var(--sand);
     padding: 14px 18px;
     font-size: 14px;
     margin-bottom: 20px;
 }
-.week {
+
+.week,
+.p-riwayat .modal .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
     text-align: center;
+}
+
+.week {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--muted, #6b6470);
+    color: var(--muted);
     margin-bottom: 8px;
 }
-.p-riwayat .calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    text-align: center;
+
+.p-riwayat .modal .calendar {
     max-height: 230px;
     overflow-y: auto;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
 }
-.p-riwayat .calendar .date {
+
+.p-riwayat .modal .calendar .date {
     padding: 10px 0;
-    border: 1px solid var(--line, #e6dccf);
-    background: #fff;
-    cursor: pointer;
+}
+
+.times {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.times > div:not(.time) {
+    grid-column: 1 / -1;
     font-size: 14px;
-    font-weight: 600;
-    transition: background .15s;
+    color: var(--muted);
 }
-.p-riwayat .calendar .date:hover {
-    border-color: #9b8b80;
+
+.p-riwayat .modal-box {
+    max-width: 520px;
 }
-.p-riwayat .calendar .date.active {
-    background: var(--tan, #c4a074);
-    border-color: var(--tan, #c4a074);
-}
+
 .p-riwayat .calendar .date.kosong {
     visibility: hidden;
     pointer-events: none;
     border: 0;
     background: none;
 }
-.time-title {
-    margin: 20px 0 10px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-}
-.times {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
-}
-.times > div:not(.time) {
-    grid-column: 1 / -1;
-    font-size: 14px;
-    color: var(--muted, #6b6470);
-}
-.p-riwayat .time {
-    padding: 12px 6px;
-    text-align: center;
-    border: 1px solid var(--line, #e6dccf);
-    background: #fff;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-}
-.p-riwayat .time:hover {
-    border-color: #9b8b80;
-}
-.p-riwayat .time.active {
-    background: var(--tan, #c4a074);
-    border-color: var(--tan, #c4a074);
-}
+
 .p-riwayat .time.off {
     opacity: .35;
     cursor: not-allowed;
     text-decoration: line-through;
 }
 
-/* =====================================================
-   10. MODAL INVOICE & CETAK TRANSAKSI
-   ===================================================== */
+/* Modal Popup Invoice / Struk Transaksi (.iv-*) */
 .iv-overlay {
     display: none;
     position: fixed;
@@ -1308,17 +1542,21 @@ body.p-riwayat .content {
     padding: 24px 16px;
     overflow-y: auto;
 }
+
 .iv-overlay.show {
     display: flex;
 }
+
 .iv-box {
     background: #fff;
     width: 100%;
     max-width: 720px;
     padding: 44px 44px 36px;
     margin: auto 0;
+    box-sizing: border-box;
     color: var(--ink, #2b1e19);
 }
+
 .iv-head {
     display: flex;
     flex-wrap: wrap;
@@ -1328,15 +1566,18 @@ body.p-riwayat .content {
     padding-bottom: 24px;
     border-bottom: 1px solid var(--ink, #2b1e19);
 }
+
 .iv-brand {
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-size: 30px;
     letter-spacing: .26em;
     font-weight: 500;
 }
+
 .iv-judul {
     text-align: right;
 }
+
 .iv-judul b {
     display: block;
     font-family: var(--serif, 'Cormorant Garamond', serif);
@@ -1344,10 +1585,12 @@ body.p-riwayat .content {
     font-weight: 500;
     letter-spacing: .08em;
 }
+
 .iv-judul span {
     font-size: 14px;
     color: #6b5f57;
 }
+
 .iv-meta {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1355,6 +1598,7 @@ body.p-riwayat .content {
     padding: 24px 0;
     border-bottom: 1px solid var(--line, #e6dccf);
 }
+
 .iv-meta small {
     display: block;
     font-size: 11px;
@@ -1364,9 +1608,11 @@ body.p-riwayat .content {
     color: #6b5f57;
     margin-bottom: 4px;
 }
+
 .iv-meta div {
     font-size: 15px;
 }
+
 .iv-item {
     display: flex;
     justify-content: space-between;
@@ -1374,20 +1620,24 @@ body.p-riwayat .content {
     padding: 18px 0;
     border-bottom: 1px solid var(--line, #e6dccf);
 }
+
 .iv-item .nm {
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-size: 24px;
     font-weight: 500;
 }
+
 .iv-item .sub {
     font-size: 14px;
     color: #6b5f57;
     margin-top: 2px;
 }
+
 .iv-item .hg {
     font-weight: 600;
     white-space: nowrap;
 }
+
 .iv-judul-bagian {
     margin: 24px 0 0;
     font-size: 12px;
@@ -1396,59 +1646,46 @@ body.p-riwayat .content {
     text-transform: uppercase;
     color: #6b5f57;
 }
+
 .iv-total {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     padding: 20px 0 6px;
 }
+
 .iv-total span {
     font-size: 13px;
     font-weight: 600;
     letter-spacing: .1em;
     text-transform: uppercase;
 }
+
 .iv-total b {
     font-family: var(--serif, 'Cormorant Garamond', serif);
     font-size: 34px;
     font-weight: 600;
 }
+
 .iv-catatan {
     font-size: 13px;
     color: #6b5f57;
     margin-top: 12px;
 }
+
 .iv-aksi {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 24px;
 }
+
 .iv-aksi .rv-btn {
     flex: 1 1 140px;
 }
 
-@media print {
-    body > *:not(#invoiceModal) {
-        display: none !important;
-    }
-    #invoiceModal {
-        position: static;
-        display: block !important;
-        background: none;
-        padding: 0;
-    }
-    .iv-box {
-        max-width: none;
-        padding: 0;
-    }
-    .iv-aksi {
-        display: none !important;
-    }
-}
-
 /* =====================================================
-   11. RESPONSIVE BREAKPOINTS
+   8. MEDIA QUERIES & RESPONSIVE LAYOUT
    ===================================================== */
 @media (min-width: 900px) {
     .rv-card {
@@ -1463,32 +1700,50 @@ body.p-riwayat .content {
     .rv-baris {
         display: contents;
     }
-    .rv-nama { order: 1; }
-    .rv-layanan { order: 2; }
-    .rv-waktu { order: 3; }
-    .rv-harga { order: 4; text-align: right; }
-    .rv-ganti { order: 5; margin-top: 0; align-self: center; }
+    .rv-nama {
+        order: 1;
+    }
+    .rv-layanan {
+        order: 2;
+    }
+    .rv-waktu {
+        order: 3;
+    }
+    .rv-harga {
+        order: 4;
+        text-align: right;
+    }
+    .rv-ganti {
+        order: 5;
+        margin-top: 0;
+        align-self: center;
+    }
 }
 
 @media (max-width: 900px) {
     .customer-hero {
-        min-height: 480px;
-        padding: 60px 24px;
+        grid-template-columns: 1fr;
+    }
+    .customer-hero img {
+        height: 330px;
+    }
+    .customer-hero h1 {
+        font-size: 52px;
     }
     .quick-grid {
         grid-template-columns: 1fr;
     }
     .quick-grid a {
         border-right: 0;
-        border-bottom: 1px solid var(--line, #e6dccf);
-    }
-    .customer-gallery .horizontal-track img {
-        min-width: 82%;
-        width: 82%;
+        border-bottom: 1px solid var(--line);
     }
     .salon-card-new {
         min-width: 82vw;
         max-width: 82vw;
+    }
+    .customer-gallery .horizontal-track img {
+        min-width: 82%;
+        width: 82%;
     }
     .p-booking .card {
         padding: 26px 20px;
@@ -1516,6 +1771,354 @@ body.p-riwayat .content {
     }
     .rv-nama {
         font-size: 22px;
+    }
+}
+
+/* =====================================================
+   9. EFEK INTERAKTIF, ANIMASI & TACTILE FEEDBACK
+   ===================================================== */
+
+/* 1. Animasi Keyframes */
+@keyframes cmRippleAnim {
+    0% {
+        transform: scale(0);
+        opacity: 0.55;
+    }
+    100% {
+        transform: scale(3.5);
+        opacity: 0;
+    }
+}
+
+@keyframes cmModalIn {
+    0% {
+        opacity: 0;
+        transform: translateY(22px) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes cmFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes cmPopIn {
+    0% {
+        transform: scale(0.92);
+    }
+    60% {
+        transform: scale(1.06);
+    }
+    100% {
+        transform: scale(1.02);
+    }
+}
+
+@keyframes cmFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. Elemen Ripple Wave Saat Tombol Ditekan */
+.cm-ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: cmRippleAnim 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    background: rgba(255, 255, 255, 0.55);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.cm-ripple-dark {
+    background: rgba(43, 30, 25, 0.22) !important;
+}
+
+/* 3. Micro-Interactions Tombol (Hover Lift & Press Feedback) */
+.btn,
+.btn-cta,
+.btn-booking,
+.modal-btn,
+.cancel-btn,
+.rv-btn,
+.add,
+.btn-line,
+.schedule-btn,
+.pilih,
+.rv-ganti,
+.salon-card-body button,
+.select-actions button,
+.slider-actions button {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                filter 0.2s ease !important;
+}
+
+/* Hover: Mengangkat tombol dengan bayangan lembut */
+.btn:hover,
+.btn-cta:hover,
+.btn-booking:hover,
+.rv-btn.utama:hover,
+.modal-btn.lanjut:hover,
+.salon-card-body button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(196, 160, 116, 0.45);
+}
+
+.btn-line:hover,
+.rv-btn:not(.utama):hover,
+.add:hover,
+.slider-actions button:hover,
+.select-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(43, 30, 25, 0.12);
+}
+
+/* Active / Saat Tombol Ditekan: Sensasi tombol fisik (press down) */
+.btn:active,
+.btn-cta:active,
+.btn-booking:active,
+.modal-btn:active,
+.cancel-btn:active,
+.rv-btn:active,
+.add:active,
+.btn-line:active,
+.schedule-btn:active,
+.pilih:active,
+.rv-ganti:active,
+.salon-card-body button:active,
+.slider-actions button:active,
+.select-actions button:active,
+.cm-burger:active {
+    transform: translateY(1.5px) scale(0.96) !important;
+    box-shadow: 0 1px 4px rgba(43, 30, 25, 0.15) !important;
+    transition: transform 0.08s ease, box-shadow 0.08s ease !important;
+}
+
+/* 4. Slot Tanggal & Jam Interaktif */
+.p-booking .date,
+.p-booking .time,
+.p-riwayat .time,
+.p-riwayat .calendar .date {
+    transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease !important;
+}
+
+.p-booking .date:not(.off):hover,
+.p-booking .time:not(.off):hover,
+.p-riwayat .time:not(.off):hover,
+.p-riwayat .calendar .date:not(.kosong):hover {
+    transform: translateY(-2px) scale(1.04);
+    border-color: var(--tan);
+    box-shadow: 0 4px 14px rgba(43, 30, 25, 0.08);
+}
+
+.p-booking .date:not(.off):active,
+.p-booking .time:not(.off):active,
+.p-riwayat .time:not(.off):active,
+.p-riwayat .calendar .date:not(.kosong):active {
+    transform: scale(0.93) !important;
+    transition: transform 0.08s ease !important;
+}
+
+.p-booking .date.active,
+.p-booking .time.active,
+.p-riwayat .time.active,
+.p-riwayat .calendar .date.active {
+    animation: cmPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 16px rgba(196, 160, 116, 0.45);
+}
+
+/* 5. Kartu Salon, Grid & Riwayat Interaktif */
+.salon-card-new {
+    overflow: hidden;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.32s ease !important;
+}
+
+.salon-card-new img {
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.salon-card-new:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 40px rgba(43, 30, 25, 0.12);
+    border-color: var(--tan);
+}
+
+.salon-card-new:hover img {
+    transform: scale(1.05);
+}
+
+.quick-grid a {
+    transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.quick-grid a .qg-arrow {
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-size: 18px;
+    margin-top: 8px;
+}
+
+.quick-grid a:hover {
+    background: #eee5d9;
+    transform: translateY(-3px);
+    box-shadow: inset 0 -3px 0 var(--cm-aksen);
+}
+
+.quick-grid a:hover .qg-arrow {
+    transform: translateX(8px);
+}
+
+.quick-grid a:active {
+    transform: scale(0.99);
+}
+
+.rv-card {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease !important;
+}
+
+.rv-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(43, 30, 25, 0.08);
+    border-color: #d6cab9;
+}
+
+.customer-gallery .horizontal-track img {
+    border-radius: 4px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.4s ease,
+                box-shadow 0.4s ease !important;
+}
+
+.customer-gallery .horizontal-track img:hover {
+    transform: scale(1.03);
+    filter: brightness(1.02);
+    box-shadow: 0 12px 30px rgba(43, 30, 25, 0.15);
+}
+
+/* 6. Tab Filter Riwayat Interaktif */
+.rv-tab {
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+}
+
+.rv-tab:hover {
+    color: var(--ink, #2b1e19);
+    transform: translateY(-1px);
+}
+
+.rv-tab:active {
+    transform: scale(0.96) !important;
+}
+
+.rv-tab b {
+    display: inline-block;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.rv-tab.active b {
+    transform: scale(1.12);
+}
+
+/* 7. Modal Pop-up Animasi & Backdrop Blur */
+.modal,
+.jm-overlay,
+.iv-overlay {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: cmFadeIn 0.25s ease forwards;
+}
+
+.modal-box,
+.jm-box,
+.iv-box {
+    animation: cmModalIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 24px 60px rgba(30, 18, 16, 0.25);
+    border-radius: 4px;
+}
+
+/* 8. Booking Form Checkbox Interaktif */
+.person .cb {
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 2px -10px;
+    transition: background-color 0.18s ease, transform 0.18s ease !important;
+}
+
+.person .cb:hover {
+    background-color: rgba(196, 160, 116, 0.12);
+    transform: translateX(4px);
+}
+
+.person .cb input[type="checkbox"] {
+    accent-color: var(--cm-aksen, #c4a074);
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    transition: transform 0.15s ease !important;
+}
+
+.person .cb input[type="checkbox"]:active {
+    transform: scale(0.85);
+}
+
+/* 9. Header & Hero Entrance Effect */
+.customer-hero .hero-content,
+.select-heading,
+.hero-booking .hero-content,
+.rv-judul {
+    animation: cmFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Print Optimization untuk Invoice Cetak / PDF */
+@media print {
+    .cm-burger,
+    .cm-side,
+    .cm-overlay,
+    .site-header,
+    .site-footer,
+    body > *:not(#invoiceModal) {
+        display: none !important;
+    }
+    #invoiceModal {
+        position: static;
+        display: block !important;
+        background: none;
+        padding: 0;
+    }
+    .iv-box {
+        max-width: none;
+        padding: 0;
+    }
+    .iv-aksi {
+        display: none !important;
     }
 }
 

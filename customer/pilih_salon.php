@@ -1,61 +1,149 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pilih Salon — Reservin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/theme.css">
-</head>
-<body class="page-customer p-pilih">
+<?php
+/* =====================================================================
+   RESERVIN — PILIH SALON (customer/pilih_salon.php)
+   Halaman pemilihan cabang salon:
+   - Carousel pilihan salon terdaftar
+   - Modal konfirmasi pemilihan salon
+   - Tombol geser interaktif
+   ===================================================================== */
+require_once __DIR__ . '/includes/init.php';
 
-<?php include __DIR__ . '/customer_menu.php'; ?>
+$page_title   = 'Pilih Salon';
+$current_page = 'pilih_salon.php';
+$body_class   = 'p-pilih';
 
-<header class="site-header site-header--customer">
-<nav class="site-nav"><a href="dashboard.php">Beranda</a><a href="pilih_salon.php" class="active">Reservasi</a><a href="riwayat.php">Riwayat</a><a href="https://gemini.google.com/" target="_blank">Tanya AI</a><a href="../login.php">Keluar</a></nav>
-<a class="brand" href="dashboard.php"><span class="brand-name">RESERVIN</span><span class="brand-sub">Salon Booking</span></a>
-<div class="header-right"><a href="pilih_salon.php" class="btn btn-cta">Booking Sekarang</a></div>
-</header>
+// Data daftar salon (dapat dihubungkan ke database jika diperlukan)
+$daftarSalon = [
+    [
+        'nama'      => 'Luna Salon',
+        'gambar'    => '../assets/images/hair_left2.jpg',
+        'kota_jam'  => 'Bandung · 09.00–20.00',
+        'alamat'    => 'Jl. Merdeka No. 25, Bandung',
+        'fasilitas' => ['WiFi', 'AC', 'Parkir', 'Ruang Tunggu'],
+    ],
+    [
+        'nama'      => 'Salon Anggun',
+        'gambar'    => '../assets/images/hair_center2.jpg',
+        'kota_jam'  => 'Jakarta · 10.00–21.00',
+        'alamat'    => 'Jl. Sudirman No. 18, Jakarta',
+        'fasilitas' => ['WiFi', 'AC', 'Parkir', 'Toilet'],
+    ],
+    [
+        'nama'      => 'Ayu Salon',
+        'gambar'    => '../assets/images/hair_right2.jpg',
+        'kota_jam'  => 'Surabaya · 09.00–19.00',
+        'alamat'    => 'Jl. Diponegoro No. 10, Surabaya',
+        'fasilitas' => ['WiFi', 'AC', 'Parkir', 'Toilet'],
+    ],
+    [
+        'nama'      => 'Glow Hair Studio',
+        'gambar'    => '../assets/images/products.jpg',
+        'kota_jam'  => 'Jakarta · 09.00–20.00',
+        'alamat'    => 'Jl. Kemang Raya No. 8, Jakarta',
+        'fasilitas' => ['Hair Spa', 'Coloring', 'AC'],
+    ],
+];
 
+// Script interaktivitas carousel dan modal konfirmasi
+$extra_js = '
+<script>
+var salonDipilih = "";
+
+function pilihSalon(nama) {
+    salonDipilih = nama;
+    var elNama = document.getElementById("namaSalon");
+    var elModal = document.getElementById("modalSalon");
+    if (elNama) elNama.textContent = nama;
+    if (elModal) elModal.style.display = "flex";
+}
+
+function tutupModal() {
+    var elModal = document.getElementById("modalSalon");
+    if (elModal) elModal.style.display = "none";
+}
+
+function lanjutBooking() {
+    if (!salonDipilih) return;
+    window.location.href = "booking.php?salon=" + encodeURIComponent(salonDipilih);
+}
+
+function slide(d) {
+    var c = document.getElementById("salonCarousel");
+    if (c) c.scrollBy({ left: d * 390, behavior: "smooth" });
+}
+
+(function () {
+    var c = document.getElementById("salonCarousel");
+    if (!c) return;
+
+    var down = false, startX = 0, scrollLeft = 0;
+
+    c.addEventListener("mousedown", function (e) {
+        down = true;
+        startX = e.pageX - c.offsetLeft;
+        scrollLeft = c.scrollLeft;
+        c.classList.add("dragging");
+    });
+
+    window.addEventListener("mouseup", function () {
+        down = false;
+        c.classList.remove("dragging");
+    });
+
+    c.addEventListener("mousemove", function (e) {
+        if (!down) return;
+        e.preventDefault();
+        c.scrollLeft = scrollLeft - (e.pageX - c.offsetLeft - startX) * 1.2;
+    });
+})();
+</script>
+';
+
+require __DIR__ . '/includes/header.php';
+?>
+
+<!-- ===== KONTEN UTAMA PILIH SALON ===== -->
 <main class="select-page">
-<div class="select-heading"><span class="eyebrow">STEP 01</span><h1>Pilih salon yang kamu suka.</h1><p>Geser ke samping untuk melihat salon lainnya.</p></div>
-<div class="slider-actions select-actions"><button onclick="slide(-1)">←</button><button onclick="slide(1)">→</button></div>
 
-<div class="salon-carousel" id="salonCarousel">
-<article class="salon-card-new">
-<img src="../assets/images/hair_left2.jpg" alt="Luna Salon">
-<div class="salon-card-body"><span>Bandung · 09.00–20.00</span><h2>Luna Salon</h2><p>Jl. Merdeka No. 25, Bandung</p><div class="chips"><b>WiFi</b><b>AC</b><b>Parkir</b><b>Ruang Tunggu</b></div><button onclick="pilihSalon('Luna Salon')">Pilih Salon →</button></div>
-</article>
-<article class="salon-card-new">
-<img src="../assets/images/hair_center2.jpg" alt="Salon Anggun">
-<div class="salon-card-body"><span>Jakarta · 10.00–21.00</span><h2>Salon Anggun</h2><p>Jl. Sudirman No. 18, Jakarta</p><div class="chips"><b>WiFi</b><b>AC</b><b>Parkir</b><b>Toilet</b></div><button onclick="pilihSalon('Salon Anggun')">Pilih Salon →</button></div>
-</article>
-<article class="salon-card-new">
-<img src="../assets/images/hair_right2.jpg" alt="Ayu Salon">
-<div class="salon-card-body"><span>Surabaya · 09.00–19.00</span><h2>Ayu Salon</h2><p>Jl. Diponegoro No. 10, Surabaya</p><div class="chips"><b>WiFi</b><b>AC</b><b>Parkir</b><b>Toilet</b></div><button onclick="pilihSalon('Ayu Salon')">Pilih Salon →</button></div>
-</article>
-<article class="salon-card-new">
-<img src="../assets/images/products.jpg" alt="Glow Hair Studio">
-<div class="salon-card-body"><span>Jakarta · 09.00–20.00</span><h2>Glow Hair Studio</h2><p>Jl. Kemang Raya No. 8, Jakarta</p><div class="chips"><b>Hair Spa</b><b>Coloring</b><b>AC</b></div><button onclick="pilihSalon('Glow Hair Studio')">Pilih Salon →</button></div>
-</article>
-</div>
+    <div class="select-heading">
+        <span class="eyebrow">STEP 01</span>
+        <h1>Pilih salon yang kamu suka.</h1>
+        <p>Geser ke samping untuk melihat salon dan cabang lainnya.</p>
+    </div>
+
+    <!-- Tombol Navigasi Slider Carousel -->
+    <div class="slider-actions select-actions">
+        <button type="button" onclick="slide(-1)" aria-label="Geser salon ke kiri">&larr;</button>
+        <button type="button" onclick="slide(1)" aria-label="Geser salon ke kanan">&rarr;</button>
+    </div>
+
+    <!-- Carousel Kartu Salon -->
+    <div class="salon-carousel" id="salonCarousel">
+        <?php foreach ($daftarSalon as $s): ?>
+            <article class="salon-card-new">
+                <img src="<?= e($s['gambar']) ?>" alt="<?= e($s['nama']) ?>" loading="lazy">
+                <div class="salon-card-body">
+                    <span><?= e($s['kota_jam']) ?></span>
+                    <h2><?= e($s['nama']) ?></h2>
+                    <p><?= e($s['alamat']) ?></p>
+                    
+                    <div class="chips">
+                        <?php foreach ($s['fasilitas'] as $f): ?>
+                            <b><?= e($f) ?></b>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <button type="button" onclick="pilihSalon(<?= json_encode($s['nama']) ?>)">
+                        Pilih Salon &rarr;
+                    </button>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </div>
+
 </main>
 
-<div class="modal" id="modalSalon"><div class="modal-box"><h2 id="namaSalon">Pilih Salon</h2><p class="modal-info">Kamu memilih salon ini. Selanjutnya pilih layanan, tanggal, jam, dan apakah ingin dilayani Owner atau Pegawai.</p><button class="modal-btn lanjut" onclick="lanjutBooking()">Lanjut Booking</button><button class="modal-btn batal" onclick="tutupModal()">Batal</button></div></div>
+<!-- Modal Konfirmasi Salon -->
+<?php require __DIR__ . '/modals/modal_pilih_salon.php'; ?>
 
-<script>
-let salonDipilih='';
-function pilihSalon(nama){salonDipilih=nama;document.getElementById('namaSalon').textContent=nama;document.getElementById('modalSalon').style.display='flex'}
-function tutupModal(){document.getElementById('modalSalon').style.display='none'}
-function lanjutBooking(){location.href='booking.php?salon='+encodeURIComponent(salonDipilih)}
-function slide(d){document.getElementById('salonCarousel').scrollBy({left:d*390,behavior:'smooth'})}
-const c=document.getElementById('salonCarousel');let down=false,x=0,s=0;
-c.addEventListener('mousedown',e=>{down=true;x=e.pageX-c.offsetLeft;s=c.scrollLeft;c.classList.add('dragging')});
-window.addEventListener('mouseup',()=>{down=false;c.classList.remove('dragging')});
-c.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();c.scrollLeft=s-(e.pageX-c.offsetLeft-x)*1.2});
-</script>
-<footer class="site-footer site-footer--slim"><div class="copy">© RESERVIN · BOOKING SALON</div></footer>
-</body>
-</html>
+<?php require __DIR__ . '/includes/footer.php'; ?>

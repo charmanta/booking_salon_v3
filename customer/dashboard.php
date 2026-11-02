@@ -1,49 +1,119 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Reservin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/theme.css">
-</head>
-<body class="page-customer p-dashboard">
+<?php
+/* =====================================================================
+   RESERVIN — DASHBOARD CUSTOMER (customer/dashboard.php)
+   Halaman beranda pelanggan:
+   - Hero sambutan pelanggan & CTA Booking
+   - Quick navigation grid (Reservasi, Riwayat, Tanya AI)
+   - Galeri inspirasi gaya rambut & salon
+   ===================================================================== */
+require_once __DIR__ . '/includes/init.php';
 
-<?php include __DIR__ . '/customer_menu.php'; ?>
+$page_title   = 'Dashboard';
+$current_page = 'dashboard.php';
+$body_class   = 'p-dashboard';
 
-<header class="site-header site-header--customer">
-<nav class="site-nav"><a href="dashboard.php" class="active">Beranda</a><a href="booking.php">Reservasi</a><a href="riwayat.php">Riwayat</a><a href="https://gemini.google.com/" target="_blank">Tanya AI</a><a href="../login.php">Keluar</a></nav>
-<a class="brand" href="dashboard.php"><span class="brand-name">RESERVIN</span><span class="brand-sub">Salon Booking</span></a>
-<div class="header-right"><a href="pilih_salon.php" class="btn btn-cta">Booking Sekarang</a></div>
-</header>
+// Script interaktivitas slider galeri
+$extra_js = '
+<script>
+function slide(d) {
+    var gal = document.getElementById("gallery");
+    if (gal) gal.scrollBy({ left: d * 390, behavior: "smooth" });
+}
+
+(function () {
+    var g = document.getElementById("gallery");
+    if (!g) return;
+
+    var down = false, startX = 0, scrollLeft = 0;
+
+    g.addEventListener("mousedown", function (e) {
+        down = true;
+        startX = e.pageX - g.offsetLeft;
+        scrollLeft = g.scrollLeft;
+        g.classList.add("dragging");
+    });
+
+    window.addEventListener("mouseup", function () {
+        down = false;
+        g.classList.remove("dragging");
+    });
+
+    g.addEventListener("mousemove", function (e) {
+        if (!down) return;
+        e.preventDefault();
+        g.scrollLeft = scrollLeft - (e.pageX - g.offsetLeft - startX) * 1.2;
+    });
+})();
+</script>
+';
+
+require __DIR__ . '/includes/header.php';
+?>
+
+<!-- ===== KONTEN UTAMA BERANDA ===== -->
 <main class="customer-home">
 
-<section class="customer-hero">
-    <div class="hero-content">
-        <span class="eyebrow">RESERVIN MEMBER</span>
+    <!-- 1. Hero Sambutan -->
+    <section class="customer-hero">
+        <div class="hero-content">
+            <span class="eyebrow"><?= e($cmUser['peran'] ?? 'RESERVIN MEMBER') ?></span>
 
-        <h1>
-            Hai, Rina.<br>
-            <em>Siap tampil lebih fresh?</em>
-        </h1>
+            <h1>
+                Hai, <?= e($cmUser['nama'] ?? 'Pelanggan') ?>.<br>
+                <em>Siap tampil lebih fresh?</em>
+            </h1>
 
-        <p>Pilih salon dan atur jadwal perawatanmu dengan mudah.</p>
+            <p>Pilih salon favoritmu dan atur jadwal perawatan dengan mudah tanpa antre.</p>
 
-        <a href="pilih_salon.php" class="btn btn-booking">
-            Booking Sekarang
+            <a href="pilih_salon.php" class="btn btn-cta btn-booking">
+                Booking Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. Grid Navigasi Cepat -->
+    <section class="quick-grid">
+        <a href="pilih_salon.php">
+            <span>01</span>
+            <h2>Reservasi</h2>
+            <p>Pilih salon, layanan, stylist, dan tentukan waktu terbaikmu.</p>
+            <span class="qg-arrow">&rarr;</span>
         </a>
-    </div>
-</section>
-<section class="quick-grid"><a href="pilih_salon.php"><span>01</span><h2>Reservasi</h2><p>Pilih salon, layanan, stylist, dan waktu.</p>→</a><a href="riwayat.php"><span>02</span><h2>Riwayat</h2><p>Lihat dan ganti jadwal reservasi yang tersedia.</p>→</a><a href="https://gemini.google.com/" target="_blank"><span>03</span><h2>Tanya AI</h2><p>Cari inspirasi dan rekomendasi perawatan.</p>→</a></section>
-<section class="customer-gallery"><div class="section-head"><div><span class="eyebrow">SALON MOOD</span><h2>Inspirasi gaya</h2></div><div class="slider-actions"><button onclick="slide(-1)">←</button><button onclick="slide(1)">→</button></div></div><div class="horizontal-track" id="gallery"><img src="../assets/images/curly-hair.jpg" alt="Inspirasi rambut"><img src="../assets/images/creambath.jpg" alt="Inspirasi rambut"><img src="../assets/images/hair dye.jpg" alt="Inspirasi rambut"><img src="../assets/images/model rambut.jpg" alt="Salon beauty"></div></section>
+        <a href="riwayat.php">
+            <span>02</span>
+            <h2>Riwayat</h2>
+            <p>Lihat status reservasi, bukti invoice, dan ganti jadwal fleksibel.</p>
+            <span class="qg-arrow">&rarr;</span>
+        </a>
+        <a href="https://gemini.google.com/" target="_blank" rel="noopener">
+            <span>03</span>
+            <h2>Tanya AI</h2>
+            <p>Konsultasi tren rambut dan rekomendasi perawatan kecantikan.</p>
+            <span class="qg-arrow">&rarr;</span>
+        </a>
+    </section>
+
+    <!-- 3. Inspirasi & Mood Galeri -->
+    <section class="customer-gallery">
+        <div class="section-head" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+            <div>
+                <span class="eyebrow">SALON MOOD</span>
+                <h2 style="margin: 8px 0 0;">Inspirasi gaya</h2>
+            </div>
+            <div class="slider-actions" style="display: flex; gap: 8px;">
+                <button type="button" class="btn-line" style="padding: 10px 16px;" onclick="slide(-1)" aria-label="Geser ke kiri">&larr;</button>
+                <button type="button" class="btn-line" style="padding: 10px 16px;" onclick="slide(1)" aria-label="Geser ke kanan">&rarr;</button>
+            </div>
+        </div>
+
+        <div class="horizontal-track" id="gallery">
+            <img src="../assets/images/curly-hair.jpg" alt="Inspirasi curly hair">
+            <img src="../assets/images/creambath.jpg" alt="Inspirasi creambath salon">
+            <img src="../assets/images/hair dye.jpg" alt="Inspirasi hair coloring">
+            <img src="../assets/images/model rambut.jpg" alt="Model gaya rambut modern">
+        </div>
+    </section>
+
 </main>
-<footer class="site-footer site-footer--slim"><div class="copy">© RESERVIN · BOOKING SALON</div></footer>
-<script>
-function slide(d){document.getElementById('gallery').scrollBy({left:d*390,behavior:'smooth'})}
-const g=document.getElementById('gallery');let down=false,x=0,s=0;
-g.addEventListener('mousedown',e=>{down=true;x=e.pageX-g.offsetLeft;s=g.scrollLeft;g.classList.add('dragging')});
-window.addEventListener('mouseup',()=>{down=false;g.classList.remove('dragging')});
-g.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();g.scrollLeft=s-(e.pageX-g.offsetLeft-x)*1.2});
-</script>
-</body>
-</html>
+
+<?php require __DIR__ . '/includes/footer.php'; ?>

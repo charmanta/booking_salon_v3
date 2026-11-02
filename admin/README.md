@@ -27,7 +27,7 @@ admin/
 │   └── admin.css                  # Seluruh styling CSS terpusat & terbagi rapi per bagian
 │
 ├── js/
-│   └── admin.js                   # JavaScript global admin (toggle sidebar, dropdown profil, responsive)
+│   └── admin.js                   # JS global admin (toggle sidebar, dropdown profil, ripple wave, animasi UX)
 │
 ├── dashboard.php                  # Halaman Beranda / Dashboard
 ├── salon.php                      # Halaman Pengaturan Data Salon & Fasilitas
@@ -47,8 +47,8 @@ admin/
 | **Menambah / Mengubah Menu Sidebar** | `admin/includes/init.php` (array `$menu_admin`) |
 | **Mengubah Tampilan Sidebar & Logo** | `admin/includes/sidebar.php` |
 | **Mengubah Header Atas / Profil Dropdown** | `admin/includes/topbar.php` |
-| **Mengubah Warna, Font, Grid, atau CSS** | `admin/css/admin.css` |
-| **Mengubah Interaksi Global (Sidebar Buka/Tutup)** | `admin/js/admin.js` |
+| **Mengubah Warna, Font, Grid, atau CSS** | `admin/css/admin.css` (palette: `--tan`, `--ink`, `--bg`, `--line`, `--serif`) |
+| **Mengubah Interaksi Global (Sidebar Buka/Tutup, Ripple, Animasi)** | `admin/js/admin.js` |
 | **Menambah Ikon SVG atau Fungsi Helper** | `admin/includes/fungsi.php` |
 | **Mengubah Form Modal Pop-up** | `admin/modals/modal_{nama_halaman}.php` |
 | **Mengubah Isi/Data Halaman Tertentu** | Buka langsung file halaman terkait, misal: `admin/layanan.php` |
