@@ -1,0 +1,1795 @@
+/* =====================================================================
+   RESERVIN — TAMPILAN ADMIN (admin/css/admin.css)
+   Semua styling untuk panel admin (Dashboard, Salon, Layanan, Pegawai,
+   Jadwal, Laporan, Profil).
+   
+   DAFTAR ISI:
+   1. VARIABEL & RESET
+   2. TATA LETAK DASAR & BODY
+   3. SIDEBAR & NAVIGASI
+   4. TOPBAR / HEADER ATAS & DROPDOWN PROFIL
+   5. KARTU & SAMBUTAN (CARDS)
+   6. TABEL & STATUS BADGE
+   7. FORMULIR, INPUT & TOMBOL
+   8. POP-UP MODAL UMUM
+   9. KOMPONEN KHUSUS PER HALAMAN:
+      - 9.1 DASHBOARD (Statistik, Grafik Batang, Layanan Terlaris)
+      - 9.2 DATA SALON (Grid Fasilitas, Input Jam)
+      - 9.3 PEGAWAI (Indikator Kehadiran, Toggle Password)
+      - 9.4 JADWAL (Matriks Jadwal Kerja, Pilihan Hari, Legenda)
+      - 9.5 LAPORAN & TRANSAKSI (Tab, Filter, Grup Accordion, Invoice Modal)
+      - 9.6 PROFIL (Header Profil, Ringkasan Salon)
+   10. RESPONSIVE BREAKPOINTS (Desktop, Tablet, Mobile)
+   ===================================================================== */
+
+/* =====================================================
+   1. VARIABEL & RESET
+   ===================================================== */
+:root {
+    --side: 232px;
+    --rose: #a9726c;
+    --rose-dark: #96605a;
+    --rose-soft: #c4938d;
+    --ink: #1f1a1a;
+    --muted: #6b6470;
+    --line: #ece4df;
+    --bg: #fbf8f6;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* =====================================================
+   2. TATA LETAK DASAR & BODY
+   ===================================================== */
+body.ad-body {
+    margin: 0;
+    font-family: 'Jost', sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+.ad-body a {
+    color: inherit;
+}
+
+.ad-body svg {
+    width: 22px;
+    height: 22px;
+    flex: none;
+}
+
+.ad-wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-main {
+    flex: 1;
+    padding: 36px clamp(18px, 3vw, 44px) 56px;
+}
+
+.ad-foot {
+    text-align: center;
+    padding: 22px;
+    font-size: 12px;
+    letter-spacing: .14em;
+    color: #8a8088;
+    border-top: 1px solid var(--line);
+}
+
+/* Aksesibilitas fokus */
+.ad-burger:focus-visible,
+.ad-user:focus-visible,
+.ad-link:focus-visible,
+.ad-btn:focus-visible,
+.ad-mini:focus-visible,
+.ad-x:focus-visible,
+.ad-tab:focus-visible {
+    outline: 2px solid #c4938d;
+    outline-offset: 2px;
+}
+
+/* Transisi sidebar (aktif setelah body siap) */
+body.sb-ready .ad-side {
+    transition: transform .3s ease;
+}
+body.sb-ready .ad-wrap {
+    transition: margin-left .3s ease;
+}
+
+/* =====================================================
+   3. SIDEBAR & NAVIGASI
+   ===================================================== */
+.ad-side {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--side);
+    z-index: 200;
+    background: linear-gradient(180deg, #b07f79 0%, #a36d67 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 16px 18px;
+    transform: translateX(-100%);
+    overflow-y: auto;
+}
+
+body.sb-open .ad-side {
+    transform: none;
+}
+
+.ad-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    text-decoration: none;
+    color: #fff;
+    padding: 0 4px 4px;
+}
+.ad-logo b {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    line-height: 1;
+}
+.ad-logo small {
+    display: block;
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: .95;
+}
+.ad-logo svg {
+    width: 28px;
+    height: 28px;
+}
+
+.ad-nav {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ad-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14.5px;
+    opacity: .95;
+    transition: background .15s;
+}
+.ad-link:hover {
+    background: rgba(255, 255, 255, .12);
+}
+.ad-link.active {
+    background: rgba(255, 255, 255, .24);
+    font-weight: 600;
+    opacity: 1;
+}
+.ad-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+.ad-side-bawah {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, .28);
+}
+
+.ad-profil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 4px 12px;
+}
+.ad-ava {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    color: #7a4a45;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex: none;
+}
+.ad-profil b {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 500;
+}
+.ad-profil small {
+    display: block;
+    font-size: 12.5px;
+    opacity: .85;
+    margin-top: 2px;
+}
+
+.ad-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(30, 18, 16, .5);
+}
+
+/* =====================================================
+   4. TOPBAR / HEADER ATAS & DROPDOWN PROFIL
+   ===================================================== */
+.ad-top {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 88px;
+    padding: 0 clamp(18px, 3vw, 44px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(90deg, #f6ece7 0%, #fbf7f5 100%);
+    border-bottom: 1px solid var(--line);
+}
+
+.ad-burger {
+    width: 46px;
+    height: 46px;
+    border: 0;
+    background: transparent;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: #4a4348;
+    padding: 0;
+}
+.ad-burger:hover {
+    background: rgba(0, 0, 0, .06);
+}
+.ad-burger svg {
+    width: 28px;
+    height: 28px;
+}
+
+.ad-user-wrap {
+    position: relative;
+}
+
+.ad-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    padding: 6px 8px;
+    border-radius: 12px;
+}
+.ad-user:hover {
+    background: rgba(0, 0, 0, .05);
+}
+.ad-user .ad-ava {
+    background: #c4938d;
+    color: #fff;
+    width: 48px;
+    height: 48px;
+    font-size: 17px;
+}
+.ad-user-info {
+    text-align: left;
+    line-height: 1.25;
+}
+.ad-user-info b {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+}
+.ad-user-info small {
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+}
+.ad-user > svg {
+    width: 20px;
+    height: 20px;
+    color: #4a4348;
+    margin-left: 6px;
+}
+
+.ad-dd {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(60, 30, 25, .14);
+    padding: 6px;
+    z-index: 300;
+}
+.ad-dd.show {
+    display: block;
+}
+.ad-dd a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 15px;
+}
+.ad-dd a:hover {
+    background: #f6ece7;
+}
+.ad-dd svg {
+    width: 20px;
+    height: 20px;
+    color: var(--rose);
+}
+
+/* =====================================================
+   5. KARTU & SAMBUTAN (CARDS)
+   ===================================================== */
+.ad-sapa h1 {
+    margin: 0;
+    font-size: clamp(28px, 3.2vw, 40px);
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+.ad-sapa p {
+    margin: 10px 0 0;
+    font-size: 19px;
+    color: var(--muted);
+}
+
+.ad-kartu {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 26px 28px;
+    min-width: 0;
+    margin-top: 24px;
+}
+.ad-sapa + .ad-kartu {
+    margin-top: 34px;
+}
+.ad-kartu-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.ad-kartu-head h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 600;
+}
+.ad-sub {
+    margin: 6px 0 20px;
+    font-size: 14.5px;
+    color: var(--muted);
+}
+.ad-semua {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: #5d5560;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.ad-semua:hover {
+    color: var(--rose-dark);
+}
+.ad-semua svg {
+    width: 17px;
+    height: 17px;
+}
+.ad-jumlah {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+/* =====================================================
+   6. TABEL & STATUS BADGE
+   ===================================================== */
+.ad-tabel-box {
+    overflow-x: auto;
+}
+
+.ad-tabel {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    min-width: 600px;
+}
+.ad-tabel th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 14px;
+    background: #f7f2ef;
+    white-space: nowrap;
+}
+.ad-tabel th:first-child {
+    border-radius: 8px 0 0 8px;
+}
+.ad-tabel th:last-child {
+    border-radius: 0 8px 8px 0;
+}
+.ad-tabel td {
+    padding: 15px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+}
+.ad-tabel tr:last-child td {
+    border-bottom: 0;
+}
+.ad-tabel .nama {
+    font-weight: 600;
+    white-space: nowrap;
+}
+.ad-tabel .harga,
+.ad-tabel .durasi {
+    white-space: nowrap;
+}
+.ad-tabel .harga {
+    font-weight: 500;
+}
+.ad-tabel .ket {
+    color: #4d4650;
+    min-width: 220px;
+}
+
+/* Pil status umum */
+.ad-pil {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.ad-pil.ok {
+    background: #dff3e8;
+    color: #1c6f47;
+}
+.ad-pil.tunggu {
+    background: #fdf0d3;
+    color: #8a5a00;
+}
+.ad-pil.off {
+    background: #f1ebe8;
+    color: #7a6c68;
+}
+
+/* =====================================================
+   7. FORMULIR, INPUT & TOMBOL
+   ===================================================== */
+.ad-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+}
+
+.ad-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    margin-bottom: 16px;
+}
+.ad-field.full {
+    grid-column: 1 / -1;
+}
+.ad-field label,
+.ad-field .lbl {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4d4650;
+}
+.ad-field input[type="text"],
+.ad-field input[type="email"],
+.ad-field input[type="password"],
+.ad-field input[type="tel"],
+.ad-field input[type="number"],
+.ad-field input[type="time"],
+.ad-field select,
+.ad-field textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 15.5px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid #e3d8d2;
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: border-color .15s, box-shadow .15s;
+}
+.ad-field textarea {
+    min-height: 96px;
+    resize: vertical;
+    line-height: 1.5;
+}
+.ad-field select:disabled {
+    background: #f7f2ef;
+    color: var(--ink);
+    opacity: 1;
+    cursor: not-allowed;
+}
+.ad-field input:focus,
+.ad-field select:focus,
+.ad-field textarea:focus {
+    outline: 0;
+    border-color: var(--rose-soft);
+    box-shadow: 0 0 0 3px rgba(196, 147, 141, .25);
+}
+.ad-field small.bantu {
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.ad-field-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* Tombol Utama dan Kedua */
+.ad-aksi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+.ad-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .15s;
+}
+.ad-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.ad-btn.utama {
+    background: var(--rose);
+    color: #fff;
+}
+.ad-btn.utama:hover {
+    background: var(--rose-dark);
+}
+.ad-btn.kedua {
+    background: #fff;
+    color: #4d4650;
+    border-color: #e3d8d2;
+}
+.ad-btn.kedua:hover {
+    background: #f6ece7;
+}
+
+/* Tombol Aksi Mini (Tabel) */
+.ad-aksi-sel {
+    display: flex;
+    gap: 8px;
+}
+.ad-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #e3d8d2;
+    color: #4d4650;
+    transition: background .15s;
+}
+.ad-mini svg {
+    width: 16px;
+    height: 16px;
+}
+.ad-mini:hover {
+    background: #f6ece7;
+}
+.ad-mini.bahaya {
+    color: #b4423a;
+    border-color: #efc9c5;
+}
+.ad-mini.bahaya:hover {
+    background: #fdeceb;
+}
+
+/* =====================================================
+   8. POP-UP MODAL UMUM
+   ===================================================== */
+.ad-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(30, 18, 16, .5);
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+.ad-modal.show {
+    display: flex;
+}
+.ad-modal-box {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+    padding: 26px 28px;
+    box-shadow: 0 20px 50px rgba(40, 20, 16, .25);
+}
+.ad-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.ad-modal-head h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 600;
+}
+.ad-x {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: #4a4348;
+    padding: 0;
+}
+.ad-x:hover {
+    background: rgba(0, 0, 0, .06);
+}
+.ad-modal-aksi {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* =====================================================
+   9. KOMPONEN KHUSUS PER HALAMAN
+   ===================================================== */
+
+/* --- 9.1 DASHBOARD --- */
+.ad-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 34px;
+}
+.ad-stat {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px 24px;
+}
+.ad-ic {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+}
+.ad-ic svg {
+    width: 30px;
+    height: 30px;
+}
+.ad-ic.rose   { background: #fbe1de; color: #b4524a; }
+.ad-ic.violet { background: #e8e2fa; color: #5f4ab0; }
+.ad-ic.green  { background: #d8f0e3; color: #23805a; }
+.ad-ic.blue   { background: #dcebfb; color: #2a68b0; }
+.ad-ic.amber  { background: #fdf0d3; color: #8a5a00; }
+
+.ad-stat .nilai {
+    margin-top: 22px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+}
+.ad-stat .judul {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #4d4650;
+}
+.ad-stat .tren {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #1f7a4d;
+}
+.ad-stat .tren svg {
+    width: 17px;
+    height: 17px;
+}
+
+.ad-baris {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+}
+
+/* Grafik Batang Dashboard */
+.ad-plot {
+    position: relative;
+    height: 250px;
+    margin: 10px 0 0 46px;
+}
+.ad-garis {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #efe8e4;
+}
+.ad-garis span {
+    position: absolute;
+    left: -46px;
+    top: -9px;
+    width: 38px;
+    text-align: right;
+    font-size: 13px;
+    color: #6b6470;
+}
+.ad-batang {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    align-items: end;
+    justify-items: center;
+}
+.ad-bar {
+    width: 100%;
+    max-width: 34px;
+    background: var(--rose-soft);
+    border-radius: 3px 3px 0 0;
+    min-height: 4px;
+}
+.ad-bar:hover {
+    background: var(--rose-dark);
+}
+.ad-sumbu-x {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    margin: 10px 0 0 46px;
+}
+.ad-sumbu-x span {
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #6b6470;
+}
+
+/* Layanan Terlaris */
+.ad-terlaris {
+    margin-top: 28px;
+}
+.ad-terlaris-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 0;
+}
+.ad-ter {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 4px 28px;
+    min-width: 0;
+}
+.ad-ter:nth-child(odd) {
+    padding-left: 0;
+    border-right: 1px solid var(--line);
+}
+.ad-ter:nth-child(even) {
+    padding-right: 0;
+}
+.ad-ter .ad-ic {
+    width: 54px;
+    height: 54px;
+    background: #f8e3e0;
+    color: #b4635c;
+}
+.ad-ter .ad-ic svg {
+    width: 26px;
+    height: 26px;
+}
+.ad-ter-info {
+    width: 110px;
+    flex: none;
+}
+.ad-ter-info b {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+}
+.ad-ter-info small {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
+}
+.ad-prog {
+    flex: 1;
+    height: 9px;
+    background: #efe7e3;
+    border-radius: 999px;
+    overflow: hidden;
+    min-width: 60px;
+}
+.ad-prog i {
+    display: block;
+    height: 100%;
+    background: var(--rose-soft);
+    border-radius: 999px;
+}
+
+/* --- 9.2 DATA SALON --- */
+.ad-jam {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    max-width: 520px;
+}
+.ad-fas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+}
+.ad-fas label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    border: 1px solid #e3d8d2;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #fff;
+    transition: background .15s, border-color .15s;
+}
+.ad-fas label:hover {
+    background: #fbf4f1;
+}
+.ad-fas input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.ad-kotak {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid #cdbfb8;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    flex: none;
+    color: transparent;
+}
+.ad-kotak svg {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.6;
+}
+.ad-fas input:checked + .ad-kotak {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: #fff;
+}
+.ad-fas label:has(input:checked) {
+    border-color: var(--rose-soft);
+    background: #fbf1ee;
+}
+.ad-fas input:focus-visible + .ad-kotak {
+    outline: 2px solid #c4938d;
+    outline-offset: 2px;
+}
+
+/* --- 9.3 PEGAWAI --- */
+.ad-tip {
+    margin: 0 0 18px;
+    font-size: 14.5px;
+    color: var(--muted);
+}
+.ad-tabel .nowrap {
+    white-space: nowrap;
+}
+.ad-jadwal b {
+    display: block;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.ad-jadwal small {
+    display: block;
+    margin-top: 3px;
+    font-size: 13.5px;
+    color: var(--muted);
+    white-space: nowrap;
+}
+.ad-jadwal .hari-ini {
+    color: #1c6f47;
+}
+
+.ad-hadir {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    white-space: nowrap;
+}
+.ad-hadir-teks {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 500;
+}
+.ad-hadir-teks::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2e9468;
+    flex: none;
+}
+.ad-hadir.off .ad-hadir-teks::before {
+    background: #c9bbb5;
+}
+.ad-hadir small {
+    padding-left: 19px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.ad-pass {
+    position: relative;
+}
+.ad-pass input {
+    padding-right: 50px !important;
+}
+.ad-pass button {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border: 0;
+    background: transparent;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: #6b6470;
+    padding: 0;
+}
+.ad-pass button:hover {
+    background: rgba(0, 0, 0, .06);
+}
+.ad-pass button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.ad-info-akun {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: #fbf4f1;
+    border: 1px solid #f0dfd9;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: #6a5550;
+    margin-bottom: 18px;
+}
+.ad-info-akun svg {
+    width: 18px;
+    height: 18px;
+    color: var(--rose);
+    margin-top: 1px;
+}
+
+/* --- 9.4 JADWAL --- */
+.ad-tabel th.hr { text-align: center; }
+.ad-tabel th.hr small { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 400; color: var(--muted); }
+.ad-tabel th.ini { background: #ecd9d3; }
+.ad-tabel td.ini { background: #fcf5f2; }
+.ad-tabel td.sel { text-align: center; }
+
+.ad-orang b {
+    display: block;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.ad-orang small {
+    display: block;
+    margin-top: 2px;
+    font-size: 13.5px;
+    color: var(--muted);
+    white-space: nowrap;
+}
+.ad-total {
+    white-space: nowrap;
+}
+.ad-total small {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--muted);
+}
+.ad-slot {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #f3e4e0;
+    color: #7a4a45;
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.ad-libur {
+    display: inline-block;
+    padding: 6px 10px;
+    font-size: 13.5px;
+    color: #a89c97;
+}
+.ad-st {
+    display: block;
+    margin-top: 5px;
+    font-size: 12.5px;
+    white-space: nowrap;
+}
+.ad-st.ok {
+    color: #1c6f47;
+}
+.ad-st.off {
+    color: #7a6c68;
+}
+
+.ad-tabel tfoot td {
+    padding: 14px 12px;
+    background: #fbf8f6;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    text-align: center;
+}
+.ad-tabel tfoot td:first-child {
+    text-align: left;
+    font-weight: 600;
+    border-radius: 8px 0 0 8px;
+}
+.ad-tabel tfoot td:last-child {
+    border-radius: 0 8px 8px 0;
+}
+.ad-tabel tfoot td.ini {
+    background: #fcf5f2;
+}
+.ad-jml {
+    display: inline-block;
+    min-width: 28px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: #dff3e8;
+    color: #1c6f47;
+    font-weight: 600;
+}
+.ad-jml.kosong {
+    background: #fdf0d3;
+    color: #8a5a00;
+}
+
+.ad-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 18px 0 0;
+    font-size: 13.5px;
+    color: var(--muted);
+}
+.ad-legenda span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.ad-legenda i {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: #f3e4e0;
+    display: inline-block;
+}
+.ad-legenda i.t {
+    background: #fcf5f2;
+    border: 1px solid #ecd9d3;
+}
+.ad-legenda i.k {
+    background: #fdf0d3;
+}
+
+/* Pilihan Hari (Jadwal Modal) */
+.ad-hari {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.ad-hari label {
+    position: relative;
+    cursor: pointer;
+}
+.ad-hari input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.ad-hari span {
+    display: block;
+    min-width: 48px;
+    text-align: center;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid #e3d8d2;
+    font-size: 14px;
+    background: #fff;
+    color: #4d4650;
+    transition: background .15s;
+}
+.ad-hari label:hover span {
+    background: #fbf4f1;
+}
+.ad-hari input:checked + span {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: #fff;
+    font-weight: 500;
+}
+.ad-hari input:focus-visible + span {
+    outline: 2px solid #c4938d;
+    outline-offset: 2px;
+}
+
+/* --- 9.5 LAPORAN & TRANSAKSI --- */
+.ad-sapa-baris {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.ad-filter {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+.ad-cari {
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid #e3d8d2;
+    border-radius: 10px;
+    padding: 11px 14px;
+    min-width: 140px;
+}
+.ad-cari:focus {
+    outline: 0;
+    border-color: var(--rose-soft);
+    box-shadow: 0 0 0 3px rgba(196, 147, 141, .25);
+}
+
+.ad-lencana {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #f7f2ef;
+    color: #5d504c;
+    white-space: nowrap;
+}
+
+/* Grafik Laporan */
+.ad-grafik {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+    padding: 0 4px;
+}
+.ad-kol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+.ad-kol .nilai-bar {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    white-space: nowrap;
+}
+.ad-area {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border-bottom: 1px solid #d9cdc8;
+}
+.ad-kol.sekarang .ad-bar {
+    background: var(--rose);
+}
+.ad-kol .bln {
+    margin-top: 10px;
+    font-size: 13.5px;
+    color: var(--muted);
+}
+.ad-kol.sekarang .bln {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* Tab Laporan */
+.ad-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 1px solid var(--line);
+    margin: 6px 0 20px;
+}
+.ad-tab {
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--muted);
+    cursor: pointer;
+}
+.ad-tab:hover {
+    color: var(--ink);
+}
+.ad-tab.active {
+    color: var(--ink);
+    font-weight: 600;
+    border-bottom-color: var(--rose);
+}
+
+.ad-alat {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.ad-alat .ad-cari {
+    flex: 1 1 240px;
+    min-width: 0;
+}
+
+.ad-panel {
+    display: none;
+}
+.ad-panel.active {
+    display: block;
+}
+
+/* Accordion Grup */
+.ad-grup {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: #fff;
+    overflow: hidden;
+}
+.ad-grup[open] {
+    border-color: #e0cfc9;
+}
+.ad-grup summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    align-items: center;
+    gap: 16px;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr) auto 24px;
+    padding: 16px 20px;
+}
+.ad-grup summary::-webkit-details-marker {
+    display: none;
+}
+.ad-grup summary:hover {
+    background: #fcf8f6;
+}
+.g-nama {
+    font-weight: 600;
+    font-size: 16px;
+    min-width: 0;
+}
+.g-meta {
+    font-size: 14px;
+    color: var(--muted);
+}
+.g-total {
+    font-weight: 700;
+    font-size: 16px;
+    text-align: right;
+    white-space: nowrap;
+}
+.g-chev svg {
+    width: 20px;
+    height: 20px;
+    color: #4a4348;
+    transition: transform .2s;
+}
+.ad-grup[open] .g-chev svg {
+    transform: rotate(180deg);
+}
+.ad-grup .ad-tabel-box {
+    border-top: 1px solid var(--line);
+    padding: 4px 8px 8px;
+}
+.ad-kosong-grup {
+    border-top: 1px solid var(--line);
+    padding: 18px 20px;
+    font-size: 14px;
+    color: var(--muted);
+}
+.ad-ringkas {
+    border-top: 1px solid var(--line);
+    padding: 14px 20px 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: 14px;
+    color: #4d4650;
+}
+.ad-ringkas i {
+    font-style: normal;
+    color: var(--muted);
+}
+.ad-juara {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #fdf0d3;
+    color: #8a5a00;
+    font-size: 12px;
+    font-weight: 500;
+    vertical-align: middle;
+}
+.ad-org {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.ad-org .ad-ava {
+    width: 38px;
+    height: 38px;
+    background: #f2dcd8;
+    color: #8a4a44;
+    font-size: 13px;
+}
+.ad-org small {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 400;
+}
+
+/* Badges Pembayaran Laporan */
+.bd {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.bd.lunas {
+    background: #e3ebdc;
+    color: #2f4a23;
+}
+.bd.tunggu {
+    background: #f3e2cf;
+    color: #6b3f12;
+}
+.bd.batal {
+    background: #f4dedb;
+    color: #8a3326;
+}
+
+.ad-kosong {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    border: 1px dashed #e0d6d0;
+    border-radius: 12px;
+}
+.ad-catatan {
+    margin: 18px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* Modal Invoice */
+.iv-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(48, 30, 24, .55);
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-y: auto;
+}
+.iv-overlay.show {
+    display: flex;
+}
+.iv-box {
+    background: #fff;
+    width: 100%;
+    max-width: 720px;
+    padding: 44px 44px 36px;
+    margin: auto 0;
+    color: #2b1e19;
+}
+.iv-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #2b1e19;
+}
+.iv-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    letter-spacing: .26em;
+    font-weight: 500;
+}
+.iv-judul {
+    text-align: right;
+}
+.iv-judul b {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: .08em;
+}
+.iv-judul span {
+    font-size: 14px;
+    color: #6b5f57;
+}
+.iv-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 28px;
+    padding: 24px 0;
+    border-bottom: 1px solid #e6dccf;
+}
+.iv-meta small {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #6b5f57;
+    margin-bottom: 4px;
+}
+.iv-meta div {
+    font-size: 15px;
+}
+.iv-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid #e6dccf;
+}
+.iv-item .nm {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 500;
+}
+.iv-item .sub {
+    font-size: 14px;
+    color: #6b5f57;
+    margin-top: 2px;
+}
+.iv-item .hg {
+    font-weight: 600;
+    white-space: nowrap;
+}
+.iv-judul-bagian {
+    margin: 24px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #6b5f57;
+}
+.iv-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 20px 0 6px;
+}
+.iv-total span {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+.iv-total b {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 600;
+}
+.iv-catatan {
+    font-size: 13px;
+    color: #6b5f57;
+    margin-top: 12px;
+}
+.iv-aksi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+.iv-btn {
+    flex: 1 1 140px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    border: 1px solid #2b1e19;
+    background: transparent;
+    color: #2b1e19;
+    cursor: pointer;
+}
+.iv-btn:hover {
+    background: #2b1e19;
+    color: #faf6f0;
+}
+.iv-btn.utama {
+    background: #c4a074;
+    border-color: #c4a074;
+}
+.iv-btn.utama:hover {
+    background: #c4a074;
+    color: #2b1e19;
+    filter: brightness(.95);
+}
+
+@media print {
+    body > *:not(#invoiceModal) {
+        display: none !important;
+    }
+    #invoiceModal {
+        position: static;
+        display: block !important;
+        background: none;
+        padding: 0;
+    }
+    .iv-box {
+        max-width: none;
+        padding: 0;
+    }
+    .iv-aksi {
+        display: none !important;
+    }
+}
+
+/* --- 9.6 PROFIL --- */
+.ad-kepala {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    margin-bottom: 24px;
+    background: #fbf4f1;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+.ad-kepala .ad-ava {
+    width: 72px;
+    height: 72px;
+    font-size: 26px;
+    background: var(--rose-soft);
+    color: #fff;
+}
+.ad-kepala b {
+    display: block;
+    font-size: 22px;
+    font-weight: 600;
+}
+.ad-kepala small {
+    display: block;
+    margin-top: 4px;
+    font-size: 15px;
+    color: var(--muted);
+}
+
+.ad-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+.ad-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    min-width: 0;
+}
+.ad-info small {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+}
+.ad-info b {
+    display: block;
+    margin-top: 3px;
+    font-size: 16.5px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* =====================================================
+   10. RESPONSIVE BREAKPOINTS
+   ===================================================== */
+@media (min-width: 1000px) {
+    body.sb-open .ad-wrap {
+        margin-left: var(--side);
+    }
+}
+
+@media (max-width: 999px) {
+    body.sb-open .ad-overlay {
+        display: block;
+    }
+    .ad-side {
+        box-shadow: 8px 0 30px rgba(0, 0, 0, .3);
+    }
+}
+
+@media (max-width: 1200px) {
+    .ad-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .ad-baris {
+        grid-template-columns: 1fr;
+    }
+    .ad-info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .ad-user-info {
+        display: none;
+    }
+    .ad-form-grid,
+    .ad-jam {
+        grid-template-columns: 1fr;
+    }
+    .ad-terlaris-grid {
+        grid-template-columns: 1fr;
+    }
+    .ad-ter:nth-child(odd),
+    .ad-ter:nth-child(even) {
+        padding: 4px 0;
+        border-right: 0;
+    }
+    .ad-grafik {
+        gap: 6px;
+    }
+    .ad-kol .nilai-bar {
+        font-size: 11px;
+    }
+    .ad-area {
+        height: 150px;
+    }
+    .ad-grup summary {
+        grid-template-columns: minmax(0, 1fr) auto 24px;
+    }
+    .g-meta {
+        grid-column: 1 / 2;
+        grid-row: 2;
+    }
+}
+
+@media (max-width: 560px) {
+    .ad-stats {
+        grid-template-columns: 1fr;
+    }
+    .iv-box {
+        padding: 28px 20px 24px;
+    }
+    .iv-meta {
+        grid-template-columns: 1fr;
+    }
+    .iv-judul {
+        text-align: left;
+    }
+}
+
+@media (max-width: 520px) {
+    .ad-kartu {
+        padding: 20px 16px;
+    }
+    .ad-modal-box {
+        padding: 22px 18px;
+    }
+    .ad-field-2 {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .ad-info-grid {
+        grid-template-columns: 1fr;
+    }
+    .ad-aksi .ad-btn {
+        flex: 1;
+    }
+    .ad-filter,
+    .ad-field,
+    .ad-field select,
+    .ad-filter .ad-btn {
+        width: 100%;
+    }
+}
