@@ -1,10 +1,6 @@
 <?php
 /* =====================================================================
    RESERVIN — DASHBOARD CUSTOMER (customer/dashboard.php)
-   Halaman beranda pelanggan:
-   - Hero sambutan pelanggan & CTA Booking
-   - Quick navigation grid (Reservasi, Riwayat, Tanya AI)
-   - Galeri inspirasi gaya rambut & salon
    ===================================================================== */
 require_once __DIR__ . '/includes/init.php';
 
@@ -50,7 +46,6 @@ function slide(d) {
 require __DIR__ . '/includes/header.php';
 ?>
 
-<!-- ===== KONTEN UTAMA BERANDA ===== -->
 <main class="customer-home">
 
     <!-- 1. Hero Sambutan -->
@@ -85,7 +80,7 @@ require __DIR__ . '/includes/header.php';
             <p>Lihat status reservasi, bukti invoice, dan ganti jadwal fleksibel.</p>
             <span class="qg-arrow">&rarr;</span>
         </a>
-        <a href="https://gemini.google.com/" target="_blank" rel="noopener">
+        <a href="#" class="open-chatbot">
             <span>03</span>
             <h2>Tanya AI</h2>
             <p>Konsultasi tren rambut dan rekomendasi perawatan kecantikan.</p>
@@ -115,5 +110,6 @@ require __DIR__ . '/includes/header.php';
     </section>
 
 </main>
+
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

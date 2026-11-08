@@ -50,7 +50,7 @@ $cmMenu = [
         'blank'   => false,
         'aliases' => ['riwayat.php'],
     ],
-    'https://gemini.google.com/' => [
+    '#chatbot'=> [
         'judul'   => 'Tanya AI',
         'ikon'    => 'chat',
         'blank'   => true,

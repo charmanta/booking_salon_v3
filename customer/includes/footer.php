@@ -20,7 +20,8 @@
     <?php if (!empty($extra_js)): ?>
         <?= $extra_js ?>
     <?php endif; ?>
-
+        
+    <?php include __DIR__ . '/../modal_chatbot.php'; ?>
 </body>
 </html>
 

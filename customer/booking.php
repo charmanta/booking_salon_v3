@@ -3,6 +3,7 @@
    RESERVIN — FORM RESERVASI / BOOKING (customer/booking.php)
    Halaman pemesanan reservasi salon untuk 1 atau banyak orang:
    - Pemilihan layanan & estimasi durasi otomatis
+   - Pilihan warna & jenis pewarnaan saat layanan "Hair Color" dipilih
    - Pemilihan pegawai & pencegahan jadwal bentrok
    - Kalender & jam dinamis dalam modal
    - Rincian total biaya & upload bukti bayar
@@ -22,7 +23,24 @@ $layanan = [
     ['nama' => 'Potong Rambut', 'harga' => 75000,  'durasi' => 30],
     ['nama' => 'Facial',        'harga' => 120000, 'durasi' => 60],
     ['nama' => 'Hair Spa',      'harga' => 150000, 'durasi' => 60],
+    ['nama' => 'Hair Color',    'harga' => 200000, 'durasi' => 60],
 ];
+
+// Nama layanan yang memunculkan panel pilihan warna rambut
+$layanan_warna = 'Hair Color';
+
+// Pilihan warna rambut (ubah / tambah sesuai kebutuhan salon)
+$warna_rambut = [
+    ['nama' => 'Hitam',      'hex' => '#1c1512'],
+    ['nama' => 'Coklat Tua', 'hex' => '#3b2418'],
+    ['nama' => 'Coklat',     'hex' => '#6b4429'],
+    ['nama' => 'Tembaga',    'hex' => '#b5651d'],
+    ['nama' => 'Burgundy',   'hex' => '#6d1a36'],
+    ['nama' => 'Blonde',     'hex' => '#d9bf93'],
+];
+
+// Pilihan jenis pewarnaan
+$jenis_warna = ['Full Color', 'Balayage', 'Highlight'];
 
 // Daftar pegawai salon (statis atau dari database)
 $pegawai = [
@@ -32,18 +50,141 @@ $pegawai = [
     'Putri - Terapis',
 ];
 
-// Script interaktivitas form multi-orang, kalkulasi harga, dan popup jadwal
+// Style panel warna + script interaktivitas form multi-orang, kalkulasi harga, dan popup jadwal
 $extra_js = '
+<style>
+/* ===== PANEL PILIHAN WARNA RAMBUT ===== */
+.warna-panel {
+    margin: 6px 0 12px;
+    padding: 18px 18px 16px;
+    background: #faf6f0;
+    border: 1px solid var(--line, #e6dccf);
+    border-radius: 6px;
+    animation: cmFadeUp .3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.warna-panel .wp-judul {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted, #70655e);
+    margin: 0 0 4px;
+}
+.warna-panel .wp-info {
+    font-size: 13px;
+    color: var(--muted, #70655e);
+    margin: 0 0 12px;
+}
+.warna-panel .wp-info b { color: var(--ink, #2b1e19); }
+.warna-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.warna-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink, #2b1e19);
+}
+.warna-swatch {
+    width: 100%;
+    height: 56px;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+    color: #fff;
+    font-size: 20px;
+    transition: transform .15s ease, border-color .15s ease;
+}
+.warna-item:hover .warna-swatch { transform: translateY(-2px); }
+.warna-item.active .warna-swatch { border-color: var(--ink, #2b1e19); }
+.warna-item.active .warna-swatch::after {
+    content: "✓";
+    font-size: 22px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+}
+.warna-item.custom .warna-swatch {
+    background: #fff;
+    border: 1px dashed var(--ink, #2b1e19);
+    color: var(--ink, #2b1e19);
+}
+.warna-item.custom.active .warna-swatch { border-style: solid; }
+.warna-item.custom input[type="color"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.jenis-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 6px 0 12px;
+}
+.jenis-btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    padding: 10px 16px;
+    background: #fff;
+    color: var(--ink, #2b1e19);
+    border: 1px solid var(--line, #e6dccf);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.jenis-btn:hover { border-color: var(--tan-dark, #b08d62); }
+.jenis-btn.active {
+    background: var(--ink, #2b1e19);
+    border-color: var(--ink, #2b1e19);
+    color: var(--cream, #faf6f0);
+}
+.warna-panel .wp-catatan {
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted, #70655e);
+}
+</style>
 <script>
-const SALON      = ' . json_encode($salon) . ';
-const LAYANAN    = ' . json_encode($layanan) . ';
-const PEGAWAI    = ' . json_encode($pegawai) . ';
-const MAX_UKURAN = 2 * 1024 * 1024; // 2 MB
-const JAM_BUKA   = 9, JAM_TUTUP = 20;
+const SALON         = ' . json_encode($salon) . ';
+const LAYANAN       = ' . json_encode($layanan) . ';
+const LAYANAN_WARNA = ' . json_encode($layanan_warna) . ';
+const WARNA         = ' . json_encode($warna_rambut) . ';
+const JENIS_WARNA   = ' . json_encode($jenis_warna) . ';
+const PEGAWAI       = ' . json_encode($pegawai) . ';
+const MAX_UKURAN    = 2 * 1024 * 1024; // 2 MB
+const JAM_BUKA      = 9, JAM_TUTUP = 20;
 
-/* Data tiap orang: layanan, pegawai, tanggal, jam */
+/* Data tiap orang: layanan, pilihan warna, pegawai, tanggal, jam */
 function orangBaru(nama, utama) {
-    return { nama: nama, utama: utama, layanan: [], pegawai: "", tanggal: null, jam: "" };
+    return {
+        nama: nama, utama: utama, layanan: [],
+        warna: "", warnaHex: "", jenisWarna: JENIS_WARNA[0],
+        pegawai: "", tanggal: null, jam: ""
+    };
 }
 
 let orang = [ orangBaru("Saya", true) ];
@@ -84,6 +225,16 @@ function namaTampil(o, i) {
     return o.nama.trim() || ("Orang " + (i + 1));
 }
 
+/* Warna rambut */
+function pakaiWarna(o) {
+    return o.layanan.indexOf(LAYANAN_WARNA) !== -1;
+}
+
+function teksWarna(o) {
+    if (!o.warna) return "belum dipilih";
+    return o.warna + " (" + o.jenisWarna + ")";
+}
+
 /* Estimasi Durasi */
 function durasiLayanan(namaLayanan) {
     const l = LAYANAN.find(function (x) { return x.nama === namaLayanan; });
@@ -122,6 +273,79 @@ function el(tag, cls, teks) {
     if (cls) e.className = cls;
     if (teks !== undefined) e.textContent = teks;
     return e;
+}
+
+/* Panel pilihan warna rambut (muncul saat Hair Color dicentang) */
+function panelWarna(o) {
+    const p = el("div", "warna-panel");
+    p.appendChild(el("span", "wp-judul", "Warna rambut"));
+
+    const info = el("div", "wp-info");
+    info.appendChild(document.createTextNode("Pilih warna yang kamu inginkan: "));
+    info.appendChild(el("b", "", o.warna || "belum dipilih"));
+    p.appendChild(info);
+
+    const grid = el("div", "warna-grid");
+
+    WARNA.forEach(function (w) {
+        const b = el("button", "warna-item" + (o.warna === w.nama ? " active" : ""));
+        b.type = "button";
+
+        const sw = el("span", "warna-swatch");
+        sw.style.background = w.hex;
+        b.appendChild(sw);
+        b.appendChild(el("span", "", w.nama));
+
+        b.onclick = function () {
+            o.warna = w.nama;
+            o.warnaHex = w.hex;
+            renderOrang();
+            renderRincian();
+        };
+        grid.appendChild(b);
+    });
+
+    // Warna lainnya (pilih bebas lewat color picker)
+    const adaKustom = o.warna !== "" && !WARNA.some(function (w) { return w.nama === o.warna; });
+    const c = el("label", "warna-item custom" + (adaKustom ? " active" : ""));
+
+    const swK = el("span", "warna-swatch", adaKustom ? "" : "+");
+    if (adaKustom) swK.style.background = o.warnaHex;
+    c.appendChild(swK);
+    c.appendChild(el("span", "", adaKustom ? "Kustom" : "Lainnya"));
+
+    const picker = document.createElement("input");
+    picker.type = "color";
+    picker.value = o.warnaHex || "#8b5a3c";
+    picker.onchange = function () {
+        o.warna = "Kustom " + picker.value.toUpperCase();
+        o.warnaHex = picker.value;
+        renderOrang();
+        renderRincian();
+    };
+    c.appendChild(picker);
+    grid.appendChild(c);
+
+    p.appendChild(grid);
+
+    // Jenis pewarnaan
+    p.appendChild(el("span", "wp-judul", "Jenis pewarnaan"));
+    const row = el("div", "jenis-row");
+
+    JENIS_WARNA.forEach(function (j) {
+        const b = el("button", "jenis-btn" + (o.jenisWarna === j ? " active" : ""), j);
+        b.type = "button";
+        b.onclick = function () {
+            o.jenisWarna = j;
+            renderOrang();
+            renderRincian();
+        };
+        row.appendChild(b);
+    });
+    p.appendChild(row);
+
+    p.appendChild(el("p", "wp-catatan", "Hasil warna bisa sedikit berbeda tergantung kondisi rambut. Stylist akan berkonsultasi lebih dulu."));
+    return p;
 }
 
 /* Render Kartu Tiap Orang */
@@ -181,11 +405,25 @@ function renderOrang() {
                     o.layanan = o.layanan.filter(function (n) { return n !== l.nama; });
                 }
 
+                // Hair Color dilepas: hapus pilihan warna
+                if (l.nama === LAYANAN_WARNA && !cb.checked) {
+                    o.warna = "";
+                    o.warnaHex = "";
+                    o.jenisWarna = JENIS_WARNA[0];
+                }
+
                 // Cek apakah perubahan durasi membuat jadwal bentrok
                 if (o.tanggal && (bentrok(i, o.tanggal.iso, o.jam) || menit(o.jam) + durasiTotal(o) > JAM_TUTUP * 60)) {
                     o.tanggal = null;
                     o.jam = "";
                     alert("Durasi layanan berubah dan jadwal sebelumnya tidak muat lagi. Silakan pilih ulang tanggal dan jam.");
+                    renderOrang();
+                    renderRincian();
+                    return;
+                }
+
+                // Hair Color dicentang / dilepas: tampilkan / sembunyikan panel warna
+                if (l.nama === LAYANAN_WARNA) {
                     renderOrang();
                     renderRincian();
                     return;
@@ -199,6 +437,11 @@ function renderOrang() {
             row.appendChild(kiri);
             row.appendChild(el("em", "", "± " + formatDurasi(l.durasi) + " · " + rupiah(l.harga)));
             card.appendChild(row);
+
+            // Panel warna muncul tepat di bawah baris Hair Color
+            if (l.nama === LAYANAN_WARNA && cb.checked) {
+                card.appendChild(panelWarna(o));
+            }
         });
 
         // Pilihan Pegawai
@@ -282,6 +525,9 @@ function renderRincian() {
             });
         }
 
+        if (pakaiWarna(o)) {
+            blok.appendChild(el("div", "rc-row muted", "Warna rambut: " + teksWarna(o)));
+        }
         blok.appendChild(el("div", "rc-row muted", "Pegawai: " + (o.pegawai || "-")));
         blok.appendChild(el("div", "rc-row muted", "Estimasi durasi: " + formatDurasi(durasiTotal(o))));
         blok.appendChild(el("div", "rc-row muted",
@@ -325,6 +571,11 @@ function bukaJadwal(i) {
 
     if (o.layanan.length === 0) {
         alert("Pilih minimal satu layanan untuk " + namaTampil(o, i) + " terlebih dahulu.");
+        return;
+    }
+
+    if (pakaiWarna(o) && o.warna === "") {
+        alert("Pilih warna rambut untuk " + namaTampil(o, i) + " terlebih dahulu.");
         return;
     }
 
@@ -450,6 +701,9 @@ function ringkasPopup() {
         box.appendChild(r);
     });
 
+    if (pakaiWarna(o)) {
+        box.appendChild(el("div", "rc-row muted", "Warna rambut: " + teksWarna(o)));
+    }
     box.appendChild(el("div", "rc-row muted", "Pegawai: " + o.pegawai));
     box.appendChild(el("div", "rc-row muted", "Estimasi durasi: " + formatDurasi(durasiTotal(o))));
     box.appendChild(el("div", "rc-row muted",
@@ -531,6 +785,11 @@ function konfirmasi() {
             return;
         }
 
+        if (pakaiWarna(o) && o.warna === "") {
+            alert("Pilih warna rambut untuk " + nama + ".");
+            return;
+        }
+
         if (o.pegawai === "") {
             alert("Pilih pegawai yang melayani " + nama + ".");
             return;
@@ -553,6 +812,7 @@ function konfirmasi() {
     orang.forEach(function (o, i) {
         teks += "\\n" + namaTampil(o, i) + "\\n"
             + "  Layanan: " + o.layanan.join(", ") + "\\n"
+            + (pakaiWarna(o) ? "  Warna rambut: " + teksWarna(o) + "\\n" : "")
             + "  Pegawai: " + o.pegawai + "\\n"
             + "  Jadwal: " + o.tanggal.label + ", " + rentangJam(o.jam, durasiTotal(o))
             + " (± " + formatDurasi(durasiTotal(o)) + ")\\n"
@@ -574,14 +834,7 @@ renderRincian();
 require __DIR__ . '/includes/header.php';
 ?>
 
-<!-- ===== HERO HALAMAN BOOKING ===== -->
-<div class="hero hero-booking">
-    <div class="hero-content">
-        <span class="eyebrow">FORMULIR RESERVASI</span>
-        <h1>Reservasi di <?= e($salon) ?></h1>
-        <p>Tentukan perawatan pilihanmu, pilih stylist terbaik, dan tentukan waktu yang paling pas.</p>
-    </div>
-</div>
+
 
 <!-- ===== KONTEN FORM RESERVASI ===== -->
 <div class="app">

@@ -100,7 +100,7 @@ require_once __DIR__ . '/includes/header.php';
             </table>
         </div>
     </div>
-
+                        
     <!-- Grafik Pendapatan 7 Hari -->
     <div class="ad-kartu">
         <div class="ad-kartu-head">
@@ -155,8 +155,48 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         <?php endforeach; ?>
     </div>
+<section class="ad-sapa">
+    <h1>Data user</h1>
+    <p>Login</p>
 </section>
 
+<form id="Formlogin" onsubmit="return simpan(event)">
+
+    <!-- INFORMASI DASAR SALON -->
+    <section class="ad-kartu">
+        <div class="ad-kartu-head">
+            <h2>Login</h2>
+        </div>
+
+        <div class="ad-form-grid">
+            <div class="ad-field">
+                <label for="nama">Username</label>
+                <input type="text" id="nama" name="nama" value=" ">
+            </div>
+
+            <div class="ad-field">
+                <label for="telepon">password</label>
+                <input type="text" id="telepon" name="telepon" value=" ">
+            </div>
+
+            <div class="ad-field full">
+                <label for="alamat">nik</label>
+                <textarea id="alamat" name="alamat"></textarea>
+            </div>
+
+            <div class="ad-field full">
+                <label for="deskripsi">Alamat & Sosmed</label>
+                <textarea id="deskripsi" name="deskripsi"></textarea>
+            </div>
+        </div>
+    </section>
+        <div class="ad-aksi">
+            <button type="submit" class="ad-btn utama">Simpan Perubahan</button>
+            <button type="button" class="ad-btn kedua" onclick="kembali()">Kembali</button>
+        </div>
+    </section>
+
+</form>
 <?php 
 // Muat kerangka footer admin
 require_once __DIR__ . '/includes/footer.php'; 

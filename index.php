@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/auth.css">
 
 <style>
 .home-hero {
@@ -44,7 +46,6 @@
 }
 </style>
 
-
 </head>
 <body class="page-home">
 <header class="site-header home-header">
@@ -53,13 +54,19 @@
 <a href="login.php">Booking</a>
 <a href="#salon">Daftar Salon</a>
 <a href="#layanan">Layanan</a>
-<a href="login.php">Login</a>
 </nav>
 <a class="brand" href="index.php" aria-label="Reservin">
 <span class="brand-name">RESERVIN</span>
 <span class="brand-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 16 19 3M16 16 5 3"/></svg> Salon Booking</span>
 </a>
-<div class="header-right"><a href="login.php" class="btn btn-cta">Booking Sekarang</a></div>
+<div class="header-right">
+<?php if (!empty($_SESSION['user'])): ?>
+<a href="customer/dashboard.php" class="btn-solid">Dashboard</a>
+<?php else: ?>
+<a href="login.php" class="btn-ghost">Masuk</a>
+<a href="daftar.php" class="btn-solid">Daftar</a>
+<?php endif; ?>
+</div>
 </header>
 
 <section class="home-hero">
@@ -130,5 +137,5 @@ document.querySelectorAll('.horizontal-track').forEach(track=>{
  track.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();track.scrollLeft=scroll-(e.pageX-track.offsetLeft-startX)*1.2});
 });
 </script>
-</body>
+</body>ccc
 </html>

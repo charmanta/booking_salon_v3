@@ -1,0 +1,314 @@
+/* =====================================================================
+   RESERVIN — auth.css  (simpan di: assets/css/auth.css)
+   Tambahan di atas theme.css: tombol header Masuk/Daftar,
+   layout split (login/registrasi/daftar salon), halaman pilih akun.
+   Muat SETELAH theme.css:
+   <link rel="stylesheet" href="assets/css/theme.css">
+   <link rel="stylesheet" href="assets/css/auth.css">
+   ===================================================================== */
+
+:root {
+  --rs-brown-dark: #7a5547;
+  --rs-brown-light: #a98474;
+  --rs-cream: #f6ede4;
+  --rs-tan: #c9a174;
+  --rs-tan-dark: #b58b5c;
+  --rs-ink: #2b211d;
+  --rs-line: #e3d3c4;
+}
+
+/* ---------- Tombol header kanan (Masuk / Daftar) ---------- */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-right .btn-ghost,
+.header-right .btn-solid {
+  display: inline-block;
+  padding: 11px 26px;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--rs-ink);
+  transition: all .2s ease;
+}
+.header-right .btn-ghost {
+  background: transparent;
+  color: var(--rs-ink);
+}
+.header-right .btn-ghost:hover {
+  background: var(--rs-ink);
+  color: #fffaf3;
+}
+.header-right .btn-solid {
+  background: var(--rs-tan);
+  border-color: var(--rs-tan);
+  color: var(--rs-ink);
+}
+.header-right .btn-solid:hover {
+  background: var(--rs-tan-dark);
+  border-color: var(--rs-tan-dark);
+}
+
+/* ---------- Layout split (kiri coklat, kanan form) ---------- */
+body.page-split {
+  margin: 0;
+  background: var(--rs-cream);
+  font-family: 'Jost', sans-serif;
+  color: var(--rs-ink);
+}
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+.split-left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 9%;
+  color: #fffaf3;
+  background-image:
+    linear-gradient(160deg, rgba(122, 85, 71, .94), rgba(169, 132, 116, .88)),
+    var(--panel-img, none);
+  background-size: cover;
+  background-position: center;
+}
+.split-left .panel-brand {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  text-decoration: none;
+  color: #fffaf3;
+}
+.split-left .panel-brand .name {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  letter-spacing: .38em;
+  padding-left: .38em;
+}
+.split-left .panel-brand .sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  opacity: .85;
+}
+.split-left h2 {
+  margin: 0 0 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: clamp(34px, 3.6vw, 50px);
+  line-height: 1.1;
+}
+.split-left p {
+  margin: 0;
+  max-width: 380px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #f2e7dc;
+}
+.split-left .panel-foot {
+  position: absolute;
+  left: 9%;
+  bottom: 34px;
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: #f2e7dc;
+  text-decoration: none;
+}
+
+.split-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px 11%;
+  background: var(--rs-cream);
+}
+.split-right .back-link {
+  display: inline-block;
+  margin-bottom: 22px;
+  font-size: 11px;
+  color: var(--rs-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.split-right h1 {
+  margin: 0 0 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: 34px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.split-right .lead {
+  margin: 0 0 22px;
+  font-size: 12px;
+  color: #7a6a60;
+}
+.split-right h3 {
+  margin: 18px 0 10px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.split-right form { display: block; }
+.split-right .field { margin-bottom: 14px; }
+.split-right .field label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #6b5a50;
+}
+.split-right .field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: var(--rs-ink);
+  background: #fff;
+  border: 1px solid var(--rs-line);
+  outline: none;
+  transition: border-color .2s;
+}
+.split-right .field input:focus { border-color: var(--rs-tan-dark); }
+
+.btn-block {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  color: var(--rs-ink);
+  background: var(--rs-tan);
+  border: 0;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-block:hover { background: var(--rs-tan-dark); }
+
+.form-links {
+  margin-top: 16px;
+  font-size: 11.5px;
+  line-height: 1.9;
+  color: #6b5a50;
+}
+.form-links a { color: var(--rs-ink); font-weight: 500; }
+
+.alert-error {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #8a2f2f;
+  background: #fbeaea;
+  border: 1px solid #efc5c5;
+}
+
+/* ---------- Halaman pilih jenis akun (daftar.php) ---------- */
+body.page-choose {
+  margin: 0;
+  background: var(--rs-cream);
+  font-family: 'Jost', sans-serif;
+  color: var(--rs-ink);
+}
+.choose-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 60px 24px 90px;
+  text-align: center;
+}
+.choose-wrap h1 {
+  margin: 0 0 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: 40px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.choose-wrap .lead {
+  margin: 0 0 34px;
+  font-size: 13px;
+  color: #7a6a60;
+}
+.choose-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  text-align: left;
+}
+.choose-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  background: #fff;
+  border: 1px solid var(--rs-line);
+}
+.choose-card .tag {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #8a7466;
+}
+.choose-card h2 {
+  margin: 6px 0 10px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 26px;
+}
+.choose-card p {
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #6b5a50;
+}
+.choose-card ul {
+  margin: 0 0 22px;
+  padding-left: 18px;
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: #4a3b33;
+}
+.choose-card .btn-block { margin-top: auto; }
+.choose-note {
+  margin-top: 28px;
+  font-size: 12px;
+  color: #7a6a60;
+}
+.choose-note a { color: var(--rs-ink); font-weight: 600; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .split { grid-template-columns: 1fr; }
+  .split-left {
+    min-height: 260px;
+    padding: 110px 8% 60px;
+  }
+  .split-left .panel-foot { display: none; }
+  .split-right { padding: 40px 8% 60px; }
+  .choose-grid { grid-template-columns: 1fr; }
+  .header-right .btn-ghost,
+  .header-right .btn-solid { padding: 9px 16px; font-size: 11px; }
+}

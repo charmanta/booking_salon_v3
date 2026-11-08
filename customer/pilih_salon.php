@@ -1,10 +1,7 @@
 <?php
 /* =====================================================================
    RESERVIN — PILIH SALON (customer/pilih_salon.php)
-   Halaman pemilihan cabang salon:
-   - Carousel pilihan salon terdaftar
-   - Modal konfirmasi pemilihan salon
-   - Tombol geser interaktif
+   Klik "Pilih Salon" -> langsung ke halaman reservasi (booking.php)
    ===================================================================== */
 require_once __DIR__ . '/includes/init.php';
 
@@ -12,7 +9,6 @@ $page_title   = 'Pilih Salon';
 $current_page = 'pilih_salon.php';
 $body_class   = 'p-pilih';
 
-// Data daftar salon (dapat dihubungkan ke database jika diperlukan)
 $daftarSalon = [
     [
         'nama'      => 'Luna Salon',
@@ -44,29 +40,9 @@ $daftarSalon = [
     ],
 ];
 
-// Script interaktivitas carousel dan modal konfirmasi
+// Script carousel (tombol geser + drag). Perpindahan halaman TIDAK lewat JS.
 $extra_js = '
 <script>
-var salonDipilih = "";
-
-function pilihSalon(nama) {
-    salonDipilih = nama;
-    var elNama = document.getElementById("namaSalon");
-    var elModal = document.getElementById("modalSalon");
-    if (elNama) elNama.textContent = nama;
-    if (elModal) elModal.style.display = "flex";
-}
-
-function tutupModal() {
-    var elModal = document.getElementById("modalSalon");
-    if (elModal) elModal.style.display = "none";
-}
-
-function lanjutBooking() {
-    if (!salonDipilih) return;
-    window.location.href = "booking.php?salon=" + encodeURIComponent(salonDipilih);
-}
-
 function slide(d) {
     var c = document.getElementById("salonCarousel");
     if (c) c.scrollBy({ left: d * 390, behavior: "smooth" });
@@ -76,13 +52,13 @@ function slide(d) {
     var c = document.getElementById("salonCarousel");
     if (!c) return;
 
-    var down = false, startX = 0, scrollLeft = 0;
+    var down = false, moved = false, startX = 0, scrollLeft = 0;
 
     c.addEventListener("mousedown", function (e) {
         down = true;
+        moved = false;
         startX = e.pageX - c.offsetLeft;
         scrollLeft = c.scrollLeft;
-        c.classList.add("dragging");
     });
 
     window.addEventListener("mouseup", function () {
@@ -92,9 +68,25 @@ function slide(d) {
 
     c.addEventListener("mousemove", function (e) {
         if (!down) return;
-        e.preventDefault();
-        c.scrollLeft = scrollLeft - (e.pageX - c.offsetLeft - startX) * 1.2;
+        var jarak = e.pageX - c.offsetLeft - startX;
+        if (Math.abs(jarak) > 5) {
+            moved = true;
+            c.classList.add("dragging");
+        }
+        if (moved) {
+            e.preventDefault();
+            c.scrollLeft = scrollLeft - jarak * 1.2;
+        }
     });
+
+    // Kalau user habis menggeser (drag), jangan anggap itu klik link
+    c.addEventListener("click", function (e) {
+        if (moved) {
+            e.preventDefault();
+            e.stopPropagation();
+            moved = false;
+        }
+    }, true);
 })();
 </script>
 ';
@@ -102,7 +94,6 @@ function slide(d) {
 require __DIR__ . '/includes/header.php';
 ?>
 
-<!-- ===== KONTEN UTAMA PILIH SALON ===== -->
 <main class="select-page">
 
     <div class="select-heading">
@@ -111,39 +102,37 @@ require __DIR__ . '/includes/header.php';
         <p>Geser ke samping untuk melihat salon dan cabang lainnya.</p>
     </div>
 
-    <!-- Tombol Navigasi Slider Carousel -->
     <div class="slider-actions select-actions">
         <button type="button" onclick="slide(-1)" aria-label="Geser salon ke kiri">&larr;</button>
         <button type="button" onclick="slide(1)" aria-label="Geser salon ke kanan">&rarr;</button>
     </div>
 
-    <!-- Carousel Kartu Salon -->
     <div class="salon-carousel" id="salonCarousel">
         <?php foreach ($daftarSalon as $s): ?>
             <article class="salon-card-new">
-                <img src="<?= e($s['gambar']) ?>" alt="<?= e($s['nama']) ?>" loading="lazy">
+                <img src="<?= e($s['gambar']) ?>" alt="<?= e($s['nama']) ?>" loading="lazy" draggable="false">
                 <div class="salon-card-body">
                     <span><?= e($s['kota_jam']) ?></span>
                     <h2><?= e($s['nama']) ?></h2>
                     <p><?= e($s['alamat']) ?></p>
-                    
+
                     <div class="chips">
                         <?php foreach ($s['fasilitas'] as $f): ?>
                             <b><?= e($f) ?></b>
                         <?php endforeach; ?>
                     </div>
 
-                    <button type="button" onclick="pilihSalon(<?= json_encode($s['nama']) ?>)">
+                    <!-- Link biasa langsung ke halaman reservasi -->
+                    <a class="btn-pilih-salon"
+                       href="booking.php?salon=<?= urlencode($s['nama']) ?>"
+                       draggable="false">
                         Pilih Salon &rarr;
-                    </button>
+                    </a>
                 </div>
             </article>
         <?php endforeach; ?>
     </div>
 
 </main>
-
-<!-- Modal Konfirmasi Salon -->
-<?php require __DIR__ . '/modals/modal_pilih_salon.php'; ?>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

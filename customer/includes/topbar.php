@@ -12,7 +12,7 @@ $halamanAktif = $current_page ?? basename(parse_url($_SERVER['SCRIPT_NAME'] ?? '
         <a href="dashboard.php" class="<?= ($halamanAktif === 'dashboard.php') ? 'active' : '' ?>">Beranda</a>
         <a href="pilih_salon.php" class="<?= in_array($halamanAktif, ['pilih_salon.php', 'booking.php'], true) ? 'active' : '' ?>">Reservasi</a>
         <a href="riwayat.php" class="<?= ($halamanAktif === 'riwayat.php') ? 'active' : '' ?>">Riwayat</a>
-        <a href="https://gemini.google.com/" target="_blank" rel="noopener">Tanya AI</a>
+        <a href="#" class="open-chatbot">Tanya AI</a>
         <a href="../login.php">Keluar</a>
     </nav>
 
