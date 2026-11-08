@@ -2,6 +2,8 @@
 /* =====================================================================
    RESERVIN — MODAL LAYANAN (admin/modals/modal_layanan.php)
    Pop-up formulir tambah dan edit data layanan salon.
+   Untuk layanan pewarnaan (nama mengandung "color"/"warna") akan muncul
+   panel "Kelola Warna" di bagian bawah formulir.
    ===================================================================== */
 ?>
 <!-- ===== MODAL TAMBAH / EDIT LAYANAN ===== -->
@@ -36,6 +38,30 @@
             <textarea id="keterangan" placeholder="Masukkan keterangan layanan"></textarea>
         </div>
 
+        <!-- ===== KELOLA WARNA (hanya untuk layanan pewarnaan) ===== -->
+        <div class="ad-warna" id="panelWarna">
+            <div class="ad-warna-head">
+                <h3>Kelola Warna</h3>
+                <p>Warna yang bisa dipilih customer saat booking layanan ini.</p>
+            </div>
+
+            <div class="ad-warna-list" id="listWarna"></div>
+
+            <div class="ad-warna-tambah">
+                <div class="ad-field">
+                    <label for="warnaNama">Tambah warna baru</label>
+                    <input type="text" id="warnaNama" maxlength="40" placeholder="Contoh: Rose Gold">
+                </div>
+                <div class="ad-field">
+                    <label for="warnaHex">Contoh warna</label>
+                    <input type="color" id="warnaHex" value="#b76e79">
+                </div>
+                <button type="button" class="ad-btn kedua" id="btnTambahWarna">+ Tambah</button>
+            </div>
+
+            <p class="ad-warna-catatan">Warna yang dinonaktifkan tidak akan muncul di halaman booking customer. Perubahan tersimpan saat kamu menekan Simpan.</p>
+        </div>
+
         <div class="ad-modal-aksi">
             <button type="button" class="ad-btn kedua" id="btnBatal">Batal</button>
             <button type="button" class="ad-btn utama" id="btnSimpan">Simpan</button>
@@ -44,4 +70,3 @@
     </div>
 
 </div>
-

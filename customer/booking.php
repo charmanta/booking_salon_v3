@@ -29,14 +29,14 @@ $layanan = [
 // Nama layanan yang memunculkan panel pilihan warna rambut
 $layanan_warna = 'Hair Color';
 
-// Pilihan warna rambut (ubah / tambah sesuai kebutuhan salon)
+// Pilihan warna rambut (data contoh, nantinya diganti dari database:
+// ambil hanya warna yang berstatus tersedia)
 $warna_rambut = [
     ['nama' => 'Hitam',      'hex' => '#1c1512'],
-    ['nama' => 'Coklat Tua', 'hex' => '#3b2418'],
-    ['nama' => 'Coklat',     'hex' => '#6b4429'],
-    ['nama' => 'Tembaga',    'hex' => '#b5651d'],
+    ['nama' => 'Dark Brown', 'hex' => '#3b2418'],
+    ['nama' => 'Chestnut',   'hex' => '#8a4b2d'],
     ['nama' => 'Burgundy',   'hex' => '#6d1a36'],
-    ['nama' => 'Blonde',     'hex' => '#d9bf93'],
+    ['nama' => 'Ash Blonde', 'hex' => '#c9b79c'],
 ];
 
 // Pilihan jenis pewarnaan
